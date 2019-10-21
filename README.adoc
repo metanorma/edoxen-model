@@ -1,0 +1,114 @@
+= Data model for meeting resolutions
+
+== Applicability
+
+This data model handles resolutions of a number of bodies, including:
+
+* ISO, ISO/TMB
+* ITU-T
+* ITU-D
+* WTSA
+* BIPM / CGPM
+* OIML
+* ILO
+
+== Model
+
+[source]
+----
+Meeting Resolution data model
+
+resolution {
+  subject: SubjectBody
+  title
+  identifier: StructuredIdentifier[]
+  meeting: MeetingIdentifier
+  dates: ResolutionDate[]
+  considerations: Consideration[]
+  actions: Action[]
+  agendaItem: AgendaItemId
+}
+
+SubjectBody {
+  name
+  address
+  etc.
+}
+
+StructuredIdentifier {
+  number:
+  prefix:
+}
+
+MeetingIdentifier {
+  venue: String
+  date: DateTime
+}
+
+Consideration {
+  type: ConsiderationType
+  dateEffective: Date
+  message: Text
+}
+
+enum ConsiderationType {
+    having / having regard
+    noting
+    recognizing
+    acknowledging
+    recalling / further recalling
+    reaffirming
+    considering
+    taking into account
+    pursuant to
+    bearing in mind
+    emphasizing
+    concerned
+}
+
+Action {
+  type: ActionType
+  dateEffective: Date
+  message: Text
+}
+
+enum ActionType {
+    adopts
+    thanks / expresses-appreciation (subjects)
+    approves
+    decides
+    asks (subjects)
+    invites / further invites (subjects)
+    resolves
+    confirms
+    welcomes (subjects)
+    recommends
+    requests (subjects)
+    congratulates (subjects)
+    instructs (subjects)
+    urges (subjects)
+    appoints (subjects)
+    resolves further
+    instructs (subjects)
+    calls upon (subjects)
+    encourages (subjects)
+    affirms / reaffirming (subjects)
+}
+
+enum ResolutionDate {
+  adoption
+  drafted
+  discussed
+}
+
+ResolutionRelationship {
+  // (this resolution is an annex to an original resolution)
+  annexOf: StructuredIdentifier[]
+  hasAnnex: StructuredIdentifier[]
+  updates: StructuredIdentifier[]
+  // Considering the previous resolution 1234
+  refines: StructuredIdentifier[]
+  replaces/obsoletes: StructuredIdentifier[]
+  considers: StructuredIdentifier[]
+}
+----
