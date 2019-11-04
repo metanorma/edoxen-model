@@ -1,0 +1,114 @@
+BIPM
+
+The General Conference on Weights and Measures (CGPM), at its 26th meeting,
+
+considering
+
+decides that
+
+effective from 20 May 2019, the International System of Units, the SI, is the system of units in which:
+
+the unperturbed ground state hyperfine transition frequency of the caesium 133 atom capital DeltanuCs is 9 192 631 770 Hz,
+the speed of light in vacuum c is 299 792 458 m/s,
+
+notes the consequences as set out in Resolution 1 adopted by the CGPM at its 24th meeting (2011) in respect of the base units of the SI and confirms these in the following Appendices to this Resolution, which have the same force as the Resolution itself,
+invites the International Committee for Weights and Measures (CIPM) to produce a new edition of its Brochure entitled "The International System of Units" in which a full description of the revised SI will be given.
+
+…
+* Appendix 1. Abrogation of former definitions of the base units
+It follows from the new definition of the SI described above that, effective from 20 May 2019:
+
+
+
+———
+* The General Conference on Weights and Measures (CGPM), at its 26th meeting, 
+considering that 
+    * Resolution 1 adopted by the CGPM at its 14th meeting (1971) requested the CIPM to define International Atomic Time (TAI),
+    * no complete self-contained definition of TAI has been provided officially by the CIPM,
+    * the Consultative Committee for the Definition of the Second (CCDS) proposed in its Recommendation S2 (1970) a definition which was extended by a Declaration of the CCDS in 1980,
+    * the CGPM at its 15th meeting (1975) noted that Coordinated Universal Time (UTC), derived from TAI, provides the basis of civil time, and strongly endorsed this usage,
+* recognizing that 
+    * the mission of the BIPM is to ensure and promote the global comparability of measurements, including the provision of a coherent international system of units,
+    * the International Astronomical Union (IAU) and the International Union of Geodesy and Geophysics (IUGG) with the International Association of Geodesy (IAG) are responsible for defining reference systems for Earth and space applications,
+    * the International Telecommunication Union Radiocommunication Sector (ITU-R) is responsible for coordinating the dissemination of time and frequency signals and making relevant recommendations,
+    * the International Earth Rotation and Reference Systems Service (IERS), a service of the IAU and IUGG, is responsible for providing information required to relate terrestrial and celestial reference systems, including time-varying measurements of the Earth's rotation angle, UT1 - UTC, the low-precision prediction of UT1 - UTC for time signal broadcasts, DUT1, and for deciding and announcing leap second insertions,
+* noting that 
+    * Resolution A4 (1991) of the IAU defined, in Recommendations I and II, the Geocentric Reference System as a system of space-time coordinates for the Earth within the framework of general relativity, and, in Recommendation III, named the time coordinate of that reference system "Geocentric Coordinate Time" (TCG),
+    * Resolution A4 (1991) of the IAU further defined, in Recommendation IV, Terrestrial Time (TT) as another time coordinate in the Geocentric Reference System, differing from TCG by a constant rate; the unit of measurement of TT being chosen to agree with the SI second on the geoid,
+    * Resolution B1.9 (2000) of the IAU redefined TT to be a time scale differing from TCG by a constant rate: dTT/dTCG = 1 – LG, where LG = 6.969 290 134 × 10–10 is a defining constant (the numerical value of LG was chosen to conform to the value W0 = 62 636 856.0 m2s–2 for the gravity potential on the geoid as recommended by Special Commission 3 of the IAG in 1999),
+    * the redefinition of TT in 2000 introduced an ambiguity between TT and TAI as the CCDS had stated in 1980 that TAI was to have "the SI second as realized on the rotating geoid as the scale unit" while the definition of TT does not refer to the geoid,
+* states that 
+    * TAI is a continuous time scale produced by the BIPM based on the best realizations of the SI second, and is a realization of TT as defined by IAU Resolution B1.9 (2000),
+    * in the transformation from the proper time of a clock to TAI, the relativistic rate shift is computed with respect to the conventionally adopted equipotential W0 = 62 636 856.0 m2s–2 of the Earth's gravity potential, which conforms to the constant LG defining the rate of TT,
+    * as stated in the IAU Resolution A4 (1991), TT - TAI = 32.184 s exactly at 1 January 1977, 0h TAI at the geocentre, in order to ensure continuity of TT with Ephemeris Time,
+    * UTC produced by the BIPM, based on TAI, is the only recommended time scale for international reference and the basis of civil time in most countries,
+    * UTC differs from TAI only by an integral number of seconds as published by the BIPM,
+    * users can derive the rotation angle of the Earth by applying to UTC the observed or predicted values of UT1 - UTC, as provided by the IERS,
+    * UTC provides a means to measure time intervals and to disseminate the standard of frequency during intervals in which leap seconds do not occur,
+    * traceability to UTC is obtained through local real-time realizations "UTC(k)" maintained by laboratories contributing data to the calculation of UTC, identified by "k",
+* confirms that
+    * International Atomic Time (TAI) is a continuous time scale produced by the BIPM based on the best realizations of the SI second. TAI is a realization of Terrestrial Time (TT) with the same rate as that of TT, as defined by the IAU Resolution B1.9 (2000),
+    * Coordinated Universal Time (UTC) is a time scale produced by the BIPM with the same rate as TAI, but differing from TAI only by an integral number of seconds,
+* and recommends that
+    * all relevant unions and organizations consider these definitions and work together to develop a common understanding on reference time scales, their realization and dissemination with a view to consider the present limitation on the maximum magnitude of UT1 - UTC so as to meet the needs of the current and future user communities,
+    * all relevant unions and organizations work together to improve further the accuracy of the prediction of UT1 - UTC and the method for its dissemination to satisfy the future requirements of users.
+————
+
+* The General Conference on Weights and Measures (CGPM), at its 26th meeting, 
+considering
+    * the increased importance of the work of the International Bureau of Weights and Measures (BIPM) to international trade, to industrial innovation, to monitor the global environment, to human health and medicine, to food and forensic science in all Member States,
+    * the recognition of the BIPM as the scientifically expert intergovernmental organization in metrology and the added value and cost efficiency it provides to all Member States in technical and economic terms,
+    * the manner in which the BIPM continues to adopt best management practice and to improve the efficiency of its operation,
+    * Resolution 7 adopted by the CGPM at its 16th meeting (1979) establishing a principle for the determination of the base dotation,
+* noting
+    * the current world financial situation and the financial constraints that Member States continue to experience,
+* welcomes
+    * the support of all kinds provided to the BIPM by National Metrology Institutes, in particular by way of secondment of staff to the BIPM, and support for the BIPM Capacity Building and Knowledge Transfer programme,
+* decides that 
+the annual dotation of the BIPM, as defined in Article 6 (1921) of the Regulations annexed to the Metre Convention, will be set in such a way that, for those States that are Parties to the Metre Convention at the time of the 26th meeting of the CGPM, it shall be: 
+12 356 526 euros in 2020
+12 480 091 euros in 2021
+12 604 892 euros in 2022
+12 730 941 euros in 2023
+encourages
+    * Member States, as well as international organizations, private organizations and foundations to maintain the provision of additional voluntary support of all kinds to support specific BIPM mission related activities, particularly those that facilitate participation in the activities of the BIPM by those countries without well-developed metrology infrastructur
+
+———
+
+On the financial arrears of Member States and the process of exclusion
+
+
+•	The General Conference on Weights and Measures (CGPM), at its 26th meeting, 
+recalling that
+	◦	Article 6 paragraphs 6 to 8 (1921) of the Regulations annexed to the Metre Convention reads as follows: 
+	◦	"6. Si un État est demeuré trois années sans effectuer le versement de sa contribution, celle-ci est répartie entre les autres États, au prorata de leurs propres contributions. Les sommes supplémentaires, versées ainsi par les États pour parfaire le montant de la dotation du Bureau, sont considérées comme une avance faite à l'État retardataire, et leur sont remboursées si celui ci vient à acquitter ses contributions arriérées.
+7. Les avantages et prérogatives conférés par l'adhésion à la Convention du Mètre sont suspendus à l'égard des États déficitaires de trois années.
+	◦	8. Après trois nouvelles années, l'État déficitaire est exclu de la Convention, et le calcul des contributions est rétabli conformément aux dispositions de l?article 20 du présent Règlement."(1)
+	◦	
+	◦	Resolution 8 adopted by the CGPM at its 23rd meeting (2007) on financial arrears of Member States sets a procedure concerning States who fail to fulfil their financial obligations,
+	•	observing that
+	◦	paragraphs 6 and 7 of Article 6 of the Annexed Regulations foresee that whilst the advantages and prerogatives of Member States are suspended for those States in arrears by three years, their contributions remain due,
+	◦	historical practice has always been to apply paragraphs 6 and 7 of Article 6 of the Annexed Regulations,
+	•	noting that
+	◦	historical practice has been at variance with the provisions of paragraph 8 of Article 6 of the Annexed Regulations by not excluding Member States when they have defaulted on their contributions for more than six years and by not re-establishing the calculation of contributions,
+	◦	historical practice has resulted in certain Member States remaining in a state of suspension for periods considerably exceeding the three-year period envisaged in the Annexed Regulations, leading to the accumulation of their arrears and the consequent distribution of their contributions among all other Member States,
+	◦	Resolution 8 adopted by the CGPM at its 23rd meeting (2007) introduced a procedure for the exclusion of a defaulting Member State that requires a decision of the CGPM, and consequently, the period of suspension prior to exclusion depends on the scheduling of CGPM meetings and thus defaulting Member States may not be treated equally,
+	◦	Resolution 8 (2007) partly addressed the issues raised by historical practice,
+	•	further recalling that
+	◦	procedural clarity and fair treatment of Member States are matters of good governance and are beneficial to all parties,
+	◦	the International Committee for Weights and Measures (CIPM), as the permanent supervisory organ of the BIPM, could apply Article 6 paragraph 8 of the Annexed Regulations in a timely manner,
+	•	decides that
+	◦	the CIPM shall implement Article 6 paragraph 8 of the Annexed Regulations,
+	◦	the CIPM shall address the situation where historical practice has resulted in the accumulation of arrears,
+	•	confirms that
+	◦	the CIPM shall notify the French Ministry for Europe and Foreign Affairs of any exclusion, which shall accordingly inform the excluded State and all other Member States,
+	◦	an excluded Member State may only again accede to the Metre Convention if its remaining arrears have been paid,
+	◦	pursuant to Article 11 of the Metre Convention, that such a Member State shall pay an entrance contribution equal to its first annual contribution.
+	•	
+	•	
+	•	(1) English translation for easy reference of the authoritative French version: 
+	•	6. If a State remains three years without paying its contribution, the said contribution is distributed among the other States pro-rata to their own contributions. The supplementary sums thus paid by these States to make up the dotation of the Bureau are considered as advances made to the State in arrears, and are reimbursed to them in the event that it repays its arrears of contributions. 
+	•	7. The advantages and prerogatives conferred by accession to the Metre Convention are suspended for those States in arrears by three years. 
+	•	8. After three more years, the State in arrears is excluded from the Convention and the calculation of contributions is re-established in accordance with the provisions of Article 20 of the present Regulations
+
+======

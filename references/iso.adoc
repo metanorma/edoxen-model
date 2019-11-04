@@ -1,0 +1,65 @@
+ISO
+=== [Resolution] [Topic]
+
+
+TECHNICAL MANAGEMENT BOARD RESOLUTION 53/2019
+Ethics and respect in ISO committees
+
+Adopted at the 75th meeting of the Technical Management Board, Geneva (Switzerland), 19-20 June 2019
+The Technical Management Board,
+Thanks the representatives from ANSI and SN for their proposal document on ethics and respect in the ISO standards development community as well as the TMB Members and ISO/CS staff that have provided feedback,
+Approves the revised Code of Conduct (CoC) with amendments agreed during the meeting with immediate effect, and
+Decides that, a new standing agenda item will be added at the beginning of each committee or WG meeting, for the Chair or convenor to present the CoC with a brief presentation on why it is important and stating the expectation that all participating will uphold the CoC and act appropriately,
+Asks the representatives from ANSI and SN to draft guidance and a complaints-handling process based on the comments received from the June meeting, to be presented to the TMB in September 2019,
+Asks ISO/CS to implement immediately the following actionable items:
+ Publish the new version of the CoC on www.iso.org, replacing the existing version;  Update the model template for meeting agendas to add the standing agenda item
+and the link to the CoC.
+Decides to include the other relevant actions relating to recommendations 2 & 5 in the 2020 TMB Work Programme for further consideration.
+Invites the IEC to join this effort, in view of developing a common Annex for the next edition of the common ISO/IEC Directives, Part 1.
+
+
+TECHNICAL MANAGEMENT BOARD RESOLUTION 51/2019
+APPROVAL OF THE DRAFT TMB WORK PROGRAMME 2020
+Adopted at the 75th meeting of the Technical Management Board, Geneva (Switzerland), 19-20 June 2019
+The Technical Management Board,
+Approves the proposed draft TMB Work Programme for 2020, focusing on the following areas of work:
+1. ImplementationofProjectmanagementinISOstandardsdevelopment
+2. ISO IEC ITU Strategic Programme Coordination Group (SPCG)
+3. ISOVirtualprojects
+4. SAG on Machine Readable Standards
+5. SAGonAccessibility
+6. Guidelines on Gender responsive and gender-neutral standards
+7. RevisedISOCodeofConduct–implementation/communication/training
+8. Attracting the next generation to the standardization process
+Further approves its submission to Council in September 2019.
+
+
+
+TECHNICAL MANAGEMENT BOARD RESOLUTION 49/2019 
+Approval of Task Force 18 Foundational Standards final recommendations 
+Adopted at the 75th meeting of the Technical Management Board, Geneva (Switzerland), 19-20 June 2019 
+
+The Technical Management Board,
+ Approves the definition of “horizontal deliverable”, as follows: 
+Horizontal deliverable 
+deliverable dealing with a subject relevant to a number of committees or sectors or of crucial importance to ensure coherence across standardization deliverables. 
+Note 1 horizontal deliverables may provide fundamental principles, concepts, graphical symbols, terminology or general characteristics. 
+Note 2 some horizontal deliverables provide the foundations of workable, fair and responsible oversight of new innovative technologies. 
+
+Invites ISO/CS, in cooperation with IEC/CO, to develop guidance to be reviewed at the 2019 JDMT that addresses: 
+* For standards developers: how such horizontal deliverables may be identified and any recommended text that should be used to explain the deliverable’s purpose and scope, 
+* For standards users: how such deliverables can be known, readily identified, and more easily found in the catalogue of standards (e.g. by allowing the filtering of search results, 
+* The process (top-down vs. bottom-up, set criteria) to be implemented, Invites IEC to concur with the above;
+
+Decides that the following process should be implemented:  
+ 
+* Any ISO committees intending to develop, or developing, horizontal deliverables should inform the TMB secretariat with their rationale to ensure validation by the TMB of their compliance with the ‘horizontal deliverable’ definition before their publication, 
+* Any ISO committee may request that any of its published deliverables be considered as a ‘horizontal deliverable’ and inform TMB with their rationale to ensure validation by the TMB of their compliance with the ‘horizontal deliverable’ definition; 
+
+Invites ISO/CS and IEC/CO to gather information, and committees to provide case studies on use and value of their horizontal deliverables by the end of 2020, and 
+* Agrees to review the situation in mid-2021 and decide on next steps, and 
+* Requests the TMB secretariat to submit the final report of TF 18 to the ISO/CS Secretary- General, and 
+* Disbands Task Force 18 and thanks its convenor, secretary and members for their work. 
+
+
+
