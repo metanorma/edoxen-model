@@ -1,8 +1,19 @@
-= Data model for meeting resolutions
+= Resolution Data Model
+
+== Purpose
+
+Different organizations utilize different resolution structures
+but are similar in purpose as well as in data elements provided.
+
+This data model aims to unify those data elements in a common
+framework, allowing interoperability between and creation of
+references to resolutions.
+
 
 == Applicability
 
-This data model handles resolutions of a number of bodies, including:
+This data model fully covers the resolution structures of a
+number of bodies, including:
 
 * ISO, ISO/TMB
 * ITU-T
@@ -12,13 +23,22 @@ This data model handles resolutions of a number of bodies, including:
 * OIML
 * ILO
 
-== Model
+
+== Data model
 
 [source]
 ----
-Meeting Resolution data model
+ResolutionCollection {
+  metadata: {
+    date:
+    title:
+    source:
+  }
 
-resolution {
+  resolutions: Resolution[]
+}
+
+Resolution {
   subject: SubjectBody
   title
   identifier: StructuredIdentifier[]
@@ -26,6 +46,7 @@ resolution {
   dates: ResolutionDate[]
   considerations: Consideration[]
   actions: Action[]
+  approvals: Approval[]
   agendaItem: AgendaItemId
 }
 
@@ -52,18 +73,36 @@ Consideration {
 }
 
 enum ConsiderationType {
-    having / having regard
-    noting
-    recognizing
-    acknowledging
-    recalling / further recalling
-    reaffirming
-    considering
-    taking into account
-    pursuant to
-    bearing in mind
-    emphasizing
-    concerned
+  having / having regard
+  noting
+  recognizing
+  acknowledging
+  recalling / further recalling
+  reaffirming
+  considering
+  taking into account
+  pursuant to
+  bearing in mind
+  emphasizing
+  concerned
+}
+
+Approval {
+  type: ApprovalType
+  degree: ApprovalDegree
+  date: Date
+  message: Text
+}
+
+enum ApprovalType {
+  affirmitive
+  negative
+}
+
+enum ApprovalDegree {
+  unanimous
+  majority
+  minority
 }
 
 Action {
@@ -73,26 +112,26 @@ Action {
 }
 
 enum ActionType {
-    adopts
-    thanks / expresses-appreciation (subjects)
-    approves
-    decides
-    asks (subjects)
-    invites / further invites (subjects)
-    resolves
-    confirms
-    welcomes (subjects)
-    recommends
-    requests (subjects)
-    congratulates (subjects)
-    instructs (subjects)
-    urges (subjects)
-    appoints (subjects)
-    resolves further
-    instructs (subjects)
-    calls upon (subjects)
-    encourages (subjects)
-    affirms / reaffirming (subjects)
+  adopts
+  thanks / expresses-appreciation (subjects)
+  approves
+  decides
+  asks (subjects)
+  invites / further invites (subjects)
+  resolves
+  confirms
+  welcomes (subjects)
+  recommends
+  requests (subjects)
+  congratulates (subjects)
+  instructs (subjects)
+  urges (subjects)
+  appoints (subjects)
+  resolves further
+  instructs (subjects)
+  calls upon (subjects)
+  encourages (subjects)
+  affirms / reaffirming (subjects)
 }
 
 enum ResolutionDate {
@@ -112,3 +151,57 @@ ResolutionRelationship {
   considers: StructuredIdentifier[]
 }
 ----
+
+
+== YAML representation
+
+=== Resolution collection
+
+The YAML representation of the data model is as follows.
+
+[source,yaml]
+----
+metadata:
+  title: Resolutions of the 38th plenary meeting of ISO/TC 154
+  date: 2019-10-17
+  source: ISO/TC 154 Secretariat
+resolutions:
+  - category: Resolutions related to JWG 1
+    dates: 2019/10/17
+    ...
+----
+
+=== Resolution (single)
+
+[source,yaml]
+----
+category: Resolutions related to JWG 1
+dates:
+  - 2019-10-17
+subject: ISO/TC 154
+title: "Adoption of NWIP ballot for ISO/PWI 9735-11 “Electronic data..."
+identifier: 2019-01
+considerations:
+  - type: considering
+    date_effective: 2019-10-17
+    message: considering the voting result ...
+
+  - type: considering
+    date_effective: 2019-10-17
+    message: considering the importance of ...
+
+  - type: considering
+    date_effective: 2019-10-17
+    message: considering the request from JWG1...
+
+approvals:
+  - type: affirmative
+    degree: unanimous
+    message: The resolution was taken by unanimity.
+
+actions:
+  - type: resolves
+    date_effective: 2019-10-17
+    message: resolves to submit ISO 9735-11...
+----
+
