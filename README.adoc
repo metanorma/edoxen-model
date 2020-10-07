@@ -116,6 +116,7 @@ enum ActionType {
   thanks / expresses-appreciation (subjects)
   approves
   decides
+  declares
   asks (subjects)
   invites / further invites (subjects)
   resolves
