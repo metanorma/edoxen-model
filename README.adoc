@@ -85,6 +85,12 @@ enum ConsiderationType {
   bearing in mind
   emphasizing
   concerned
+  accepts
+  observing
+  referring
+  acting
+  empowers
+  reaffirming
 }
 
 Approval {
@@ -133,6 +139,15 @@ enum ActionType {
   calls upon (subjects)
   encourages (subjects)
   affirms / reaffirming (subjects)
+  elects
+  authorizes
+  charges
+  states
+  remarks
+  judges
+  sanctions
+  abrogates
+  empowers
 }
 
 enum ResolutionDate {
