@@ -1,13 +1,14 @@
-= Resolution Data Model
+= Edoxen information models
 
 == Purpose
 
-Different organizations utilize different resolution structures
-but are similar in purpose as well as in data elements provided.
+Different organizations utilize different resolution and decision
+structures but are similar in purpose as well as in data elements
+provided.
 
-This data model aims to unify those data elements in a common
-framework, allowing interoperability between and creation of
-references to resolutions.
+The Edoxen information models aim to unify those data elements in
+a common framework, allowing interoperability between and creation
+of references to resolutions and decisions.
 
 
 == Applicability
