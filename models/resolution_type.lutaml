@@ -1,0 +1,6 @@
+enum ResolutionType {
+  resolution
+  recommendation
+  decision
+  declaration
+}

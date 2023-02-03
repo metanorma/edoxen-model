@@ -1,0 +1,5 @@
+class ResolutionMetadata {
+  date: DateTime
+  title: String
+  source: String
+}

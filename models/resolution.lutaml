@@ -1,0 +1,12 @@
+class Resolution {
+  subject: SubjectBody
+  title: String
+  type: ResolutionType
+  identifier: StructuredIdentifier[1..*]
+  meeting: MeetingIdentifier
+  dates: ResolutionDate[1..*]
+  considerations: Consideration[1..*]
+  actions: Action[1..*]
+  approvals: Approval[1..*]
+  agendaItem: AgendaItemId
+}

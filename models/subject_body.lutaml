@@ -1,0 +1,5 @@
+class SubjectBody {
+  name: String
+  address: String
+  // etc.
+}

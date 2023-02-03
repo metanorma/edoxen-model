@@ -1,0 +1,4 @@
+class ResolutionCollection {
+  metadata: ResolutionMetadata
+  resolutions: Resolution[0..*]
+}

@@ -1,0 +1,5 @@
+class Consideration {
+  type: ConsiderationType
+  dateEffective: Date
+  message: Text
+}

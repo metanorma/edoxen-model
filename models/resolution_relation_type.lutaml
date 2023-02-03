@@ -1,0 +1,37 @@
+enum ResolutionRelationType {
+  annexOf {
+    definition {
+      This resolution is an annex to the target resolution.
+    }
+  }
+
+  hasAnnex {
+    definition {
+      The target resolution is an annex of the source resolution.
+    }
+  }
+
+  updates {
+    definition {
+      This resolution updates the target resolution.
+    }
+  }
+
+  refines {
+    definition {
+      This resolution refines the target resolution.
+    }
+  }
+
+  replaces {
+    definition {
+      This resolution replaces or obsoletes the target resolution.
+    }
+  }
+
+  considers {
+    definition {
+      This resolution is made in consideration of the target resolution.
+    }
+  }
+}

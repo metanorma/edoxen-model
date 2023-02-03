@@ -1,0 +1,5 @@
+enum ResolutionDateType {
+  adoption
+  drafted
+  discussed
+}

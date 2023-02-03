@@ -1,0 +1,31 @@
+enum ConsiderationType {
+  having {
+    definition {
+      having or having regard
+    }
+  }
+
+  noting
+  recognizing
+  acknowledging
+
+  recalling {
+    definition {
+      recalling or further recalling
+    }
+  }
+
+  reaffirming
+  considering
+  taking-into-account
+  pursuant-to
+  bearing-in-mind
+  emphasizing
+  concerned
+  accepts
+  observing
+  referring
+  acting
+  empowers
+  reaffirming
+}

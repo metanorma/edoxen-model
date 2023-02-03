@@ -1,0 +1,4 @@
+enum ApprovalType {
+  affirmative
+  negative
+}

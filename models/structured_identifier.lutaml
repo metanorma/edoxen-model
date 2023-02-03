@@ -1,0 +1,4 @@
+class StructuredIdentifier {
+  number: String
+  prefix: String
+}

@@ -1,0 +1,95 @@
+enum ActionType {
+  adopts
+  thanks {
+    definition {
+      thanks or expresses-appreciation (subjects)
+    }
+  }
+  approves
+  decides
+  declares
+  asks {
+    definition {
+      asks (subjects)
+    }
+  }
+  invites {
+    definition {
+      invites or further invites (subjects)
+    }
+  }
+  resolves
+  confirms
+  welcomes {
+    definition {
+      welcomes (subjects)
+    }
+  }
+
+  recommends
+  requests {
+    definition {
+      requests (subjects)
+    }
+  }
+
+  congratulates {
+    definition {
+      congratulates (subjects)
+    }
+  }
+
+  instructs {
+    definition {
+      instructs (subjects)
+    }
+  }
+
+  urges {
+    definition {
+      urges (subjects)
+    }
+  }
+
+  appoints {
+    definition {
+      appoints (subjects)
+    }
+  }
+
+  resolves further
+
+  instructs {
+    definition {
+      instructs (subjects)
+    }
+  }
+
+  calls-upon {
+    definition {
+      calls upon (subjects)
+    }
+  }
+
+  encourages {
+    definition {
+      encourages (subjects)
+    }
+  }
+
+  affirms {
+    definition {
+      affirms or reaffirming (subjects)
+    }
+  }
+
+  elects
+  authorizes
+  charges
+  states
+  remarks
+  judges
+  sanctions
+  abrogates
+  empowers
+}
