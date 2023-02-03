@@ -1,0 +1,47 @@
+
+class Agenda {
+  id: FormattedString
+  items: AgendaItem[1..*]
+  committee: FormattedString
+  committee_group: FormattingString[0..1]
+  status: AgendaStatus[0..1]
+  title: FormattedString
+  date: DateTime[0..1]
+  revdate: DateTime[0..1]
+  location: Location[0..*]
+  session: Integer
+  distribution: FormattedString[0..*]
+  annotations: Annotation[0..*]
+  'contributors should defer to Contribution model
+  contributors: Person[0..*]
+  participants: Participation[0..*]
+}
+
+class Participation {
+  person: Person
+  status: ParticipationStatus
+}
+
+enum ParticipationStatus {
+  present
+  absent
+}
+
+class Person {
+  name: String
+  role: String
+}
+
+class AgendaItem {
+  label: FormattedString
+  title: FormattedString
+  description: FormattedString
+  references: Reference[0..*]
+}
+
+class NumberedItem
+class UnnumberedItem
+
+class Location {
+
+}
