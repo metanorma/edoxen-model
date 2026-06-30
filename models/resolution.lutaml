@@ -1,12 +1,13 @@
 class Resolution {
-  subject: SubjectBody
-  title: String
-  type: ResolutionType
   identifier: StructuredIdentifier[1..*]
-  meeting: MeetingIdentifier
+  type: ResolutionType
+  doi: String
+  urn: String
+  agendaItem: String
   dates: ResolutionDate[1..*]
-  considerations: Consideration[1..*]
-  actions: Action[1..*]
-  approvals: Approval[1..*]
-  agendaItem: AgendaItemId
+  categories: String[0..*]
+  meeting: MeetingIdentifier
+  relations: ResolutionRelation[0..*]
+  urls: Url[0..*]
+  localizations: Localization[1..*]
 }
