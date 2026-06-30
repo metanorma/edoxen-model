@@ -1,5 +1,9 @@
 class ResolutionMetadata {
   date: DateTime
   title: String
+  titleLocalized: Localization[0..*]
   source: String
+  sourceUrls: SourceUrl[0..*]
+  city: String
+  countryCode: String
 }

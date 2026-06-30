@@ -1,0 +1,5 @@
+class SourceUrl {
+  ref: String
+  format: String
+  languageCode: Iso639ThreeCharCode
+}
