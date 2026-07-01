@@ -1,0 +1,7 @@
+enum AgendaItemOutcome {
+  discussed
+  resolved
+  deferred
+  adopted
+  withdrawn
+}

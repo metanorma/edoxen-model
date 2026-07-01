@@ -1,0 +1,6 @@
+enum HostType {
+  national_body
+  liaison
+  associate
+  organizer
+}

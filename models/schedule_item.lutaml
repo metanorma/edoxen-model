@@ -1,0 +1,7 @@
+class ScheduleItem {
+  date: Date
+  time: String
+  event: String
+  description: String
+  room: String
+}

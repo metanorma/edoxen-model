@@ -1,0 +1,8 @@
+class Agenda {
+  identifier: StructuredIdentifier[0..*]
+  status: AgendaStatus
+  source_doc: String
+  items: AgendaItem[0..*]
+  opening_session: ScheduleItem
+  closing_session: ScheduleItem
+}

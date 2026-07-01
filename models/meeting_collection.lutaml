@@ -1,0 +1,4 @@
+class MeetingCollection {
+  metadata: MeetingCollectionMetadata
+  meetings: Meeting[0..*]
+}

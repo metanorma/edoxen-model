@@ -47,13 +47,44 @@ See the `models/` directory. One `.lutaml` file per concept:
 | `resolution.lutaml`              | A single formal `Resolution`.
 | `localization.lutaml`            | A monolingual rendering of a Resolution (glossarist-style).
 | `structured_identifier.lutaml`   | `prefix + number` identifier; a Resolution carries 1..*.
-| `meeting_identifier.lutaml`      | Meeting venue + date.
+| `meeting_identifier.lutaml`      | Lightweight meeting venue + date (used as a reference from a Resolution).
 | `resolution_date.lutaml`         | Date with semantic kind (adoption / drafted / discussed).
 | `resolution_relation.lutaml`     | Directed relation between two resolutions.
 | `action.lutaml`, `consideration.lutaml`, `approval.lutaml` | Per-localization sub-structures.
 | `url.lutaml`, `source_url.lutaml` | URLs — generic and per-language source PDF.
-| `*_type.lutaml`, `approval_degree.lutaml` | Closed value sets (enums).
+| `*_type.lutaml`, `approval_degree.lutaml` | Closed value sets (enums) for the Resolution side.
 |===
+
+=== Meeting model
+
+The Meeting/Agenda model represents the *event* that produces
+Resolutions, plus the agenda document that orders its business.
+
+[cols="1,3"]
+|===
+| File | Concept
+
+| `meeting_collection.lutaml`, `meeting_collection_metadata.lutaml` | Top-level wrapper for many Meetings.
+| `meeting.lutaml`                 | A single Meeting (event).
+| `meeting_localization.lutaml`    | Per-language content for a Meeting.
+| `meeting_relation.lutaml`        | Directed link between two Meetings.
+| `agenda.lutaml`                  | The business-order document of a Meeting.
+| `agenda_item.lutaml`             | One entry on an Agenda.
+| `schedule_item.lutaml`           | One entry in the timetable.
+| `deadline.lutaml`                | A time-bound requirement.
+| `date_range.lutaml`              | Start + end pair (for multi-day meetings).
+| `location.lutaml`                | Venue geography (name, address, geo coords).
+| `person.lutaml`                  | Identity + contact + affiliation.
+| `host_ref.lutaml`                | Typed reference to an organization.
+| `reference.lutaml`               | Generic document reference.
+| `meeting_type.lutaml`, `meeting_status.lutaml`, `agenda_status.lutaml`, `agenda_item_kind.lutaml`, `agenda_item_outcome.lutaml`, `host_type.lutaml`, `meeting_relation_type.lutaml`, `source_url_kind.lutaml` | Closed value sets for the Meeting side.
+|===
+
+A Meeting links to ResolutionCollection(s) by URN
+(`Meeting.resolution_refs[]` ↔ `ResolutionCollection.metadata.meeting_urn`).
+Meetings and Resolutions have different lifetimes — agendas exist
+weeks before a meeting, resolutions only after adoption — so they
+are kept as separate documents.
 
 
 == YAML representation
@@ -227,6 +258,120 @@ A per-language source-PDF reference used in
 `ResolutionMetadata.source_urls[]`. See `models/source_url.lutaml`.
 
 
+== Meeting representation
+
+=== Sample meeting YAML
+
+[source,yaml]
+----
+identifier:
+  - prefix: CIML
+    number: "56"
+urn: urn:oiml:ciml:meeting:ciml-56
+ordinal: 56
+type: plenary
+status: completed
+year: 2021
+
+date_range:
+  start: 2021-10-18
+  end:   2021-10-22
+
+committee: CIML
+general_area: Paris
+city: PAR
+country_code: FR
+
+chair:
+  name: Roman Schwartz
+  role: chair
+secretary:
+  name: Anthony Donnellan
+  role: secretary
+  affiliation: BIML
+  email: secretary@biml.org
+
+venues:
+  - name: OIML Headquarters
+    address: 11 Rue Turgot, 75009 Paris, France
+    link: https://www.oiml.org/about/contact
+
+source_urls:
+  - ref: https://www.oiml.org/en/structure/ciml/pdf/56-ciml-resolutions-english.pdf
+    format: pdf
+    language_code: eng
+    kind: resolutions_pdf
+  - ref: https://www.oiml.org/fr/structure/ciml/pdf/56-ciml-resolutions-french.pdf
+    format: pdf
+    language_code: fra
+    kind: resolutions_pdf
+
+agenda:
+  status: final
+  source_doc: https://www.oiml.org/en/structure/ciml/pdf/56-ciml-agenda.pdf
+  items:
+    - label: "1"
+      kind: opening
+      title: Opening of the meeting
+      outcome: adopted
+    - label: "2"
+      kind: numbered
+      title: Approval of the agenda
+      outcome: resolved
+      resolution_ref: urn:oiml:doc:ciml:resolution:2021-01
+    - label: "3"
+      kind: numbered
+      title: Approval of the minutes of the 55th CIML Meeting
+      outcome: resolved
+      resolution_ref: urn:oiml:doc:ciml:resolution:2021-02
+
+schedule:
+  - date: 2021-10-18
+    time: "09:00-10:30"
+    event: Opening session
+    room: Salle Turgot
+  - date: 2021-10-22
+    time: "16:00-17:00"
+    event: Closing session
+    room: Salle Turgot
+
+deadlines:
+  - date: 2021-09-30
+    description: Registration via OIML meeting platform
+
+localizations:
+  - language_code: eng
+    script: Latn
+    title: 56th CIML Meeting
+    general_area: Paris, France
+  - language_code: fra
+    script: Latn
+    title: 56e réunion du CIML
+    general_area: Paris, France
+
+resolution_refs:
+  - urn:oiml:ciml:resolution-collection:ciml-56
+----
+
+=== Linking a ResolutionCollection back to a Meeting
+
+A ResolutionCollection carries the meeting URN in its `metadata`:
+
+[source,yaml]
+----
+metadata:
+  title: 56th CIML Meeting — Resolutions
+  meeting_urn: urn:oiml:ciml:meeting:ciml-56
+  date: 2021-10-19
+  source_urls: [ ... ]
+resolutions:
+  - ...
+----
+
+The join key is the URN. Meetings and Resolutions are versioned
+independently.
+
+
 == Ruby implementation
 
 The Ruby gem at https://github.com/metanorma/edoxen[metanorma/edoxen]
@@ -235,14 +380,18 @@ implements this model:
 * One Ruby class per LutaML class, attribute declarations mirror the
   LutaML definitions 1:1.
 * `Edoxen::Enums` mirrors the LutaML enums; the schema's enum arrays
-  are kept in lockstep by the gem's `schema_enum_sync_spec.rb`.
+  are kept in lockstep by the gem's `schema_enum_sync_spec.rb` (for
+  Resolutions) and `schema_meeting_enum_sync_spec.rb` (for Meetings).
 * `Edoxen::Resolution#in_language(code, fallback:)` and
   `#primary_localization` provide the canonical lookup accessors
-  (English when available, else the first declared localization).
-* A JSON-Schema (`schema/edoxen.yaml`) enforces `additionalProperties:
-  false`, `required`, `enum`, and `pattern` constraints the Ruby model
-  is permissive about.
-* A Thor CLI (`edoxen validate`, `edoxen normalize`) wraps both layers.
+  (English when available, else the first declared localization). The
+  same accessors exist on `Edoxen::Meeting`.
+* JSON-Schemas (`schema/edoxen.yaml` for Resolutions,
+  `schema/meeting.yaml` for Meetings) enforce `additionalProperties:
+  false`, `required`, `enum`, and `pattern` constraints.
+* A Thor CLI wraps both layers:
+  `edoxen validate` / `edoxen normalize` for Resolutions;
+  `edoxen validate-meetings` / `edoxen normalize-meetings` for Meetings.
 
 Install:
 
@@ -251,9 +400,10 @@ Install:
 gem install edoxen
 ----
 
-Validate against the canonical shape:
+Validate either document type:
 
 [source,sh]
 ----
-edoxen validate "resolutions/*.yaml"
+edoxen validate            "resolutions/*.yaml"
+edoxen validate-meetings   "meetings/*.yaml"
 ----

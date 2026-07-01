@@ -1,0 +1,5 @@
+class Reference {
+  ref: String
+  kind: String
+  title: String
+}

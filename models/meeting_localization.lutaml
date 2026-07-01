@@ -1,0 +1,7 @@
+class MeetingLocalization {
+  languageCode: Iso639ThreeCharCode
+  script: Iso15924Code
+  title: String
+  general_area: String
+  practical_info: String
+}

@@ -1,0 +1,36 @@
+class Meeting {
+  identifier: StructuredIdentifier[1..*]
+  urn: String
+  ordinal: Integer
+  type: MeetingType
+  status: MeetingStatus
+  year: Integer
+
+  date_range: DateRange
+
+  committee: String
+  committee_group: String
+
+  venues: Location[0..*]
+  general_area: String
+  city: String
+  country_code: String
+  virtual: Boolean
+
+  chair: Person
+  secretary: Person
+  host: String
+  hosts: HostRef[0..*]
+
+  source_urls: SourceUrl[0..*]
+  landing_url: String
+  registration_url: String
+
+  agenda: Agenda
+  schedule: ScheduleItem[0..*]
+  deadlines: Deadline[0..*]
+
+  localizations: MeetingLocalization[0..*]
+  relations: MeetingRelation[0..*]
+  resolution_refs: String[0..*]
+}
