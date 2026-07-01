@@ -2,17 +2,19 @@
 
 == Purpose
 
-Different organizations utilize different resolution and decision
-structures but are similar in purpose as well as in data elements
-provided.
+Different organizations utilize different proceedings structures —
+the agendas, minutes, attendance rolls, votes, and resolutions that
+make up the published record of a formal meeting — but they are
+similar in purpose and in the data elements provided.
 
-The Edoxen information models aim to unify those data elements in
-a common framework, allowing interoperability between and creation
-of references to resolutions and decisions.
+The Edoxen information models aim to unify those data elements in a
+common framework, allowing interoperability between publications
+and the creation of stable references to meetings, agendas,
+minutes, and the resolutions adopted.
 
 This repository holds the *canonical* LutaML UML definition of the
 model. The Ruby gem that implements it lives at
-https://github.com/metanorma/edoxen[metanorma/edoxen] and mirrors
+https://github.com/edoxen/edoxen[edoxen/edoxen] and mirrors
 the LutaML files 1:1 — attribute declarations, enum values, and
 field shapes.
 
@@ -374,7 +376,7 @@ independently.
 
 == Ruby implementation
 
-The Ruby gem at https://github.com/metanorma/edoxen[metanorma/edoxen]
+The Ruby gem at https://github.com/edoxen/edoxen[edoxen/edoxen]
 implements this model:
 
 * One Ruby class per LutaML class, attribute declarations mirror the
