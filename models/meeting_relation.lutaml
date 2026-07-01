@@ -1,0 +1,5 @@
+class MeetingRelation {
+  source: StructuredIdentifier
+  destination: StructuredIdentifier
+  type: MeetingRelationType
+}

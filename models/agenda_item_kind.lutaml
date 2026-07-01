@@ -1,0 +1,7 @@
+enum AgendaItemKind {
+  numbered
+  unnumbered
+  header
+  opening
+  closing
+}

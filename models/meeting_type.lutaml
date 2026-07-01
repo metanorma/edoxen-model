@@ -1,0 +1,8 @@
+enum MeetingType {
+  plenary
+  working_group
+  task_group
+  ad_hoc
+  joint
+  conference_session
+}

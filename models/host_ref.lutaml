@@ -1,0 +1,6 @@
+class HostRef {
+  ref: String
+  type: HostType
+  role: String
+  contact: Person
+}

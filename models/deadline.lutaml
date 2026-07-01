@@ -1,0 +1,4 @@
+class Deadline {
+  date: Date
+  description: String
+}

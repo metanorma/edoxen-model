@@ -1,0 +1,7 @@
+enum AgendaStatus {
+  draft
+  final
+  amended
+  cancelled
+  superseded
+}

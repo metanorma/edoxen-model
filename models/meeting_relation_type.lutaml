@@ -1,0 +1,43 @@
+enum MeetingRelationType {
+  continues_from {
+    definition {
+      This meeting continues the business of the destination meeting.
+    }
+  }
+
+  continues_to {
+    definition {
+      The destination meeting continues the business of this meeting.
+    }
+  }
+
+  joint_with {
+    definition {
+      This meeting is held jointly with the destination meeting.
+    }
+  }
+
+  supersedes {
+    definition {
+      This meeting supersedes the destination meeting.
+    }
+  }
+
+  superseded_by {
+    definition {
+      The destination meeting supersedes this meeting.
+    }
+  }
+
+  rescheduled_from {
+    definition {
+      This meeting was rescheduled from the destination meeting.
+    }
+  }
+
+  rescheduled_to {
+    definition {
+      This meeting was rescheduled to the destination meeting.
+    }
+  }
+}

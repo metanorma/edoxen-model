@@ -1,0 +1,8 @@
+class Person {
+  name: String
+  role: String
+  affiliation: String
+  email: String
+  phone: String
+  orcid: String
+}

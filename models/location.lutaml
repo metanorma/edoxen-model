@@ -1,0 +1,9 @@
+class Location {
+  name: String
+  address: String
+  link: String
+  phone: String
+  note: String
+  lat: Float
+  lon: Float
+}
