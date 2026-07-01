@@ -30,6 +30,10 @@ class Meeting {
   schedule: ScheduleItem[0..*]
   deadlines: Deadline[0..*]
 
+  attendance: Attendance[0..*]
+  vote_records: VoteRecord[0..*]
+  minutes: Minutes[0..*]
+
   localizations: MeetingLocalization[0..*]
   relations: MeetingRelation[0..*]
   resolution_refs: String[0..*]

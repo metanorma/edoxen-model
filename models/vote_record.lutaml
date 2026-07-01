@@ -1,0 +1,7 @@
+class VoteRecord {
+  resolution_ref: String
+  person: Person
+  affiliation: String
+  vote: VoteType
+  notes: String
+}

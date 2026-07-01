@@ -1,0 +1,7 @@
+class Attendance {
+  person: Person
+  status: ParticipationStatus
+  affiliation: String
+  proxy_for: Person
+  notes: String
+}
