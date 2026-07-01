@@ -1,0 +1,6 @@
+class ScheduleItemLocalization {
+  language_code: Iso639ThreeCharCode
+  script: Iso15924Code
+  event: String
+  description: String
+}

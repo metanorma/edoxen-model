@@ -1,0 +1,7 @@
+enum ParticipationStatus {
+  present
+  absent
+  apologies
+  observer
+  excused
+}

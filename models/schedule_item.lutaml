@@ -4,4 +4,5 @@ class ScheduleItem {
   event: String
   description: String
   room: String
+  localizations: ScheduleItemLocalization[0..*]
 }

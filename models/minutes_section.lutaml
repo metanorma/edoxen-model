@@ -1,0 +1,8 @@
+class MinutesSection {
+  number: String
+  title: String
+  narrative: String
+  page_start: Integer
+  page_end: Integer
+  references: Reference[0..*]
+}

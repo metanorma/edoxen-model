@@ -65,19 +65,25 @@ Resolutions, plus the agenda document that orders its business.
 | File | Concept
 
 | `meeting_collection.lutaml`, `meeting_collection_metadata.lutaml` | Top-level wrapper for many Meetings.
-| `meeting.lutaml`                 | A single Meeting (event).
+| `meeting.lutaml`                 | A single Meeting (event). Carries identity, time, venue, officers, agenda, schedule, deadlines, attendance, vote records, and minutes.
 | `meeting_localization.lutaml`    | Per-language content for a Meeting.
 | `meeting_relation.lutaml`        | Directed link between two Meetings.
 | `agenda.lutaml`                  | The business-order document of a Meeting.
-| `agenda_item.lutaml`             | One entry on an Agenda.
-| `schedule_item.lutaml`           | One entry in the timetable.
+| `agenda_item.lutaml`             | One entry on an Agenda (numbered/unnumbered/header/opening/closing).
+| `schedule_item.lutaml`           | One entry in the timetable. Carries `localizations[]` for per-language event/description.
+| `schedule_item_localization.lutaml` | Per-language content for a ScheduleItem (glossarist pattern: structural fields stay on ScheduleItem; per-language text lives here).
 | `deadline.lutaml`                | A time-bound requirement.
 | `date_range.lutaml`              | Start + end pair (for multi-day meetings).
 | `location.lutaml`                | Venue geography (name, address, geo coords).
 | `person.lutaml`                  | Identity + contact + affiliation.
 | `host_ref.lutaml`                | Typed reference to an organization.
 | `reference.lutaml`               | Generic document reference.
-| `meeting_type.lutaml`, `meeting_status.lutaml`, `agenda_status.lutaml`, `agenda_item_kind.lutaml`, `agenda_item_outcome.lutaml`, `host_type.lutaml`, `meeting_relation_type.lutaml`, `source_url_kind.lutaml` | Closed value sets for the Meeting side.
+| `attendance.lutaml`              | One record per person present at a Meeting (status, proxy_for, affiliation, notes).
+| `vote_record.lutaml`             | One vote by one person on one resolution at one meeting.
+| `minutes.lutaml`                 | The narrative record of a Meeting — running record of what was said, by whom, in what order, with what outcome. Distinct from Agenda (planned) and ResolutionCollection (decisions). One Minutes per language.
+| `minutes_section.lutaml`         | One section of Minutes, typically keyed by agenda-item number so consumers can join Minutes ↔ AgendaItem ↔ Resolution.
+| `subject_body.lutaml`            | Structured body for a Resolution's subject (committee / WG / project). Used when the subject is more than a plain string.
+| `meeting_type.lutaml`, `meeting_status.lutaml`, `agenda_status.lutaml`, `agenda_item_kind.lutaml`, `agenda_item_outcome.lutaml`, `host_type.lutaml`, `meeting_relation_type.lutaml`, `source_url_kind.lutaml`, `participation_status.lutaml`, `vote_type.lutaml` | Closed value sets for the Meeting side.
 |===
 
 A Meeting links to ResolutionCollection(s) by URN
@@ -85,6 +91,29 @@ A Meeting links to ResolutionCollection(s) by URN
 Meetings and Resolutions have different lifetimes — agendas exist
 weeks before a meeting, resolutions only after adoption — so they
 are kept as separate documents.
+
+=== The Meeting trinity: Agenda, Resolutions, Minutes
+
+A Meeting owns three distinct documents, each with its own lifetime
+and structure:
+
+[cols="1,4",options="header"]
+|===
+| Document | Concept
+| `Agenda` | The business order, drafted *before* the meeting. Items, opening_session, closing_session, source_doc.
+| `ResolutionCollection` | The formal decisions adopted *by* the meeting. Joined to the Meeting by URN (`metadata.meeting_urn`).
+| `Minutes` | The running narrative record of *what was said* at the meeting. Sections are typically keyed by agenda-item number so consumers can join Minutes ↔ AgendaItem ↔ Resolution.
+|===
+
+Plus three Meeting-side rosters:
+
+[cols="1,4",options="header"]
+|===
+| Roster | Concept
+| `attendance[]` | One `Attendance` record per person present (status, proxy_for, affiliation, notes). Mirrors `ParticipationStatus` (present / absent / apologies / observer / excused).
+| `vote_records[]` | One `VoteRecord` per (person × resolution). Carries `VoteType` (affirmative / negative / abstain / absent / not_applicable) plus affiliation and notes.
+| `minutes[]` | One `Minutes` document per language. Each carries `sections: MinutesSection[]` with Markdown narrative — the format the GLM-OCR pipeline emits.
+|===
 
 
 == YAML representation

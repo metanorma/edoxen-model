@@ -1,0 +1,7 @@
+enum VoteType {
+  affirmative
+  negative
+  abstain
+  absent
+  not_applicable
+}
