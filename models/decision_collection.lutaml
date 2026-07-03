@@ -1,0 +1,4 @@
+class DecisionCollection {
+  metadata: DecisionMetadata
+  decisions: Decision[0..*]
+}

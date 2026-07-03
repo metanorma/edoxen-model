@@ -1,0 +1,322 @@
+Akoma Ntoso
+===========
+Akoma Ntoso (XML "hearts and minds" in Akan) is the OASIS standard
+for machine-readable parliamentary, legislative, and judicial
+documents. It is the most-cited XML schema for formal proceedings
+in the legal/parliamentary world, used by the European Parliament,
+Italian Camera dei Deputati, UK Parliament, German Bundestag,
+Brazilian Congress, UN System, and dozens of other legislative
+bodies.
+
+It is the only major reference that gives us a canonical
+*debate record* structure — i.e. "who said what, in what order,
+with what outcome" — modeled explicitly. This is the closest
+external standard to Edoxen's `Minutes` + `MinutesSection`.
+
+Source: OASIS Standard `legaldocml-akn-core-v1.0` (Akoma Ntoso
+Version 1.0, Committee Specification). The official URL is
+`https://docs.oasis-open.org/legaldocml/legaldocml-akn-core/v1.0/`
+(membership-gated). Wikipedia's article at
+`https://en.wikipedia.org/wiki/Akoma_Ntoso` provides a public
+summary; the structure below is the well-established canonical
+form.
+
+
+== Definition (per Wikipedia / official abstract)
+
+Source: https://en.wikipedia.org/wiki/Akoma_Ntoso
+
+> Akoma Ntoso is a legal document standard designed to serve as a
+> basis for modern machine-readable and fully digital legislative
+> and judicial processes. This is achieved by providing a coherent
+> syntax and well-defined semantics to represent legal documents
+> in a digital format. It is designed to be suitable as a common
+> exchange format in all parliamentary, legal and judicial systems
+> around the world.
+
+The Akoma Ntoso standard defines a set of machine-readable
+electronic representations in XML format of the building blocks
+of parliamentary, legislative and judiciary documents.
+
+> "(...) defines a set of simple, technology-neutral electronic
+> representations of parliamentary, legislative and judiciary
+> documents for e-services in a worldwide context and provides
+> an enabling framework for the effective exchange of 'machine
+> readable' parliamentary, legislative and judiciary documents
+> such as legislation, **debate record, minutes**, judgements,
+> etc."
+> — Akoma Ntoso official abstract
+
+Key adoptions cited:
+
+- European Parliament (and EP's AT4AM amendment editor)
+- Italian Camera dei Deputati and Senato
+- UK Parliament (post-2017 modernization)
+- German Bundestag (LegalDocML.de profile, v1.0 March 2020)
+- Brazilian Congress
+- African Parliamentary Union (APU) member states
+- UN System (AKN4UN profile — Guidelines for UN normative,
+  parliamentary and judicial documents)
+
+
+== Top-level document types (the Akoma Ntoso root elements)
+
+The core Akoma Ntoso XML schema defines several top-level document
+types. Each is a specialization of a generic `akomaNtoso` root
+element, with its own name and semantic.
+
+|===
+| Root element | What it models | Edoxen equivalent
+
+| `<act>`            | A legislative Act (law that has been passed).       | `ResolutionCollection` (close)
+| `<bill>`           | A draft law, before passage.                       | (no Edoxen equivalent; pre-adoption)
+| `<debateRecord>`   | The verbatim record of a parliamentary debate.     | `Minutes` + `MinutesSection` (close)
+| `<debate>`         | A debate (subset of debateRecord; also reused).    | `MinutesSection` (sub-unit)
+| `<amendment>`      | A proposed amendment to a bill.                    | (no Edoxen equivalent)
+| `<amendmentList>`  | Collection of amendments.                          | (no Edoxen equivalent)
+| `<judgment>`       | A court judgment.                                  | (out of scope)
+| `<doc>`            | A generic document (catch-all for non-parliamentary).| (no Edoxen equivalent)
+| `<statement>`      | A formal statement (e.g., ministerial).            | `MinutesSection` (sub-unit, type=statement)
+| `<division>`       | A recorded vote.                                   | `VoteRecord` (the act of voting itself)
+|===
+
+Note the central one for Edoxen: `<debateRecord>` is the formal
+root element for the proceedings of a parliamentary session. It
+IS the document that records "who said what, in what order, with
+what outcome, in a sitting that produced these acts/amendments/
+divisions". This is the closest external standard to Edoxen's
+`Minutes` model.
+
+
+== DebateRecord structure (the minutes equivalent)
+
+A `<debateRecord>` carries:
+
+- `<preface>` — metadata block (FRBRthis, FRBRuri, FRBRdate,
+  references, etc.)
+- `<references>` — citations to other Akoma Ntoso documents
+- `<debateBody>` — the actual content
+
+`<debateBody>` is organized as:
+
+  <debateBody>
+    <debateSection id="intro">
+      <speech by="#mp-jones" role="chair">...</speech>
+    </debateSection>
+    <debateSection id="item-1">
+      <speech by="#mp-jones" role="chair">Item 1 — minutes</speech>
+      <question by="#mp-smith">Were minutes approved?</question>
+      <answer by="#mp-jones">Yes.</answer>
+      <motion id="m1">That the minutes be approved.</motion>
+      <division id="d1">
+        <count>
+          <for>10</for>
+          <against>0</against>
+          <abstentions>0</abstentions>
+        </count>
+        <outcome>passed</outcome>
+      </division>
+    </debateSection>
+    <debateSection id="item-2">...</debateSection>
+    ...
+    <summary>
+      <p>The session adjourned at 17:00.</p>
+    </summary>
+  </debateBody>
+
+Key element types and their Edoxen mappings:
+
+|===
+| Akoma Ntoso element | Semantics | Edoxen equivalent
+
+| `<debateRecord>`            | The whole meeting record     | `Minutes`
+| `<debateBody>`              | Body of the record           | (implicit; `Minutes` body)
+| `<debateSection>`           | One section, often keyed by agenda item | `MinutesSection`
+| `<speech by="#…" role="…">` | What one person said         | `MinutesSection.speaker` + body
+| `<question by="#…">`        | A question posed              | (could become a `MinutesSection` of kind=question)
+| `<answer by="#…">`          | An answer given               | (could become a `MinutesSection` of kind=answer)
+| `<motion id="m1">`          | A formal motion               | (closest: `Resolution` is the post-vote result; the motion itself is not in Edoxen today)
+| `<division id="d1">`        | A formal vote                  | `VoteRecord`
+| `<count><for/against/abstentions>` | Tally of the division   | `VoteRecord` aggregate / roll-up
+| `<outcome>passed|failed|withdrawn</outcome>` | Result of motion/vote | `VoteRecord.outcome`
+| `<summary>`                 | Closing narrative             | (no Edoxen equivalent; could be Minutes.trailer)
+| `<references>`              | Cross-references              | `Meeting.resolution_refs[]` + others
+|===
+
+
+== Speech and role
+
+Each `<speech>` carries:
+
+- `by="#person-uri"` — required pointer to a person (TLCPerson in
+  the references section)
+- `role` — optional role marker (e.g., `chair`, `vicechair`)
+- `as="#party-uri"` — optional party affiliation
+- `startTime` / `endTime` — timestamps
+- body content — can include `<p>`, `<list>`, etc.
+
+This matches what Edoxen Minutes sections need: who, in what
+capacity, when, what was said.
+
+Example:
+
+  <speech by="#mp-jones" role="chair" startTime="2026-09-15T14:32:00Z">
+    <p>I call this meeting to order.</p>
+    <p>The first item on the agenda is approval of the minutes.</p>
+  </speech>
+
+
+== Motion and division
+
+Akoma Ntoso separates *the motion* (what was proposed) from *the
+division* (the recorded vote). This is significant for Edoxen
+because today Edoxen's `Resolution` conflates "the motion as
+adopted" with "the resolution as adopted" — the *proposal* (motion)
+isn't separately tracked.
+
+Motion element:
+
+  <motion id="m-2026-001" date="2026-09-15">
+    That this Committee approves the proposal as amended.
+  </motion>
+
+Division element:
+
+  <division id="d-2026-001" date="2026-09-15">
+    <count>
+      <for>10</for>
+      <against>2</against>
+      <abstentions>1</abstentions>
+    </count>
+    <outcome>passed</outcome>
+    <recordedBy>#secretary</recordedBy>
+  </division>
+
+Motion-level tracking (whether passed/failed/withdrawn) is exactly
+what Edoxen Resolution is missing as a separate concept. Today,
+Edoxen conflates the motion's status with the resolution's
+adoption.
+
+
+== Person references and TLCPerson
+
+Akoma Ntoso uses **TLCPerson** (Terminology, Language, and
+Citation Person) as the canonical person type. Each person has:
+
+- `id` — referenced via `#…` URI fragment
+- `showAs` — display name
+- `name` — structured name parts (given, family, prefix, suffix)
+- `birth` / `death` — biographical dates
+- `contact` — contact info
+- `affiliation` — party/organization
+
+A complete parliamentary record then has a top-level `<references>`
+section with all people, organizations, and concepts identified
+by URI fragments, then `<debateBody>` content references them by
+`by="#…"` / `as="#…"` / `to="#…"`.
+
+This is the same glossarist-style pattern Edoxen already uses for
+`Localization`. Adopting the TLCPerson structure would unify the
+person model across Edoxen Meeting / Resolution / Minutes.
+
+
+== FRBR naming convention
+
+Akoma Ntoso mandates FRBR-style (Functional Requirements for
+Bibliographic Records) naming. Each document carries:
+
+- `<FRBRthis>` — URI of this expression
+- `<FRBRuri>` — URI of the work
+- `<FRBRdate>` — date of this version
+- `<FRBRauthor>` — author of this version
+- `<FRBRcountry>` — country code (ISO 3166-1 alpha-2)
+- `<FRBRsubtype>` — for the National Council of Provinces etc.
+
+Example:
+
+  <debateRecord>
+    <preface>
+      <FRBRthis>/akn/za/na/debate/2026-09-15/main</FRBRthis>
+      <FRBRuri>/akn/za/na/debate/2026-09-15</FRBRuri>
+      <FRBRdate date="2026-09-15" name="sitting"/>
+      <FRBRauthor href="#na-secretary"/>
+      <FRBRcountry>za</FRBRcountry>
+    </preface>
+    ...
+  </debateRecord>
+
+Maps onto Edoxen's `Meeting.urn` + `Meeting.identifier[]`. The
+Akoma Ntoso pattern is more detailed but the structural mapping
+is direct.
+
+
+== What Akoma Ntoso does NOT have (and Edoxen must keep)
+
+1. **Logistics / scheduling.** No concept of when/where/who is
+   invited (that's iCalendar's territory). A debateRecord is a
+   *retrospective* record, not a *prospective* invitation.
+
+2. **Public-web identity.** No URL/landing-page model, no event
+   description for search engines (Schema.org's territory).
+
+3. **Virtual meeting details.** No CONFERENCE / join URL /
+   attendee count, because AKN was designed for physical
+   parliamentary chambers. Hybrid/hybrid-virtual sessions post-
+   2020 have been retrofitted by some AKN implementations but
+   the core standard has no schema for them.
+
+4. **Recurrence / series.** AKN documents are individual
+   expressions; series relationships are handled at the
+   application level (e.g., "all sittings in 2026") by URI
+   pattern, not by a native recurrence model.
+
+5. **Capacity / registration / offers.** AKN is post-hoc
+   (minutes), not prospective (tickets/registration).
+
+6. **Per-attendee RSVP state.** AKN records who ATTENDED and who
+   SPOKE; it does not model "who was invited, accepted, declined,
+   delegated" (iCalendar's territory).
+
+
+== Net contribution to Edoxen
+
+Akoma Ntoso is the *debate-record* layer. It is the only major
+reference that gives Edoxen canonical structure for what is
+*currently missing* in Edoxen's Minutes model: explicit speech,
+motion, division, outcome.
+
+Concrete additions Akoma Ntoso forces onto the Edoxen Minutes model:
+
+- `MinutesSection.kind: Enum {speech, question, answer, motion,
+  division, statement, summary}` — replaces the current flat
+  list-of-Markdown-blocks model with a typed section model
+- `MinutesSection.speaker: Person` (was: implicit in body text)
+- `MinutesSection.role: String?` (chair/vicechair/rapporteur;
+  from AKN `role` attribute on `<speech>`)
+- `MinutesSection.start_time: DateTime`
+- `MinutesSection.end_time: DateTime`
+- `MinutesSection.outcome: Enum {passed, failed, withdrawn,
+  deferred}` for motion/division sections
+- `MinutesSection.related_motion: String?` — links division
+  sections to their motion sections
+- `Minutes.references[]` — TLCPerson + organization registry
+  pattern, adopted as a top-level glossary
+- `Resolution.motion_separate: Boolean` (or new `Motion` entity)
+  — separating "what was proposed" from "what was adopted"
+
+Concrete things Akoma Ntoso does NOT replace in Edoxen:
+
+- iCalendar's scheduling/recurrence/virtual-meeting layer
+- Schema.org's public-web identity layer
+- Edoxen's existing Agenda/AgendaItem structure (Akoma Ntoso
+  doesn't model agenda explicitly — agenda items appear as
+  `<debateSection>` keys but without separate agenda semantics)
+
+This gives a complete three-layer coverage:
+
+1. **iCalendar** (RFC 5545 + 7986 + 9253) — logistics, scheduling,
+   virtual meeting, recurrence
+2. **Schema.org Event** — public-web identity, capacity, status,
+   registration
+3. **Akoma Ntoso** — parliamentary record structure (speech, motion,
+   division, outcome)

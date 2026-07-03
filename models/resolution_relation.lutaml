@@ -1,5 +1,0 @@
-class ResolutionRelation {
-  source: StructuredIdentifier // of a Resolution
-  destination: StructuredIdentifier // of a Resolution
-  type: ResolutionRelationType
-}

@@ -1,0 +1,16 @@
+class MeetingComponent {
+  identifier: String
+  urn: String
+  kind: ComponentKind
+  title: String
+  description: String
+  startsAt: DateTime
+  endsAt: DateTime
+  venueRefs: String[0..*]
+  chair: Person
+  agendaRef: String
+  minutesRef: String
+  attendanceRefs: String[0..*]
+  localizations: ComponentLocalization[0..*]
+  extensions: MeetingExtension[0..*]
+}

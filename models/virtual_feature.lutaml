@@ -1,0 +1,8 @@
+enum VirtualFeature {
+  audio
+  video
+  chat
+  phone
+  screen
+  feed
+}

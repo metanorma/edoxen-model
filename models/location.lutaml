@@ -1,3 +1,7 @@
+// Superseded by the Venue hierarchy (venue.lutaml, physical_venue.lutaml,
+// virtual_venue.lutaml). Kept for backward traceability; do not use in new code.
+// The polymorphic Venue base class replaces this Location class — physical
+// locations are now PhysicalVenue instances.
 class Location {
   name: String
   address: String

@@ -1,0 +1,174 @@
+---
+identifier:
+- prefix: CIML
+  number: '56'
+urn: urn:oiml:ciml:meeting:ciml-56
+ordinal: 56
+type: plenary
+status: completed
+visibility: public
+date_range:
+  start: 2025-10-13
+  end: 2025-10-17
+series_ref: urn:oiml:ciml:meeting-series
+venues:
+- kind: physical
+  name: Hôtel Mercure Paris Montmartre
+  unlocode: FRPAR
+  address: 3 Rue Caulaincourt, 75018 Paris, France
+  country_code: FR
+  lat: 48.8842
+  lon: 2.3395
+  room: Salle Turgot
+- kind: virtual
+  name: Video Conference (optional remote participation)
+  label: Zoom — Members only
+  uri: https://oiml.zoom.us/j/987654321
+  passcode: CIML56
+  features:
+  - audio
+  - video
+  - screen
+general_area: Paris, France
+city: Paris
+country_code: FR
+committee: CIML
+committee_group: OIML
+officers:
+- role: chair
+  person:
+    name: Roman Schwartz
+    kind: member
+- role: secretary
+  person:
+    name: Anthony Donnellan
+    kind: public_officer
+    affiliation: BIML
+    email: secretary@biml.org
+hosts:
+- type: organization
+  name: OIML
+  identifier: oiml
+source_urls:
+- ref: https://www.oiml.org/en/structure/ciml/pdf/56-ciml-resolutions-english.pdf
+  format: pdf
+  language_code: eng
+  kind: decisions_pdf
+- ref: https://www.oiml.org/fr/structure/ciml/pdf/56-ciml-resolutions-french.pdf
+  format: pdf
+  language_code: fra
+  kind: decisions_pdf
+agenda:
+  status: final
+  source_doc: https://www.oiml.org/en/structure/ciml/pdf/56-ciml-agenda.pdf
+  items:
+  - label: '1'
+    kind: opening
+    title: Opening of the meeting
+    outcome: adopted
+  - label: '2'
+    kind: numbered
+    title: Approval of the agenda
+    outcome: adopted
+    topics:
+    - identifier: agenda-approval
+      title: Approval of the 56th CIML Meeting agenda
+      status: decided
+  - label: '3'
+    kind: numbered
+    title: Approval of the minutes of the 55th CIML Meeting
+    outcome: adopted
+  - label: '9'
+    kind: aob
+    title: Any Other Business
+deadlines:
+- date: 2025-09-30
+  description: Registration via OIML meeting platform
+attendance:
+- person:
+    name: Dr. Mariya Petrova
+    kind: member
+    affiliation: Bulgarian Institute of Metrology
+  status: present
+  role: required
+  response: confirmed
+- person:
+    name: Mr. Hiroshi Tanaka
+    kind: member
+    affiliation: NMIJ Japan
+  status: present
+  role: required
+  response: confirmed
+- person:
+    name: Dr. Sarah Mitchell
+    kind: member
+    affiliation: NIST USA
+  status: apologies
+  role: required
+  response: declined
+decisions:
+- identifier:
+  - prefix: CIML
+    number: 2025-44
+  kind: resolution
+  status: decided
+  doi: 10.63493/decisions/ciml202544
+  urn: urn:oiml:ciml:decision:2025-44
+  agenda_item: '16.2'
+  dates:
+  - date: 2025-10-13
+    type: discussed
+  - date: 2025-10-15
+    type: decided
+  brought_by_motions:
+  - urn:oiml:ciml:motion:2025-44-bring
+  about_topics:
+  - urn:oiml:ciml:topic:donnellan-contract-renewal
+  localizations:
+  - language_code: eng
+    script: Latn
+    title: Decision on the renewal of the contract of Mr Anthony Donnellan
+    subject: CIML
+    actions:
+    - type: decides
+      message: |
+        The Committee decides to renew the contract of
+        Mr Anthony Donnellan as BIML Director.
+motions:
+- identifier: motion-2025-44-bring
+  urn: urn:oiml:ciml:motion:2025-44-bring
+  text: |
+    I move that the Committee decides to renew the contract of
+    Mr Anthony Donnellan as BIML Director.
+  mover:
+    name: Roman Schwartz
+    kind: member
+  seconders:
+  - name: Dr. Mariya Petrova
+    kind: member
+  status: carried
+  introduced_at: 2025-10-15 14:30:00.000000000 +02:00
+  proposed_decision: urn:oiml:ciml:decision:2025-44
+  resulting_decision: urn:oiml:ciml:decision:2025-44
+votings:
+- identifier: voting-2025-44
+  urn: urn:oiml:ciml:voting:2025-44
+  on_motion: urn:oiml:ciml:motion:2025-44-bring
+  status: decided
+  voting_method: unanimous_consent
+  called_by:
+    name: Roman Schwartz
+    kind: member
+  called_at: 2025-10-15 14:35:00.000000000 +02:00
+  result_declared_at: 2025-10-15 14:36:00.000000000 +02:00
+  result: passed
+  vote_records: []
+localizations:
+- language_code: eng
+  script: Latn
+  title: 56th CIML Meeting
+  general_area: Paris, France
+- language_code: fra
+  script: Latn
+  title: 56e réunion du CIML
+  general_area: Paris, France

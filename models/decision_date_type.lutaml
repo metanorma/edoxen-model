@@ -1,0 +1,11 @@
+enum DecisionDateType {
+  adoption
+  drafted
+  discussed
+  proposed
+  decided
+  negatived
+  withdrawn
+  published
+  effective
+}

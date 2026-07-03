@@ -1,0 +1,92 @@
+# 01 — Venue: polymorphic physical/virtual with UNLOCODE + IATA
+
+## Why
+
+The current model has asymmetric encoding:
+- `Meeting.venues: Location[0..*]` (physical only)
+- `Meeting.virtual: Boolean` (insufficient — Zoom needs URL+passcode+dial-in)
+
+The user (2026-07-03) pointed out the MECE violation: having
+`virtual_access` without `physical_access` is broken, and
+`physical_access` doesn't make sense (physical isn't an "access
+method" — it's just being at the place).
+
+Fix: ONE polymorphic `Venue` BASE TYPE with two SUBTYPES
+(`PhysicalVenue`, `VirtualVenue`) using inheritance. The user
+clarified (2026-07-03): "physical and virtual is a type and
+polymorphic, not an attribute." So they are SUBCLASSES, not
+optional attributes.
+
+UNLOCODE (5-char UN location codes) and IATA (3-char airport
+codes) are added as canonical identifiers for physical venues,
+integrated via the `unlocodes` and `iata` gems.
+
+## Files
+
+- `models/venue.lutaml` — BASE TYPE (kind, name, label, etc.)
+- `models/venue_kind.lutaml` — enum: `physical`, `virtual`
+- `models/physical_venue.lutaml` — `class PhysicalVenue < Venue`
+- `models/virtual_venue.lutaml` — `class VirtualVenue < Venue`
+- `models/virtual_feature.lutaml` — enum: audio, video, chat, phone, screen, feed
+
+## Files to remove (or deprecate)
+
+- `models/location.lutaml` — replaced by Venue hierarchy
+
+## Schema
+
+```lutaml
+class Venue {
+  kind: VenueKind                # discriminator: physical | virtual
+  name: String
+  label: String
+  description: String
+  capacity: Integer
+  url: String
+  extensions: MeetingExtension[0..*]
+}
+
+class PhysicalVenue < Venue {
+  unlocode: String               # 5-char UN/LOCODE (e.g. "FRPAR")
+  iata_code: String              # 3-char IATA airport/city (e.g. "CDG")
+  address: String
+  city: String
+  country_code: String           # ISO 3166-1 alpha-2
+  lat: Float
+  lon: Float
+  building: String
+  floor: String
+  room: String
+  access_notes: String
+}
+
+class VirtualVenue < Venue {
+  uri: String                    # tel: https: sip: xmpp: rtsp:
+  features: VirtualFeature[0..*]
+  passcode: String
+  meeting_id: String
+  dial_in_numbers: String[0..*]
+  waiting_room: Boolean
+  registration_required: Boolean
+}
+
+enum VenueKind { physical, virtual }
+enum VirtualFeature { audio, video, chat, phone, screen, feed }
+```
+
+`Meeting.venues: Venue[0..*]` is polymorphic — each entry is
+either a PhysicalVenue or a VirtualVenue instance.
+
+## Dependencies
+
+- TODO 09 (MeetingExtension) — for the `extensions[]` slot
+- TODO 11 (new enums) — VenueKind, VirtualFeature
+
+## Acceptance criteria
+
+- `Venue` is base class; `PhysicalVenue` and `VirtualVenue` are `< Venue`
+- PhysicalVenue has UNLOCODE + IATA fields (Strings, validated downstream)
+- VirtualVenue has URI + multi-dial-in + waiting_room
+- All physical-virtual combinations representable (see MECE table in plan)
+- Existing `models/location.lutaml` removed
+- `unlocodes` and `iata` gems referenced in documentation as canonical sources

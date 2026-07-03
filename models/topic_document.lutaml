@@ -1,0 +1,10 @@
+class TopicDocument {
+  identifier: String
+  title: String
+  version: String
+  status: String
+  url: String
+  format: String
+  languageCode: String
+  extensions: MeetingExtension[0..*]
+}

@@ -1,0 +1,31 @@
+# 32 — Docs: Update existing pages
+
+## Pages to update
+
+- `docs/introduction.md` — broadened scope
+- `docs/architecture.md` — generic core + profile extensions
+- `docs/schema.md` — new schema overview
+- `docs/meeting-collection.md` — Meeting + MeetingSeries
+- `docs/attendance.md` — add role + response fields
+- `docs/agenda.md` — add topics[]
+- `docs/minutes.md` — speech-level granularity
+- `docs/actions.md` (existing) — link to Motion
+- `docs/approvals.md` (existing) — link to Voting
+- `docs/considerations.md` (existing) — keep
+- `docs/dates.md` — add ISO 8601-2 references
+- `docs/multilingual.md` — unchanged
+- `docs/localization.md` / `docs/localization-sync.md` — unchanged
+- `docs/origin.md` — update
+- `docs/installation.md` — new gem version
+- `docs/cli.md` — new commands
+- `docs/validation.md` — new validators
+- `docs/parse-yaml.md` — updated for new model
+- `docs/create-resolutions.md` → rename to `docs/create-decisions.md`
+- `docs/source-url.md` — unchanged
+- `docs/structured-identifier.md` — unchanged
+
+## Acceptance criteria
+
+- All pages reflect new model
+- All internal links work
+- All code examples use new entities

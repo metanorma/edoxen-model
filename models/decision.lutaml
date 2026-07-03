@@ -1,0 +1,18 @@
+class Decision {
+  identifier: StructuredIdentifier[1..*]
+  kind: DecisionKind
+  status: DecisionStatus
+  doi: String
+  urn: String
+  agendaItem: String
+  dates: DecisionDate[1..*]
+  categories: String[0..*]
+  meeting: MeetingIdentifier
+  relations: DecisionRelation[0..*]
+  urls: Url[0..*]
+  broughtByMotions: String[0..*]
+  aboutTopics: String[0..*]
+  madeInComponent: String
+  localizations: Localization[1..*]
+  extensions: MeetingExtension[0..*]
+}

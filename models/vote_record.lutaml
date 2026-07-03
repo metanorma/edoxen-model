@@ -1,7 +1,10 @@
 class VoteRecord {
-  resolution_ref: String
+  decisionRef: String
+  votingRef: String
   person: Person
   affiliation: String
   vote: VoteType
+  role: String
   notes: String
+  extensions: MeetingExtension[0..*]
 }

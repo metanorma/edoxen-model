@@ -1,0 +1,71 @@
+# 11 — New enums (consolidated)
+
+## Why
+
+Multiple new enums are introduced across TODOs 01-10. This TODO
+consolidates the enum-file creation so they're all done in one
+pass. Each enum gets its own `.lutaml` file (one value set per
+file, per existing convention).
+
+## Files to create
+
+From TODO 01 (Venue):
+- `models/venue_kind.lutaml` — `physical`, `virtual`
+- `models/virtual_feature.lutaml` — `audio`, `video`, `chat`, `phone`, `screen`, `feed`
+
+From TODO 02 (Decision):
+- (DecisionKind and DecisionStatus are part of TODO 02)
+
+From TODO 03 (Motion):
+- (MotionStatus is part of TODO 03)
+
+From TODO 04 (Voting):
+- (VotingStatus, VotingMethod, VotingOutcome are part of TODO 04)
+
+From TODO 05 (Topic):
+- (TopicStatus is part of TODO 05)
+
+From TODO 07 (Component):
+- (ComponentKind is part of TODO 07)
+
+From TODO 08 (Officer):
+- (OfficerRole is part of TODO 08)
+
+From TODO 10 (Recurrence):
+- (RecurrenceFreq is part of TODO 10)
+
+New in this TODO:
+- `models/visibility.lutaml` — `public`, `private`, `confidential` (from iCalendar CLASS)
+- `models/attendance_role.lutaml` — `chair`, `required`, `optional`, `non_participant` (from iCalendar ROLE, plain English)
+- `models/attendance_response.lutaml` — `pending`, `confirmed`, `declined`, `tentative`, `delegated` (from iCalendar PARTSTAT, plain English)
+
+## Schema (new in this TODO)
+
+```lutaml
+enum Visibility {
+  public
+  private
+  confidential
+}
+
+enum AttendanceRole {
+  chair                # presides over the meeting
+  required             # participation required
+  optional             # participation optional
+  non_participant      # copied for information only
+}
+
+enum AttendanceResponse {
+  pending              # awaiting response (iCalendar NEEDS-ACTION)
+  confirmed            # will attend (iCalendar ACCEPTED)
+  declined             # will not attend (iCalendar DECLINED)
+  tentative            # maybe (iCalendar TENTATIVE)
+  delegated            # someone else will attend (iCalendar DELEGATED)
+}
+```
+
+## Acceptance criteria
+
+- 3 new enum files created (Visibility, AttendanceRole, AttendanceResponse)
+- All enum values are plain English (no PARTSTAT/RSVP jargon)
+- Lowercase, no hyphens (consistent with existing Edoxen enums)

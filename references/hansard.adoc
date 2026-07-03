@@ -1,0 +1,573 @@
+HK LegCo Open Hansard Database (canonical parliamentary reference)
+================================================================
+
+The Legislative Council of the Hong Kong Special Administrative
+Region publishes the official records of its proceedings as a
+fully structured, openly accessible OData (Open Data Protocol)
+database — covering the 6th (2016–2021), 7th (2022–2025), and
+8th (2026–present) Legislative Councils.
+
+Source page:
+https://www.legco.gov.hk/en/open-legco/open-data/hansard-database.html
+
+OData service root:
+https://app.legco.gov.hk/OpenData/HansardDB/
+
+Schema metadata:
+https://app.legco.gov.hk/OpenData/HansardDB/$metadata
+
+Edoxen adopts the LegCo schema as the canonical reference
+for *parliamentary / legislative-debate* meetings because:
+
+1. The API is openly accessible (no Cloudflare block, no
+   API key, no rate-limit documented for normal use).
+2. The schema is normalized to 16 entity types, including
+   first-class entities for the *agenda* (Rundown), the
+   *sections* of a sitting, the *subjects* under discussion
+   (with cross-meeting continuation), the *speeches* (linked
+   to speakers and sections), the *bills* (with stages), the
+   *motions*, the *votes*, and the *quorum summons*.
+3. It exposes ~9 years of machine-readable data spanning
+   multiple legislative terms.
+4. The OData API supports standard query options ($filter,
+   $select, $top, $skip, $orderby, $expand, $inlinecount)
+   — same query shape Edoxen would expect.
+
+
+== The 16 entity types (verbatim from $metadata)
+
+The full OData schema, as exposed at `$metadata`, declares
+16 entity types. Edoxen adopts each one's fields as a
+candidate for the parliamentary Meeting model.
+
+=== Hansard (top-level sitting record)
+
+ViewOpenDataHansard:
+
+  HansardID       Int32   key — unique sitting identifier
+  MeetingDate     DateTime  — date the Council met
+  AgendaDate      DateTime  — date the agenda was issued
+                              (typically = MeetingDate but
+                              may differ when an agenda is
+                              tabled in advance)
+  HansardType     String   — "English" / "Floor" /
+                              "Committee" — language + venue
+  isCEQandA       Int32    — flag: this sitting contains a
+                              Chief Executive Question and
+                              Answer session
+  isCEQT          Int32    — flag: Chief Executive Question
+                              Time (separate segment)
+  HansardFileURL  String   — PDF / HTML URL on legco.gov.hk
+
+A "Hansard" row is *one sitting of the Council*. Edoxen's
+`Meeting` is structurally equivalent, with two additions
+LegCo already captures cleanly:
+
+  Meeting.legislative.term_id        (→ Terms)
+  Meeting.legislative.sitting_kind   (→ HansardType)
+
+=== Terms
+
+ViewOpenDataTerms:
+
+  TermID      Int32   key
+  StartDate   DateTime
+  EndDate     DateTime
+  NameChi     String   "第七屆立法會" / ...
+  NameEng     String   "Seventh Legislative Council" / ...
+  Seats       Int32    total seats in that term
+  hasData     Int32    0/1 — whether the API has data for
+                         this term (1 = available)
+
+Edoxen adoption: a new `LegislativeTerm` entity, parent of
+many Meetings.
+
+=== Sections (the heading taxonomy)
+
+ViewOpenDataSections:
+
+  SectionID     Int32   key
+  NameChi       String   "質詢時間" / ...
+  NameEng       String   "Questions Time" / ...
+  SectionCode   String   short code used everywhere else
+
+SectionCode is the join key across Rundown / Subjects /
+Speeches / Bills / Motions / VotingResults / SummoningBells.
+It is *the* organizing axis for a sitting — agenda items,
+speeches, motions, and votes all carry SectionCode.
+
+Edoxen adoption: this is the `Section` (or `AgendaSection`)
+of a parliamentary Meeting. Currently Edoxen `AgendaItem`
+has no `section` field; it should adopt one.
+
+=== Subjects (cross-meeting topic threads)
+
+ViewOpenDataSubjects:
+
+  RundownID     Int32   key
+  HansardID     Int32   the sitting
+  SectionCode   String  which section the subject appeared in
+  MeetingDate   DateTime
+  HansardType   String
+  Subject       String   the topic (free text or localized)
+  ResumptionOf  DateTime  — if this subject is a *resumption*
+                            of a discussion that began at a
+                            previous sitting, the date of
+                            that earlier sitting
+
+This is the most interesting entity in the schema. `Subject`
+identifies a topic thread that may span multiple sittings;
+`ResumptionOf` makes the cross-meeting link explicit. Edoxen
+has no concept of cross-meeting subject threading — it's a
+genuine new addition derived from LegCo.
+
+Edoxen adoption: `AgendaItem.subject_thread: String` (or a
+new `Subject` entity with `resumption_of: Meeting` for
+continuations).
+
+=== Rundown (THE AGENDA as a first-class entity)
+
+ViewOpenDataRundown:
+
+  RundownID        Int32   key
+  HansardID        Int32   the sitting
+  MeetingDate      DateTime
+  HansardType      String
+  SpeakerID        Int32   — nullable; some Rundown items
+                              are not speaker-specific
+                              ("ADDRESS", "MEMBERS' MOTIONS",
+                              etc.)
+  Content          String   — the agenda item text, e.g.
+                              "ADDRESS", "BILLS", "MOTIONS",
+                              "QUESTIONS", or a specific
+                              section name
+  SeqNum           Int32   — the order of this item within
+                              the sitting's Rundown (1, 2,
+                              3, ...)
+  BookmarkName     String   — PDF anchor name (used as a
+                              deep-link target in the Hansard
+                              PDF)
+  HansardFileURL   String   — full URL with `#nameddest=` to
+                              the exact PDF bookmark
+
+This is the Edoxen `Agenda` and `AgendaItem` model in
+real-world form. Rundown entries are *ordered agenda items*
+(`SeqNum` is the ordering field); each one has a `Content`
+label, optionally a `SpeakerID` for items led by a specific
+member, and a `BookmarkName` that deep-links into the
+official Hansard PDF.
+
+Edoxen adoption: this is direct — `AgendaItem.seq`,
+`AgendaItem.content`, `AgendaItem.speaker_ref`. The
+`BookmarkName` field is unique to LegCo but extremely
+useful for deep-linking; Edoxen `AgendaItem.bookmark:
+String` would be a clean addition.
+
+Live example (`$top=2` from Rundown):
+
+  [
+    {
+      "RundownID": 282031,
+      "HansardID": 681,
+      "MeetingDate": "2012-12-05T00:00:00",
+      "HansardType": "English",
+      "SpeakerID": null,
+      "Content": "ADDRESS",
+      "SeqNum": 9,
+      "BookmarkName": "add",
+      "HansardFileURL":
+        "https://www.legco.gov.hk/yr12-13/english/counmtg/hansard/cm1205-translate-e.pdf#nameddest=add"
+    },
+    {
+      "RundownID": 556943,
+      "HansardID": 1496,
+      "MeetingDate": "2015-10-28T00:00:00",
+      "HansardType": "English",
+      "SpeakerID": null,
+      "Content": "ADDRESS",
+      "SeqNum": 11,
+      "BookmarkName": "add",
+      "HansardFileURL":
+        "https://www.legco.gov.hk/yr15-16/english/counmtg/hansard/cm20151028-translate-e.pdf#nameddest=add"
+    }
+  ]
+
+Note the deep-link in `HansardFileURL` — the PDF URL has
+`#nameddest=add` (the BookmarkName) appended. Edoxen
+adopts this pattern: every AgendaItem gets a stable
+deep-link to the official PDF.
+
+=== Speakers (catalog)
+
+ViewOpenDataSpeakers:
+
+  SpeakerID   Int32   key
+  NameChi     String
+  NameEng     String
+  Type        String   — "Member" / "Public Officer" /
+                         "President" / "Clerk" / etc.
+  Initial    String
+  FirstName  String
+  LastName   String
+
+Edoxen adoption: a clean `Person` with separate
+`family_name`, `given_name`, `initial`, `kind` (the
+`Type` field) — "member" / "public_officer" /
+"presiding_officer" / "clerk".
+
+=== Speeches (normalized by section × speaker)
+
+ViewOpenDataSpeeches:
+
+  RundownID      Int32
+  HansardID      Int32
+  MeetingDate    DateTime
+  HansardType    String
+  SectionID      Int32   → Sections
+  SectionName    String
+  SpeakerID      Int32   → Speakers
+  SpeakerName    String
+  Speeches       String  — the verbatim text
+  SeqNum         Int32   — order within section
+  HansardFileURL String
+
+A speech is one member's verbatim contribution to a section
+of a sitting. The triplet (SectionID, SpeakerID, SeqNum)
+uniquely identifies a speech within a sitting.
+
+Edoxen adoption: `MinutesSection.speech[]` (each speech
+has its own speaker + text). Currently Edoxen's
+`MinutesSection` is a free-text blob; LegCo's structure
+forces speech-level granularity.
+
+=== Questions
+
+ViewOpenDataQuestions:
+
+  RundownID      Int32
+  MeetingDate    DateTime
+  HansardType    String
+  Subject        String   — the question topic
+  SpeakerID      Int32   — the Member asking
+  Speaker        String
+  QuestionType   String   — "Oral" / "Written" / "Urgent" /
+                             "Supplementary"
+  HansardFileURL String
+
+LegCo models *questions to the Government* as a first-class
+entity, separated from regular debates. The `QuestionType`
+enum is the procedural category.
+
+Edoxen adoption: a new `Question` entity with `kind: Enum
+{oral, written, urgent, supplementary}`. Currently Edoxen
+has no questions concept.
+
+=== Bills
+
+ViewOpenDataBills:
+
+  RundownID      Int32
+  HansardID      Int32
+  MeetingDate    DateTime
+  HansardType    String
+  SectionCode    String
+  Section        String   — localizable section name
+  Subject        String   — the bill's short title
+  HansardFileURL String
+
+A bill at a particular sitting in a particular section.
+Bill *stage* is a separate entity (below).
+
+=== BillStages (reference data)
+
+ViewOpenDataBillStages:
+
+  SectionCode     String
+  StageNameEng    String   "First Reading" / "Second Reading"
+                              / "Committee Stage" / "Third
+                              Reading" / "Resumption of
+                              Second Reading Debate" / etc.
+  StageNameChi    String
+  IntroduceBy     String   "Government" / "Member"
+  Order           Int64    — sequence number within the bill
+                              lifecycle
+
+BillStages is a *reference table*: it lists all valid
+stages a bill goes through, with the order Edoxen should
+display them in. This is reference data, not per-sitting
+data. Edoxen adoption: a `BillStage` enum with explicit
+ordering, mirroring LegCo's reference list.
+
+=== Motions
+
+ViewOpenDataMotions:
+
+  RundownID      Int32
+  HansardID      Int32
+  MeetingDate    DateTime
+  HansardType    String
+  SectionCode    String
+  Section        String
+  Subject        String   — the motion's title
+  HansardFileURL String
+
+Motions are first-class entities, distinct from Speeches
+even though motions are debated through speeches.
+
+=== Petitions
+
+ViewOpenDataPetitions:
+
+  RundownID      Int32
+  HansardID      Int32
+  MeetingDate    DateTime
+  HansardType    String
+  Speakers       String   — comma-separated list of MPs
+                              presenting the petition
+  Subject        String
+  HansardFileURL String
+  SpeakerID      Int32   — nullable
+
+Edoxen adoption: a `Petition` entity, currently absent.
+
+=== Addresses
+
+ViewOpenDataAddresses:
+
+  RundownID      Int32
+  HansardID      Int32
+  MeetingDate    DateTime
+  HansardType    String
+  Subject        String
+  Speaker        String
+  HansardFileURL String
+  SpeakerID      Int32
+
+Formal addresses by the Chief Executive, Members, or
+designated public officers — a structured form distinct
+from regular speeches.
+
+=== Statements
+
+ViewOpenDataStatements:
+
+  RundownID      Int32
+  HansardID      Int32
+  MeetingDate    DateTime
+  HansardType    String
+  Subject        String
+  Speaker        String
+  SubjectID      Int32   — links to a Subjects row
+  HansardFileURL String
+
+Formal statements by designated public officers.
+
+=== VotingResults
+
+ViewOpenDataVoteResult:
+
+  RundownID      Int32
+  HansardID      Int32
+  MeetingDate    DateTime
+  HansardType    String
+  SectionCode    String
+  Subject        String   — the subject of the vote
+                              (often a bill title)
+  VoteResult     String   — nullable; "Passed" / "Negatived"
+                              / "Not Voted" / etc.
+  HansardFileURL String
+
+VotingResults records one vote at one sitting in one
+section, on one subject. The actual member-by-member
+division is on the linked Hansard PDF
+(`#nameddest=EV_VOTED_00146` etc.).
+
+=== SummoningBells (quorum summons)
+
+ViewOpenDataSummoningBell:
+
+  RundownID      Int32
+  HansardID      Int32
+  MeetingDate    DateTime
+  HansardType    String
+  SectionCode    String
+  HansardFileURL String
+
+A quorum bell is rung when fewer Members than the quorum
+are present. LegCo records this as a first-class event —
+useful for understanding when the Council was inquorate
+and why a debate was interrupted.
+
+Edoxen adoption: a `QuorumBell` event logged on the
+Meeting's timeline.
+
+
+== Live API examples
+
+=== 13 distinct data resources exposed
+
+Each resource has its own OData endpoint. JSON and XML
+formats both supported:
+
+  GET /HansardDB/Hansard
+  GET /HansardDB/Terms
+  GET /HansardDB/Sections
+  GET /HansardDB/Subjects
+  GET /HansardDB/Rundown
+  GET /HansardDB/Speakers
+  GET /HansardDB/Speeches
+  GET /HansardDB/Questions
+  GET /HansardDB/Bills
+  GET /HansardDB/BillStages
+  GET /HansardDB/Motions
+  GET /HansardDB/Petitions
+  GET /HansardDB/Addresses
+  GET /HansardDB/Statements
+  GET /HansardDB/VotingResults
+  GET /HansardDB/SummoningBells
+
+=== Real query examples (verbatim from LegCo docs)
+
+  # Top 20 oral questions in English, ordered by meeting date:
+  /HansardDB/Questions?$top=20&$format=xml&$select=
+    MeetingDate,Subject,Speaker,HansardFileURL&$orderby=
+    MeetingDate&$filter=HansardType eq 'English' and
+    QuestionType eq 'Oral'
+
+  # All voting results with subject containing "Adjournment":
+  /HansardDB/VotingResults?$format=xml&$inlinecount=
+    allpages&$filter=substringof('Adjournment of the
+    Council',Subject) eq true and HansardType eq 'Floor'
+
+  # All addresses by Dr Hon LAM Tai-fai:
+  /HansardDB/Addresses?$format=xml&$inlinecount=
+    allpages&$filter=Speaker eq 'LAM Tai-fai'
+
+  # Chief Executive's Question Time in 2018:
+  /HansardDB/Hansard?$format=json&$inlinecount=
+    allpages&$filter=year(MeetingDate) eq 2018 and
+    isCEQT eq 1
+
+
+== Net contribution to Edoxen
+
+The LegCo schema forces concrete additions to the Edoxen
+parliamentary meeting model. Specifically:
+
+=== New entities
+
+- `LegislativeTerm` (from `Terms`) — parent of many Meetings
+  within a parliamentary term
+- `BillStage` enum + reference list (from `BillStages`) —
+  ordered lifecycle of a bill
+- `Question` (from `Questions`) — with `kind: Enum
+  {oral, written, urgent, supplementary}`
+- `Petition` (from `Petitions`)
+- `Address` (from `Addresses`) — formal address
+- `Statement` (from `Statements`) — formal statement
+- `QuorumBell` (from `SummoningBells`) — quorum event on
+  the Meeting timeline
+- `Subject` (from `Subjects`) — with `resumption_of:
+  Meeting` to thread cross-meeting topics
+
+=== New fields on existing entities
+
+- `Meeting.legislative.term_id` — link to the
+  LegislativeTerm
+- `Meeting.legislative.sitting_kind: Enum {english, floor,
+  committee, ceq, ceqt, ...}` — from HansardType
+- `Meeting.legislative.is_ceqanda: Boolean` — from
+  `isCEQandA`
+- `Meeting.legislative.is_ceqt: Boolean` — from `isCEQT`
+- `AgendaItem.seq: Integer` — explicit ordering (already
+  has `label` for human number; adding `seq` for
+  machine-iteration)
+- `AgendaItem.content: String` — the agenda item label
+  ("ADDRESS", "BILLS", "MOTIONS", "QUESTIONS", or
+  section name)
+- `AgendaItem.bookmark: String` — deep-link target into
+  the official PDF (`BookmarkName`)
+- `AgendaItem.speaker_ref: Person` — nullable; for items
+  led by a specific member
+- `AgendaItem.section_code: String` — join key into
+  Sections (currently absent from Edoxen `AgendaItem`)
+- `Person.kind: Enum {member, public_officer,
+  presiding_officer, clerk, ...}` — from `Type`
+- `Person.family_name: String`, `Person.given_name: String`,
+  `Person.initial: String` — split Edoxen's current
+  `Person.name` into the LegCo tripartite shape
+
+=== Restructuring
+
+- `MinutesSection` becomes a *section*, not a single
+  blob — speech-level granularity within sections
+  (from `Speeches`)
+- `AgendaItem.subject_thread: Subject` (or simply an
+  identifier that joins to `Subjects`) — supports
+  cross-meeting threading via `ResumptionOf`
+
+
+== Comparison to UK Hansard
+
+UK Hansard (https://hansard.parliament.uk/) shares most
+of the LegCo semantics but is structured differently:
+
+  | Dimension         | UK Hansard            | HK LegCo
+  |-------------------|-----------------------|-----------------------
+  | Sitting granularity | one sitting per page | one Hansard row
+  | Agenda as entity  | implicit (Order Paper)| explicit (Rundown)
+  | Speech granularity| speech level (HTML)   | speech level (OData)
+  | Votes             | one row per division  | one row per vote
+  | Quorum bells      | not recorded          | recorded
+  | Bills             | not first-class       | first-class
+  | Cross-meeting     | not modeled           | modeled (ResumptionOf)
+    subject threading
+  | API access        | Cloudflare-protected  | open OData
+  | Bilingual         | English only          | English + Chinese
+  | Procedural types  | Motion / Amendment    | Address / Statement
+                        / Resolution           / Petition / Question
+                                               / Motion / Bill
+
+For a *machine-readable* parliamentary reference, the
+HK LegCo schema is the stronger choice because of:
+
+1. Open API access (no scraping needed)
+2. Normalized entity model (no HTML to parse)
+3. Explicit Rundown (agenda) as a queryable entity
+4. Cross-meeting subject threading
+5. Reference data for bill stages (machine-iterable)
+
+UK Hansard remains the more *legally authoritative* source
+for UK proceedings; LegCo is the more *technically
+accessible* source for a meeting data model. Edoxen uses
+LegCo as the schema template and notes that the same
+shape maps onto UK Hansard via the underlying content
+even if the UK API is less accessible.
+
+
+== How Edoxen relates to the LegCo API
+
+- Edoxen `Meeting.urn` ↔ LegCo `HansardID` (1:1)
+- Edoxen `AgendaItem.seq` ↔ LegCo `Rundown.SeqNum` (1:1)
+- Edoxen `AgendaItem.bookmark` ↔ LegCo `Rundown.BookmarkName`
+- Edoxen `AgendaItem.section_code` ↔ LegCo
+  `Rundown.SectionCode` / `Sections.SectionCode`
+- Edoxen `MinutesSection` ↔ LegCo `Speeches` grouped by
+  `SectionID`
+- Edoxen `Person` ↔ LegCo `Speakers`
+- Edoxen `Question` ↔ LegCo `Questions`
+- Edoxen `Bill` ↔ LegCo `Bills` joined with `BillStages`
+- Edoxen `Motion` ↔ LegCo `Motions`
+- Edoxen `Petition` ↔ LegCo `Petitions`
+- Edoxen `Address` ↔ LegCo `Addresses`
+- Edoxen `Statement` ↔ LegCo `Statements`
+- Edoxen `VoteRecord` (per-member) ↔ LegCo
+  `VotingResults` + per-vote member list in the linked
+  Hansard PDF
+- Edoxen `QuorumBell` ↔ LegCo `SummoningBells`
+
+The LegCo schema is the most directly transcribable
+parliamentary source Edoxen has identified. Once an
+intermediary is built (a LegCo OData → Edoxen YAML
+converter), the entire 9-year LegCo corpus becomes
+Edoxen ingestible.

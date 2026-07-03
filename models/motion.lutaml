@@ -1,0 +1,13 @@
+class Motion {
+  identifier: String
+  urn: String
+  text: String
+  mover: Person
+  seconders: Person[0..*]
+  status: MotionStatus
+  introducedAt: DateTime
+  proposedDecision: String
+  resultingDecision: String
+  votings: String[0..*]
+  extensions: MeetingExtension[0..*]
+}

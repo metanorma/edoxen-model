@@ -1,0 +1,9 @@
+class VirtualVenue < Venue {
+  uri: String
+  features: VirtualFeature[0..*]
+  passcode: String
+  meetingId: String
+  dialInNumbers: String[0..*]
+  waitingRoom: Boolean
+  registrationRequired: Boolean
+}

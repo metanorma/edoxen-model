@@ -1,0 +1,270 @@
+---
+identifier:
+- prefix: ACME
+  number: 2026-Q1-Board
+urn: urn:acme:board:meeting:2026-q1
+ordinal: 47
+type: board_meeting
+status: completed
+visibility: confidential
+date_range:
+  start: 2026-03-15
+  end: 2026-03-15
+venues:
+- kind: physical
+  name: Acme Corporation Boardroom
+  unlocode: USNYC
+  iata_code: JFK
+  address: 1 Acme Plaza, 5th Avenue, New York, NY 10001, USA
+  country_code: US
+  building: Acme Plaza
+  floor: '42'
+  room: Boardroom 42A
+- kind: virtual
+  name: Video Conference
+  label: Microsoft Teams — Directors only
+  uri: https://teams.microsoft.com/l/meetup-join/acme-board
+  passcode: Director2026
+  features:
+  - audio
+  - video
+  - screen
+  - chat
+- kind: virtual
+  name: Phone Bridge
+  label: International dial-in
+  uri: tel:+1-800-555-1234,,,987654#
+  features:
+  - phone
+  - audio
+general_area: New York
+city: New York
+country_code: US
+officers:
+- role: chair
+  person:
+    name: Ms. Eleanor Vance
+    kind: member
+    affiliation: Acme Corporation Board
+- role: vice_chair
+  person:
+    name: Dr. Marcus Hale
+    kind: member
+- role: secretary
+  person:
+    name: Mr. James Okafor
+    kind: public_officer
+    email: secretary@acme.com
+- role: treasurer
+  person:
+    name: Ms. Sofia Reyes
+    kind: member
+- role: parliamentarian
+  person:
+    name: Mr. David Lin
+    kind: member
+agenda:
+  status: final
+  items:
+  - label: '1'
+    kind: opening
+    title: Call to Order
+  - label: '2'
+    kind: numbered
+    title: Approval of the minutes from the Q4 2025 meeting
+    outcome: adopted
+  - label: '3'
+    kind: numbered
+    title: Treasurer's Report
+    outcome: noted
+    topics:
+    - identifier: acme-topic-q4-financials
+      urn: urn:acme:topic:q4-2025-financials
+      title: Q4 2025 Financial Performance
+      status: decided
+      documents:
+      - identifier: acme-doc-q4-financials
+        title: Q4 2025 Financial Report
+        kind: report
+        url: https://intra.acme.com/board/q4-2025-financials.pdf
+        format: pdf
+        language_code: eng
+  - label: '4'
+    kind: numbered
+    title: Motion on Dividend Declaration
+    outcome: carried
+    topics:
+    - identifier: acme-topic-dividend
+      urn: urn:acme:topic:2026-q1-dividend
+      title: Declaration of Q1 2026 Dividend
+      status: decided
+  - label: '5'
+    kind: aob
+    title: Any Other Business
+  - label: '6'
+    kind: closing
+    title: Adjournment
+attendance:
+- person:
+    name: Ms. Eleanor Vance
+    kind: member
+    affiliation: Acme Corporation Board
+  status: present
+  role: chair
+  response: confirmed
+- person:
+    name: Dr. Marcus Hale
+    kind: member
+  status: present
+  role: vice_chair
+  response: confirmed
+- person:
+    name: Mr. James Okafor
+    kind: public_officer
+  status: present
+  role: required
+  response: confirmed
+- person:
+    name: Ms. Sofia Reyes
+    kind: member
+  status: present
+  role: required
+  response: confirmed
+- person:
+    name: Mr. David Lin
+    kind: member
+  status: present
+  role: optional
+  response: confirmed
+- person:
+    name: Dr. Isabel Cortez
+    kind: member
+  status: present
+  role: required
+  response: tentative
+- person:
+    name: Prof. Reza Nasser
+    kind: member
+  status: absent
+  role: required
+  response: declined
+  proxy_for:
+    name: Dr. Marcus Hale
+    kind: member
+motions:
+- identifier: motion-dividend-2026-q1
+  urn: urn:acme:board:motion:2026-q1-dividend
+  text: |
+    I move that the Board declare a quarterly dividend of $0.45
+    per share, payable on April 15, 2026, to shareholders of record
+    as of March 31, 2026.
+  mover:
+    name: Ms. Sofia Reyes
+    kind: member
+  seconders:
+  - name: Ms. Eleanor Vance
+    kind: member
+  - name: Dr. Marcus Hale
+    kind: member
+  - name: Mr. David Lin
+    kind: member
+  status: carried
+  introduced_at: 2026-03-15 10:30:00.000000000 -05:00
+  proposed_decision: urn:acme:board:decision:2026-q1-dividend
+  resulting_decision: urn:acme:board:decision:2026-q1-dividend
+votings:
+- identifier: voting-dividend-2026-q1
+  urn: urn:acme:board:voting:2026-q1-dividend
+  on_motion: urn:acme:board:motion:2026-q1-dividend
+  status: decided
+  voting_method: roll_call
+  called_by:
+    name: Ms. Eleanor Vance
+    kind: member
+  called_at: 2026-03-15 11:00:00.000000000 -05:00
+  result_declared_at: 2026-03-15 11:05:00.000000000 -05:00
+  result: tied
+  counts:
+    ayes: 3
+    noes: 3
+    abstentions: 0
+    absent: 1
+  casting_vote:
+    person:
+      name: Ms. Eleanor Vance
+      kind: member
+    decision_ref: urn:acme:board:decision:2026-q1-dividend
+    vote: affirmative
+    role: teller
+    notes: Chair exercised casting vote to break the tie
+  vote_records:
+  - decision_ref: urn:acme:board:decision:2026-q1-dividend
+    voting_ref: urn:acme:board:voting:2026-q1-dividend
+    person:
+      name: Ms. Eleanor Vance
+      kind: member
+    vote: affirmative
+    role: teller
+  - decision_ref: urn:acme:board:decision:2026-q1-dividend
+    voting_ref: urn:acme:board:voting:2026-q1-dividend
+    person:
+      name: Dr. Marcus Hale
+      kind: member
+    vote: affirmative
+  - decision_ref: urn:acme:board:decision:2026-q1-dividend
+    voting_ref: urn:acme:board:voting:2026-q1-dividend
+    person:
+      name: Ms. Sofia Reyes
+      kind: member
+    vote: affirmative
+  - decision_ref: urn:acme:board:decision:2026-q1-dividend
+    voting_ref: urn:acme:board:voting:2026-q1-dividend
+    person:
+      name: Mr. David Lin
+      kind: member
+    vote: negative
+  - decision_ref: urn:acme:board:decision:2026-q1-dividend
+    voting_ref: urn:acme:board:voting:2026-q1-dividend
+    person:
+      name: Dr. Isabel Cortez
+      kind: member
+    vote: negative
+  - decision_ref: urn:acme:board:decision:2026-q1-dividend
+    voting_ref: urn:acme:board:voting:2026-q1-dividend
+    person:
+      name: Prof. Reza Nasser
+      kind: member
+    affiliation: Acme Corporation Board
+    vote: negative
+    notes: Voted by proxy held by Dr. Marcus Hale
+decisions:
+- identifier:
+  - prefix: ACME
+    number: 2026-Q1-001
+  kind: order
+  status: decided
+  urn: urn:acme:board:decision:2026-q1-dividend
+  dates:
+  - date: 2026-03-15
+    type: decided
+  brought_by_motions:
+  - urn:acme:board:motion:2026-q1-dividend
+  about_topics:
+  - urn:acme:topic:2026-q1-dividend
+  localizations:
+  - language_code: eng
+    script: Latn
+    title: Board Order Declaring Q1 2026 Dividend
+    subject: Acme Corporation
+    actions:
+    - type: orders
+      message: |
+        The Board orders that a quarterly dividend of $0.45
+        per share be paid on April 15, 2026, to shareholders
+        of record as of March 31, 2026.
+localizations:
+- language_code: eng
+  script: Latn
+  title: 47th Acme Board of Directors Meeting — Q1 2026
+  general_area: New York, USA
+  practical_info: Confidential. Board members only.

@@ -1,0 +1,7 @@
+enum AttendanceResponse {
+  pending
+  confirmed
+  declined
+  tentative
+  delegated
+}

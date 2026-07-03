@@ -1,0 +1,9 @@
+enum DecisionStatus {
+  draft
+  proposed
+  under_consideration
+  decided
+  negatived
+  withdrawn
+  deferred
+}

@@ -1,0 +1,13 @@
+class PhysicalVenue < Venue {
+  unlocode: String
+  iataCode: String
+  address: String
+  city: String
+  countryCode: String
+  lat: Float
+  lon: Float
+  building: String
+  floor: String
+  room: String
+  accessNotes: String
+}

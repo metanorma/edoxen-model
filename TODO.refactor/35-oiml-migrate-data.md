@@ -1,0 +1,39 @@
+# 35 — OIML: Migrate YAML data to new schema
+
+## Why
+
+`oimlsmart/resolutions-data/` has decades of CIML meeting/resolution YAML in the OLD schema. Migrate to new model (Decision, Meeting, etc.).
+
+## Files to migrate
+
+- `resolutions/*.yaml` (each resolution file → Decision)
+- `meetings/ciml-*.yaml` (each meeting → Meeting with new fields)
+- `minutes/*.yaml` (if present)
+- `schemas/edoxen-meeting.yaml` (update)
+
+## Migration script
+
+Write `scripts/migrate_to_v2.rb` that:
+1. Reads each YAML in old format
+2. Maps to new format:
+   - `resolution` → `decision` with `kind: resolution`
+   - `chair` → `officers: [{role: chair, person: ...}]`
+   - `secretary` → `officers: [{role: secretary, person: ...}]`
+   - `venues: [{name: "BIML HQ", ...}]` → `venues: [{kind: physical, name: "BIML HQ", physical: {...}}]`
+   - `virtual: true` → add a virtual Venue
+   - `resolution_refs` → `decisions[]`
+3. Writes new YAML
+4. Validates against new JSON Schema
+5. Reports any unmappable fields
+
+## Backups
+
+- Keep original YAMLs in `legacy/` subdirectory (NEVER delete — per CLAUDE.md)
+- Migration is one-way but reversible from backups
+
+## Acceptance criteria
+
+- All OIML YAML migrated to new schema
+- Originals preserved in `legacy/`
+- Migration script idempotent (re-running produces same output)
+- All migrated files validate against new schema

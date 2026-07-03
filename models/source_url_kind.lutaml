@@ -1,7 +1,7 @@
 enum SourceUrlKind {
   agenda_pdf
   minutes_pdf
-  resolutions_pdf
+  decisions_pdf
   report_pdf
   register_url
   landing_page

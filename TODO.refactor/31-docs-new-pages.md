@@ -1,0 +1,44 @@
+# 31 — Docs: Add new pages
+
+## New pages to create
+
+- `docs/decision.md` — Decision base type, DecisionKind, DecisionStatus
+- `docs/motion.md` — Motion state machine, seconders, mover
+- `docs/voting.md` — Voting state machine, methods, outcomes, counts
+- `docs/topic.md` — Topic, TopicDocument, TopicAsset
+- `docs/venue.md` — Polymorphic Venue, physical vs virtual, UNLOCODE/IATA
+- `docs/meeting-series.md` — Recurring meetings, Recurrence class
+- `docs/meeting-component.md` — Sub-events (tracks, sessions, debates)
+- `docs/officer.md` — Officer roles (chair, secretary, etc.)
+- `docs/extensions.md` — Profile mechanism, MeetingExtension
+- `docs/recurrence.md` — ISO 8601-2 §13 syntax + Recurrence class
+- `docs/profiles.md` — How adopters write profiles (legco as example)
+
+## Page template
+
+```markdown
+# Decision
+
+## Purpose
+A formal outcome adopted by a Meeting.
+
+## Schema
+(LutaML excerpt + sample YAML)
+
+## DecisionKind
+(table of 9 values)
+
+## DecisionStatus state machine
+(ASCII diagram)
+
+## Related
+- Motion (brings a Decision)
+- Voting (decides a Motion)
+- Topic (a Decision is about a Topic)
+```
+
+## Acceptance criteria
+
+- 11 new pages created
+- Each follows the template
+- Cross-links work

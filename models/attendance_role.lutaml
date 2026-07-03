@@ -1,0 +1,6 @@
+enum AttendanceRole {
+  chair
+  required
+  optional
+  non_participant
+}

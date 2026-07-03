@@ -1,0 +1,11 @@
+enum MotionStatus {
+  introduced
+  seconded
+  debating
+  question_put
+  voting
+  carried
+  negatived
+  withdrawn
+  lapsed
+}

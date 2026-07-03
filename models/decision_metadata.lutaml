@@ -1,9 +1,11 @@
-class ResolutionMetadata {
+class DecisionMetadata {
   date: DateTime
   title: String
   titleLocalized: Localization[0..*]
   source: String
   sourceUrls: SourceUrl[0..*]
-  city: UnLocode  // UN/LOCODE, 5-char (ISO 3166-1 country + 3-char location)
+  meetingUrn: String
+  city: String
   countryCode: String
+  extensions: MeetingExtension[0..*]
 }

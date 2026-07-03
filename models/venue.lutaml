@@ -1,0 +1,9 @@
+class Venue {
+  kind: VenueKind
+  name: String
+  label: String
+  description: String
+  capacity: Integer
+  url: String
+  extensions: MeetingExtension[0..*]
+}

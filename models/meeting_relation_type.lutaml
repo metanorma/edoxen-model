@@ -40,4 +40,52 @@ enum MeetingRelationType {
       This meeting was rescheduled to the destination meeting.
     }
   }
+
+  parent_of {
+    definition {
+      This meeting is the parent in a series (RFC 9253 RELTYPE=PARENT).
+    }
+  }
+
+  child_of {
+    definition {
+      This meeting is a child of the destination series/meeting (RFC 9253 RELTYPE=CHILD).
+    }
+  }
+
+  sibling_of {
+    definition {
+      This meeting is a sibling of the destination (RFC 9253 RELTYPE=SIBLING).
+    }
+  }
+
+  depends_on {
+    definition {
+      This meeting depends on the destination (RFC 9253 RELTYPE=DEPENDS-ON).
+    }
+  }
+
+  finish_to_start {
+    definition {
+      RFC 9253 temporal: destination cannot start until this meeting finishes.
+    }
+  }
+
+  finish_to_finish {
+    definition {
+      RFC 9253 temporal: this meeting and destination must finish together.
+    }
+  }
+
+  start_to_start {
+    definition {
+      RFC 9253 temporal: this meeting and destination must start together.
+    }
+  }
+
+  start_to_finish {
+    definition {
+      RFC 9253 temporal: this meeting must start before destination finishes.
+    }
+  }
 }

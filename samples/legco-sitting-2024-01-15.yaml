@@ -1,0 +1,203 @@
+---
+identifier:
+- prefix: HKLC
+  number: '2024-01-15'
+urn: urn:legco:hk:meeting:2024-01-15-sitting
+ordinal: 1
+type: plenary
+status: completed
+visibility: public
+date_range:
+  start: 2024-01-15
+  end: 2024-01-15
+series_ref: urn:legco:hk:meeting-series:8th-term
+venues:
+- kind: physical
+  name: Legislative Council Chamber
+  unlocode: HKHKG
+  iata_code: HKG
+  address: Legislative Council Building, 1 Jackson Road, Central, Hong Kong
+  country_code: HK
+  lat: 22.2793
+  lon: 114.1628
+  building: LegCo Complex
+  floor: '1'
+  room: Chamber
+- kind: virtual
+  name: Public Webcast
+  label: Public livestream
+  uri: https://webcast.legco.gov.hk/live/english
+  features:
+  - audio
+  - video
+  - feed
+general_area: Hong Kong
+city: Hong Kong
+country_code: HK
+committee: Legislative Council
+committee_group: Eighth Legislative Council
+officers:
+- role: presiding_officer
+  person:
+    name: Hon Andrew Leung
+    kind: presiding_officer
+    affiliation: Legislative Council
+- role: secretary
+  person:
+    name: Mr. Kenneth Chen
+    kind: clerk
+    affiliation: LegCo Secretariat
+hosts:
+- type: organization
+  name: Legislative Council of the Hong Kong Special Administrative Region
+agenda:
+  status: final
+  items:
+  - label: '1'
+    kind: opening
+    title: Opening of the Council meeting
+  - label: '2'
+    kind: numbered
+    title: Address by the Chief Executive
+    components:
+    - urn:legco:hk:component:address-ce-2024-01-15
+  - label: '3'
+    kind: numbered
+    title: Questions to the Government
+    components:
+    - urn:legco:hk:component:question-time-2024-01-15
+  - label: '4'
+    kind: numbered
+    title: Second Reading of Bills
+    topics:
+    - identifier: legco-topic-waste-disposal-bill-2r
+      urn: urn:legco:hk:topic:waste-disposal-bill-2r
+      title: Second Reading of Waste Disposal (Amendment) Bill 2024
+      status: decided
+      resumption_of: urn:legco:hk:topic:waste-disposal-bill-1r-2023-12-13
+      documents:
+      - identifier: legco-bill-2024-waste-disposal-amendment
+        title: Waste Disposal (Amendment) Bill 2024
+        kind: bill
+        url: https://www.gld.gov.hk/egazette/english/gazette/toc.php
+        extensions:
+        - profile: legco
+          kind: bill
+          attributes:
+          - key: billNumber
+            value: 2024年第87号
+          - key: stage
+            value: second_reading
+          - key: introducedBy
+            value: Government
+  - label: '5'
+    kind: aob
+    title: Any Other Business
+  - label: '6'
+    kind: closing
+    title: Adjournment of the Council
+components:
+- identifier: address-ce-2024-01-15
+  urn: urn:legco:hk:component:address-ce-2024-01-15
+  kind: address
+  title: Address by the Chief Executive
+  starts_at: 2024-01-15 11:00:00.000000000 +08:00
+  ends_at: 2024-01-15 11:30:00.000000000 +08:00
+  venue_refs:
+  - urn:legco:hk:venue:chamber
+  extensions:
+  - profile: legco
+    kind: address
+    attributes:
+    - key: addressKind
+      value: CE_address
+- identifier: question-time-2024-01-15
+  urn: urn:legco:hk:component:question-time-2024-01-15
+  kind: question_time
+  title: Questions to the Government
+  starts_at: 2024-01-15 11:30:00.000000000 +08:00
+  ends_at: 2024-01-15 13:00:00.000000000 +08:00
+  venue_refs:
+  - urn:legco:hk:venue:chamber
+motions:
+- identifier: motion-waste-disposal-2r-2024-01-15
+  urn: urn:legco:hk:motion:waste-disposal-2r-2024-01-15
+  text: |
+    I move that the Waste Disposal (Amendment) Bill 2024 be read
+    the second time.
+  mover:
+    name: Hon Starry Lee
+    kind: member
+  seconders:
+  - name: Hon Martin Liao
+    kind: member
+  - name: Hon Holden Chow
+    kind: member
+  - name: Hon Alice Mak
+    kind: member
+  status: carried
+  introduced_at: 2024-01-15 15:00:00.000000000 +08:00
+  proposed_decision: urn:legco:hk:decision:waste-disposal-2r-passed
+  resulting_decision: urn:legco:hk:decision:waste-disposal-2r-passed
+votings:
+- identifier: voting-waste-disposal-2r-2024-01-15
+  urn: urn:legco:hk:voting:waste-disposal-2r-2024-01-15
+  on_motion: urn:legco:hk:motion:waste-disposal-2r-2024-01-15
+  status: decided
+  voting_method: division
+  called_by:
+    name: Hon Andrew Leung
+    kind: presiding_officer
+  called_at: 2024-01-15 16:30:00.000000000 +08:00
+  result_declared_at: 2024-01-15 17:00:00.000000000 +08:00
+  result: passed
+  counts:
+    ayes: 78
+    noes: 12
+    abstentions: 0
+    absent: 1
+  extensions:
+  - profile: legco
+    kind: voting_result
+    attributes:
+    - key: sectionCode
+      value: b2d
+    - key: bookmark
+      value: EV_VOTED_00146
+decisions:
+- identifier:
+  - prefix: HKLC
+    number: 2024-waste-disposal-2r
+  kind: resolution
+  status: decided
+  urn: urn:legco:hk:decision:waste-disposal-2r-passed
+  dates:
+  - date: 2024-01-15
+    type: decided
+  brought_by_motions:
+  - urn:legco:hk:motion:waste-disposal-2r-2024-01-15
+  about_topics:
+  - urn:legco:hk:topic:waste-disposal-bill-2r
+  localizations:
+  - language_code: eng
+    script: Latn
+    title: Second Reading of Waste Disposal (Amendment) Bill 2024 passed
+localizations:
+- language_code: eng
+  script: Latn
+  title: Council Meeting of 15 January 2024
+  general_area: Hong Kong
+- language_code: yue
+  script: Hant
+  title: 2024年1月15日立法會會議
+  general_area: 香港
+extensions:
+- profile: legco
+  kind: profile_declaration
+  attributes:
+  - key: source
+    value: https://app.legco.gov.hk/OpenData/HansardDB/
+  - key: term
+    value: 8th Legislative Council
+  - key: termStartDate
+    value: '2026-01-01'

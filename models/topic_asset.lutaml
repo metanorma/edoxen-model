@@ -1,0 +1,8 @@
+class TopicAsset {
+  identifier: String
+  title: String
+  kind: String
+  url: String
+  format: String
+  extensions: MeetingExtension[0..*]
+}

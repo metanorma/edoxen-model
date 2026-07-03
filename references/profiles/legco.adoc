@@ -1,0 +1,198 @@
+Profile: legco (HK Legislative Council)
+=======================================
+
+Profile namespace: `legco`
+
+Source schema: HK LegCo Open Data Hansard Database
+https://www.legco.gov.hk/en/open-legco/open-data/hansard-database.html
+
+OData service root: https://app.legco.gov.hk/OpenData/HansardDB/
+
+The HK LegCo schema exposes 16 normalized entity types via OData.
+Eight of these are domain-specific (not in Edoxen core) and live
+as profile extensions under the `legco` namespace.
+
+
+== Extension kinds
+
+
+=== `bill`
+
+A bill under consideration by the Council.
+
+Hangs on: `Topic.documents[]` as a `TopicDocument` with `kind="bill"`,
+plus this extension on the TopicDocument for LegCo-specific metadata.
+
+Maps to: `Bills` + `BillStages` (LegCo OData)
+
+Attributes:
+- `billNumber` (String) — LegCo bill number (e.g., "2024年第87号")
+- `stage` (String) — first_reading | second_reading | committee_stage | third_reading | resumption
+- `introducedBy` (String) — Government | Member name
+- `gazetteDate` (Date) — date the bill was gazetted
+- `gazetteUrl` (String) — URL to gazette notice
+
+Sample YAML:
+
+[source,yaml]
+----
+documents:
+  - identifier: hk-bill-2024-waste-disposal-amendment
+    title: Waste Disposal (Amendment) Bill 2024
+    kind: bill
+    url: https://www.gld.gov.hk/egazette/english/gazette/toc.php
+    extensions:
+      - profile: legco
+        kind: bill
+        attributes:
+          - key: billNumber
+            value: "2024年第87号"
+          - key: stage
+            value: second_reading
+          - key: introducedBy
+            value: Government
+----
+
+
+=== `petition`
+
+A petition presented by a Member.
+
+Hangs on: `Topic.documents[]` as a `TopicDocument` with `kind="petition"`.
+
+Maps to: `Petitions` (LegCo OData)
+
+Attributes:
+- `presentedBy` (String) — Member name(s)
+- `signatories` (Integer) — number of signatures
+- `datePresented` (Date)
+
+
+=== `address`
+
+A formal address by the Chief Executive, a Member, or a designated
+public officer.
+
+Hangs on: `Meeting.components[]` as a `MeetingComponent` with
+`kind="address"`, plus this extension for LegCo-specific details.
+
+Maps to: `Addresses` (LegCo OData)
+
+Attributes:
+- `speakerId` (String) — Speaker ID in LegCo's catalog
+- `addressKind` (String) — CE_address | member_address | officer_address
+
+
+=== `statement`
+
+A formal statement by a designated public officer.
+
+Hangs on: `Meeting.components[]` as a `MeetingComponent` with
+`kind="statement"`.
+
+Maps to: `Statements` (LegCo OData)
+
+Attributes:
+- `speakerId` (String)
+- `subjectId` (String) — cross-reference to Subjects table
+
+
+=== `question`
+
+A question to the Government (oral, written, urgent, or supplementary).
+
+Hangs on: `Topic.documents[]` as a `TopicDocument` with `kind="question"`.
+
+Maps to: `Questions` (LegCo OData)
+
+Attributes:
+- `questionType` (String) — Oral | Written | Urgent | Supplementary
+- `askedBy` (String) — Member name
+- `answerUrl` (String) — URL to the Government's reply
+
+
+=== `voting_result`
+
+Voting result metadata (the per-vote member list lives in `Meeting.votings[].voteRecords`).
+
+Hangs on: `Meeting.votings[]` as a `Voting` extension.
+
+Maps to: `VotingResults` (LegCo OData)
+
+Attributes:
+- `sectionCode` (String) — LegCo section code (e.g., "b2d", "cwc")
+- `bookmark` (String) — PDF bookmark name for deep-link (e.g., "EV_VOTED_00146")
+
+
+=== `summoning_bell`
+
+A quorum bell rung when fewer Members than the quorum are present.
+
+Hangs on: `Meeting.extensions[]` directly on the Meeting.
+
+Maps to: `SummoningBells` (LegCo OData)
+
+Attributes:
+- `sectionCode` (String)
+- `timestamp` (DateTime) — when the bell was rung
+- `bookmark` (String) — PDF deep-link
+
+
+=== `subject`
+
+A subject thread that can span multiple sittings via resumption.
+
+Hangs on: `Topic.extensions[]` on a Topic.
+
+Maps to: `Subjects` (LegCo OData, including `ResumptionOf`)
+
+Attributes:
+- `subjectId` (String) — LegCo's internal subject identifier
+- `sectionCode` (String)
+- `hansardType` (String) — English | Floor | Chinese
+- `resumptionOf` (Date) — date of prior sitting where subject was first raised
+
+Sample YAML:
+
+[source,yaml]
+----
+topics:
+  - identifier: legco-subject-waste-disposal-bill-2r
+    title: Second Reading of Waste Disposal (Amendment) Bill 2024
+    status: decided
+    extensions:
+      - profile: legco
+        kind: subject
+        attributes:
+          - key: subjectId
+            value: "12345"
+          - key: sectionCode
+            value: b2d
+          - key: hansardType
+            value: English
+          - key: resumptionOf
+            value: "2024-12-11"
+----
+
+
+== Profile declaration
+
+Adopters using the LegCo profile should declare it once at the
+top of their Meeting YAML:
+
+[source,yaml]
+----
+extensions:
+  - profile: legco
+    kind: profile_declaration
+    attributes:
+      - key: source
+        value: https://app.legco.gov.hk/OpenData/HansardDB/
+      - key: term
+        value: "8th Legislative Council"
+      - key: termStartDate
+        value: "2026-01-01"
+----
+
+This makes the profile's namespace explicit and links the
+Meeting to its source dataset.

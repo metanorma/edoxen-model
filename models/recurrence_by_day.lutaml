@@ -1,0 +1,4 @@
+class RecurrenceByDay {
+  ordinal: Integer
+  weekday: String
+}

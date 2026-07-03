@@ -1,0 +1,37 @@
+# 26 — Gem: Update CLI
+
+## Why
+
+The gem has a Thor CLI (`bin/edoxen` or `lib/edoxen/cli.rb`) with commands like `validate`, `normalize`, `validate-meetings`, `normalize-meetings`. Need to update for new model.
+
+## Files to modify
+
+- `lib/edoxen/cli.rb`
+- `exe/edoxen` (executable)
+
+## Commands to update
+
+```
+edoxen validate DECISION_FILE      # was validate RESOLUTION_FILE
+edoxen normalize DECISION_FILE
+edoxen validate-meeting MEETING_FILE
+edoxen normalize-meeting MEETING_FILE
+```
+
+## New commands to add
+
+```
+edoxen validate-venue VENUE_FILE
+edoxen validate-motion MOTION_FILE
+edoxen validate-voting VOTING_FILE
+edoxen series-decode RECURRENCE_STRING  # ISO 8601-2 ↔ Recurrence object
+edoxen unlocode-lookup UNLOCODE          # uses unlocodes gem
+edoxen iata-lookup IATA_CODE             # uses iata gem
+```
+
+## Acceptance criteria
+
+- CLI updated for new model
+- New commands implemented
+- All commands have specs
+- `edoxen help` shows updated commands

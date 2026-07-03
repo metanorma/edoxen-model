@@ -1,0 +1,46 @@
+# 06 — MeetingSeries: parent of recurring meetings
+
+## Why
+
+Crossref has `proceedings-series`. IETF meetings are a series.
+Apache board meetings are a series. W3C TPAC is annual series.
+Standing committees meet in series.
+
+Currently Edoxen has `Meeting` and `MeetingCollection` (just a
+wrapper). No concept of recurring parent.
+
+## Files to create
+
+- `models/meeting_series.lutaml`
+- `models/series_kind.lutaml` (optional — for distinguishing series types)
+
+## Schema
+
+```lutaml
+class MeetingSeries {
+  identifier: StructuredIdentifier[1..*]
+  urn: String
+  name: String
+  description: String
+  recurrence: Recurrence                 # ISO 8601-2 structured
+  term: String                           # e.g. "8th LegCo", "FY2026"
+  organizer: Person
+  hosts: HostRef[0..*]
+  kind: String                           # open: standards_body | parliamentary |
+                                         # conference | corporate | community
+  meeting_refs: String[0..*]             # URNs → Meeting instances
+  extensions: MeetingExtension[0..*]
+}
+```
+
+## Dependencies
+
+- TODO 10 (Recurrence)
+- TODO 09 (MeetingExtension)
+
+## Acceptance criteria
+
+- `MeetingSeries` is parent of recurring Meeting instances
+- Has `recurrence` field (structured, ISO 8601-2-aligned)
+- Has `term` for legislative/organizational terms
+- Meeting.series_ref points back via URN

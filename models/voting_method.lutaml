@@ -1,0 +1,10 @@
+enum VotingMethod {
+  voice
+  division
+  show_of_hands
+  roll_call
+  electronic
+  secret_ballot
+  unanimous_consent
+  consensus
+}

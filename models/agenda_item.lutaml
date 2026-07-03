@@ -5,5 +5,8 @@ class AgendaItem {
   description: String
   references: Reference[0..*]
   outcome: AgendaItemOutcome
-  resolution_ref: String
+  decisionRef: String
+  topics: Topic[0..*]
+  components: String[0..*]
+  extensions: MeetingExtension[0..*]
 }

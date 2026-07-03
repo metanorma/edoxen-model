@@ -1,0 +1,5 @@
+class DecisionRelation {
+  source: StructuredIdentifier
+  destination: StructuredIdentifier
+  type: DecisionRelationType
+}

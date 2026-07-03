@@ -1,0 +1,17 @@
+class Recurrence {
+  freq: RecurrenceFreq
+  interval: Integer
+  count: Integer
+  until: DateTime
+  byDay: RecurrenceByDay[0..*]
+  byMonthDay: Integer[0..*]
+  byMonth: Integer[0..*]
+  byWeekNo: Integer[0..*]
+  byYearDay: Integer[0..*]
+  byHour: Integer[0..*]
+  byMinute: Integer[0..*]
+  bySecond: Integer[0..*]
+  bySetPos: Integer[0..*]
+  weekStart: String
+  extensions: MeetingExtension[0..*]
+}

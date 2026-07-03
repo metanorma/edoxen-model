@@ -1,0 +1,369 @@
+IETF Datatracker Meeting Data
+=============================
+IETF (Internet Engineering Task Force) holds three numbered
+meetings per year ("IETF NNN"). Each meeting is a multi-day,
+multi-track gathering of ~1,000 attendees in parallel rooms,
+plus Birds of a Feather (BOF) sessions, tutorials, plenaries,
+hackathons, and side meetings.
+
+The Datatracker (datatracker.ietf.org) is the canonical
+machine-readable record: each session has a JSON record,
+a structured Markdown agenda, minutes, slide decks, and
+presentations. It is the best-structured public meeting
+data available — and the most diverse (working groups,
+research groups, teams, directorate, plenary, BOFs).
+
+Edoxen adopts IETF meeting data as the canonical multi-day,
+multi-track, multi-room, multi-session meeting reference.
+Where standards-body references (ISO, ITU) are *single-track
+plenary meetings with a published resolution record*, IETF
+meetings are *multi-track weeks with N parallel sessions, each
+its own meeting-within-a-meeting*.
+
+
+== Real corpus used
+
+Source: `https://datatracker.ietf.org/meeting/122/agenda.json`
+
+IETF 122 (Bangkok, March 2025) — 208 sessions, 16 rooms,
+3-day week.
+
+Counts (from `agenda.json`):
+
+|===
+| Metric | Value
+
+| Total sessions                 | 208
+| Working Groups (wg)            | 126
+| Research Groups (rg)           |  12
+| IRTF (irtf)                    |  13
+| Teams (team)                   |  21
+| Areas (ietf / dir / adm / ag)  |  16
+| RAG (rag)                      |   1
+| BOFs (is_bof=true)             |   2
+| Active groups                  | 177
+| Unique rooms                   |  16
+| Cancelled sessions             |   5
+| Rescheduled sessions           |   5
+|===
+
+Area distribution:
+
+|===
+| Parent area | Session count
+| sec       | 33
+| rtg       | 21
+| ops       | 21
+| wit       | 20
+| art       | 18
+| int       | 12
+| gen       |  3
+| iab       |  2
+| ietf      |  5
+| (none)    | 60   (plenary / IETF-wide / tutorial)
+|===
+
+
+== Session JSON record (verbatim from datatracker)
+
+Each session has this shape (from `agenda.json`):
+
+  {
+    "agenda": "https://datatracker.ietf.org/meeting/122/materials/agenda-122-oauth-05",
+    "duration": "2:00:00",
+    "group": {
+      "acronym": "oauth",
+      "name": "Web Authorization Protocol",
+      "parent": "sec",
+      "state": "active",
+      "type": "wg"
+    },
+    "id": 131328,
+    "is_bof": false,
+    "location": "Chitlada 2",
+    "minutes": "https://datatracker.ietf.org/meeting/122/materials/minutes-122-oauth-202503180600-00",
+    "modified": "2026-07-01T20:49:51Z",
+    "name": "Web Authorization Protocol",
+    "objtype": "session",
+    "presentations": [
+      {
+        "name": "slides-122-oauth-chairs-slides",
+        "order": 1,
+        "resource_uri": "/api/v1/meeting/sessionpresentation/94063/",
+        "rev": "01",
+        "title": "Chairs Slides"
+      },
+      ...
+    ],
+    "session_id": 33897,
+    "session_res_uri": "/api/v1/meeting/session/33897/",
+    "start": "2025-03-18T06:00:00Z",
+    "status": "sched"
+  }
+
+Field-by-field Edoxen mapping:
+
+|===
+| Datatracker field | Type | Edoxen Meeting field
+
+| id / session_id              | Integer    | `Meeting.session_id` (new — internal PK)
+| group.acronym                | String     | `Meeting.committee` (e.g., "oauth")
+| group.name                   | String     | `Meeting.title` (per-language)
+| group.type                   | Enum       | `Meeting.session_kind` (wg / rg / team / ietf / rag)
+| group.parent                 | String     | (new) `Meeting.area` (sec / rtg / ops / etc.)
+| group.state                  | Enum       | (new) `Meeting.committee_state` (active / bof / concluded)
+| start                        | DateTime   | `ScheduleItem.start_time`
+| duration                     | Duration   | `ScheduleItem.duration`
+| location                     | String     | `Location.name` (room name only; full location elsewhere)
+| is_bof                       | Boolean    | (new) `Meeting.is_bof` — Birds of a Feather flag
+| status                       | Enum       | `MeetingStatus` (sched / resched / canceled / done)
+| agenda (URL)                 | URL        | `Meeting.source_urls[kind=agenda]`
+| minutes (URL)                | URL        | `Meeting.source_urls[kind=minutes]`
+| name                         | String     | `Meeting.title`
+| presentations[].title        | String     | `AgendaItem.title`
+| presentations[].order        | Integer    | `AgendaItem.order`
+| presentations[].name         | String     | `AgendaItem.attachment.slug`
+| presentations[].resource_uri | URL        | `AgendaItem.attachment.url`
+| presentations[].rev          | String     | `Attachment.revision`
+|===
+
+
+== Real agenda document (verbatim, IETF 122 OAuth WG)
+
+URL: `https://datatracker.ietf.org/meeting/122/materials/agenda-122-oauth-05`
+
+  # IETF122 - OAuth WG Agenda
+
+  ## Tuesday (120 min)
+
+  - Chairs update – Rifaat/Hannes (10 min)
+
+  - Token Status List - Paul (20 min)
+    https://datatracker.ietf.org/doc/draft-ietf-oauth-status-list/
+
+  - Attestation-based Client Authentication - Paul (15 min)
+    https://datatracker.ietf.org/doc/draft-ietf-oauth-attestation-based-client-auth/
+
+  - OAuth 2.1 - Aaron (25 min)
+    https://datatracker.ietf.org/doc/draft-ietf-oauth-v2-1/
+
+  - OAuth First-Party Apps - Aaron (20 min)
+    https://datatracker.ietf.org/doc/draft-ietf-oauth-first-party-apps/
+
+  - Client ID Scheme - Aaron (20 min)
+    https://datatracker.ietf.org/doc/draft-parecki-oauth-client-id-scheme/
+
+  - Updating Security BCP - Pedram Hosseyni (10 min)
+    No draft available at this time.
+
+  ## Friday (120 min)
+
+  - Chairs update – Rifaat/Hannes (5 min)
+
+  - SD-JWT – Brian (10 min)
+    https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/
+
+  - SD-JWT VC - Brian (20 min)
+    ...
+
+Note the structure:
+
+- Agenda grouped by **day** (Tuesday / Friday)
+- Each day has a **duration budget** (120 min)
+- Each agenda item has **presenter** + **duration** + optional
+  **linked document** (draft URL)
+- Each session has an **agenda URL** AND a **minutes URL** AND
+  slide decks per presentation
+
+This is the real shape of an IETF agenda — multi-day, with
+duration budgets, presenter attributions, and structured per-item
+links.
+
+
+== What IETF data forces onto the Edoxen Meeting model
+
+Concrete additions:
+
+- `Meeting.session_kind: Enum {wg, rg, team, ietf, rag, irtf,
+  directorate, bof}` — discriminator for what KIND of meeting
+- `Meeting.area: String?` — parent area (sec/rtg/ops/...) for
+  hierarchical grouping
+- `Meeting.committee_state: Enum {active, bof, concluded}` —
+  lifecycle of the group, not just the meeting
+- `Meeting.is_bof: Boolean` — explicit Birds-of-a-Feather flag
+  (BOFs propose new working groups; need to be tracked)
+- `ScheduleItem.start_time: DateTime` (today Edoxen has
+  `ScheduleItem.date` + `ScheduleItem.time` as a String; this
+  is ambiguous)
+- `ScheduleItem.duration: Duration` — explicit duration; today
+  implicit
+- `ScheduleItem.presenter: Person` — agenda-item presenter
+  attribution (today: anonymous "event" string)
+- `ScheduleItem.linked_documents: URL[]` — drafts/papers/inputs
+- `AgendaItem.presenter: Person` (already partially in Edoxen
+  via `AgendaItem.title`, but should be a structured Person)
+- `AgendaItem.duration: Duration`
+- `AgendaItem.linked_documents: URL[]`
+- `AgendaItem.attachments: Attachment[] {name, rev, url, type}`
+  — for slide decks, drafts, jabber logs
+
+Crucial structural difference from standards-body references:
+
+**IETF meetings have no "Resolution" layer.** IETF does NOT
+produce resolutions — its output is RFCs (Internet-Drafts that
+go through a separate standards process). IETF meetings produce:
+
+- Minutes (running narrative, present at `minutes` URL)
+- Consensus calls (record in minutes)
+- Document updates (drafts that move between states)
+- Decisions on next steps (record in minutes)
+
+The Edoxen `ResolutionCollection` join (via `resolution_refs[]`)
+is therefore *absent* in IETF data — but the `Minutes` is
+present and richly populated. This is a clean test of whether
+Edoxen's ResolutionResolution side is genuinely orthogonal
+(pluggable) or secretly required.
+
+Conclusion from the data: the `ResolutionCollection` link is
+optional for meetings that don't produce resolutions. Edoxen's
+Meeting should not REQUIRE `resolution_refs`.
+
+
+== What IETF does NOT have (and Edoxen must keep)
+
+1. **Resolutions / formal decisions.** IETF runs on consensus
+   in the room, recorded in minutes, with formal RFC output
+   through a separate process. No "Resolution" first-class
+   entity.
+
+2. **Motions, divisions, voting.** IETF uses "hums" and
+   polling; not formal roll-call votes. The closest is
+   consensus calls in minutes.
+
+3. **Fixed committee structure.** Groups come and go (BOFs,
+   concluded WGs). The `Meeting.committee_state` field
+   captures this; standards-body Edoxen has assumed long-
+   lived committees.
+
+4. **Permanent officers.** Chairs rotate (every 2 years);
+   no permanent "secretary" in the IETF context. Area
+   Directors are appointed by the Nominating Committee.
+
+
+== Multi-track structure
+
+The IETF model has THREE levels:
+
+1. **Meeting** (IETF 122, the whole week)
+2. **Session** (OAuth WG session #1, OAuth WG session #2)
+3. **AgendaItem** (Token Status List, Attestation, etc.)
+
+Edoxen's current model conflates (1) and (2) — every Meeting
+is itself a trackless event. IETF data shows that real meetings
+have multiple parallel sessions in the same week, sometimes
+the same group meeting twice (Tuesday OAuth, Friday OAuth).
+
+The right model:
+
+  MeetingSeries {
+    name: "IETF 122"           // = the whole week
+    start_date, end_date
+    venue: Location
+    sessions: Meeting[]        // = each WG/RG/team/BOF session
+  }
+
+  Meeting {                    // = one session within a series
+    parent_series: MeetingSeries
+    track: String?             // = the WG acronym, RG acronym
+    area: String?              // = sec/rtg/ops parent
+    type: MeetingType          // = wg/rg/team/ietf/bof
+    agenda: Agenda
+    minutes: Minutes
+    presentations: Presentation[]
+  }
+
+Or alternatively, keep `Meeting` as the series and add a new
+`Session` entity:
+
+  Meeting (the whole IETF 122)
+    sessions: Session[]        // each session within the week
+
+The IETF data structures sessions explicitly, so adding a
+`Session` (or `Track`) entity to Edoxen is the natural move.
+
+
+== Status enum (from `agenda.json`)
+
+Field `status` on each session. Observed values:
+
+- `sched`     — scheduled (the default)
+- `resched`   — rescheduled (time/room changed)
+- `canceled`  — cancelled
+- (missing)   — not yet scheduled
+
+Maps onto Edoxen's current `MeetingStatus` enum
+(`planned` / `confirmed` / `cancelled` / `completed` /
+`in_session`). Edoxen today has no `rescheduled` state —
+IETF data forces adding it.
+
+Also from Datatracker: sessions that DID happen get a
+`minutes` URL; sessions that didn't (cancelled) don't. This
+is the simplest possible "did this meeting produce a record"
+flag.
+
+
+== Concrete real examples (from IETF 122)
+
+OAuth WG session:
+
+  start:       2025-03-18T06:00:00Z (Tuesday 06:00 UTC)
+  duration:    2:00:00
+  location:    Chitlada 2 (Bangkok hotel room name)
+  group:       oauth (parent: sec, state: active, type: wg)
+  status:      sched
+  is_bof:      false
+  agenda URL:  .../agenda-122-oauth-05
+  minutes URL: .../minutes-122-oauth-202503180600-00
+
+RATS (Remote ATtestation ProcedureS) WG session:
+
+  start:       2025-03-17T06:00:00Z
+  duration:    2:00:00
+  location:    Boromphimarn 4
+  group:       rats (parent: sec, state: active, type: wg)
+
+Note: same group acronym doesn't mean same room — different
+WGs meet in different rooms in parallel. Same room can be
+used by different sessions at different times. This is the
+multi-track pattern that Edoxen doesn't currently model.
+
+
+== Net contribution to Edoxen
+
+IETF is the *multi-day, multi-track, multi-session meeting
+with linked documents and structured presentations* reference.
+Adopting it forces:
+
+- A `MeetingSeries` (or `Session`) entity to handle parallel
+  tracks within one overall event
+- A `Meeting.session_kind` enum
+- A `Meeting.area` field
+- A `Meeting.committee_state` lifecycle enum
+- A `Meeting.is_bof` flag
+- `ScheduleItem.start_time: DateTime` + `duration: Duration`
+  (replace ambiguous `time: String`)
+- `ScheduleItem.presenter: Person`
+- `ScheduleItem.linked_documents: URL[]`
+- `AgendaItem.presenter: Person`
+- `AgendaItem.duration: Duration`
+- `AgendaItem.linked_documents: URL[]`
+- `Meeting.status` enum extended with `rescheduled`
+- `Meeting.resolution_refs[]` made OPTIONAL (not required),
+  to accommodate non-resolution-producing meetings
+
+The most consequential single addition is `MeetingSeries` /
+`Session`. Every multi-day conference (W3C TPAC, ApacheCon,
+RSA Conference, etc.) requires it. Standards-body plenary
+meetings (ISO/TC 154 Nth plenary) can stay as a single
+`Meeting` since they don't have parallel sessions — backward-
+compatible.

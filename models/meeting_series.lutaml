@@ -1,0 +1,13 @@
+class MeetingSeries {
+  identifier: StructuredIdentifier[1..*]
+  urn: String
+  name: String
+  description: String
+  recurrence: Recurrence
+  term: String
+  organizer: Person
+  hosts: HostRef[0..*]
+  kind: String
+  meetingRefs: String[0..*]
+  extensions: MeetingExtension[0..*]
+}

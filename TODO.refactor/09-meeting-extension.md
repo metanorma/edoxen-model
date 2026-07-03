@@ -1,0 +1,64 @@
+# 09 — MeetingExtension: profile mechanism
+
+## Why
+
+User (2026-07-03): "We want to be GENERIC, while others can
+customize the type of thing for themselves while fitting into
+our schema."
+
+ISO 8601-2 §15 has a formal "profile" concept. We adopt it.
+
+Domain-specific extensions (Bill, Witness, Petition, Address,
+Statement, QuorumBell, etc.) live in profile extensions, NOT
+in the core schema.
+
+## Files to create
+
+- `models/meeting_extension.lutaml`
+- `models/extension_attribute.lutaml`
+
+## Schema
+
+```lutaml
+class MeetingExtension {
+  profile: String             # adopter namespace: "legco", "us-congress",
+                              # "ietf", "apache-board", "standards-body", ...
+  kind: String                # extension type within profile:
+                              # "bill", "witness", "petition", ...
+  ref: String[0..1]           # optional cross-reference (URN/URL)
+  attributes: ExtensionAttribute[0..*]
+  extensions: MeetingExtension[0..*]   # extensions can be nested
+}
+
+class ExtensionAttribute {
+  key: String
+  value: String
+}
+```
+
+## Pattern
+
+Every core entity has an `extensions: MeetingExtension[0..*]` slot.
+Adopters register their profile namespace and define `kind` values
+within it. Generic tools read core fields; profile-aware tools
+read extensions.
+
+## Example profiles (not built in core — documented separately)
+
+- `legco` — bill, petition, address, statement, question, voting-result,
+  summoning-bell, subject
+- `us-congress` — bill, witness, hearing-subtype
+- `standards-body` — working-draft, document-ref
+- `conference` — keynote, sponsor
+- `ietf` — bof, wg-session
+- `apache-board` — officer
+
+## Dependencies
+
+- None (foundational)
+
+## Acceptance criteria
+
+- `MeetingExtension` and `ExtensionAttribute` defined
+- Pattern documented in `references/profiles/` (TODO 16)
+- Every core entity has `extensions: MeetingExtension[0..*]` slot

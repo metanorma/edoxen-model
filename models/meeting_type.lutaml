@@ -4,5 +4,16 @@ enum MeetingType {
   task_group
   ad_hoc
   joint
-  conference_session
+  general_assembly
+  committee
+  subcommittee
+  conference
+  workshop
+  seminar
+  webinar
+  hearing
+  markup
+  board_meeting
+  annual_general_meeting
+  other
 }

@@ -1,0 +1,6 @@
+class VotingCounts {
+  ayes: Integer
+  noes: Integer
+  abstentions: Integer
+  absent: Integer
+}

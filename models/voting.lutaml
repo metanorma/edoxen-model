@@ -1,0 +1,15 @@
+class Voting {
+  identifier: String
+  urn: String
+  onMotion: String
+  status: VotingStatus
+  method: VotingMethod
+  calledBy: Person
+  calledAt: DateTime
+  resultDeclaredAt: DateTime
+  result: VotingOutcome
+  counts: VotingCounts
+  castingVote: VoteRecord
+  voteRecords: VoteRecord[0..*]
+  extensions: MeetingExtension[0..*]
+}

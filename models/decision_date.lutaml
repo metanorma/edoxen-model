@@ -1,0 +1,4 @@
+class DecisionDate {
+  date: Date
+  type: DecisionDateType
+}

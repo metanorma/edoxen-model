@@ -1,0 +1,4 @@
+class ExtensionAttribute {
+  key: String
+  value: String
+}

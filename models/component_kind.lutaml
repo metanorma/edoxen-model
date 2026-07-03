@@ -1,0 +1,21 @@
+enum ComponentKind {
+  track
+  session
+  debate
+  breakout
+  bof
+  plenary_session
+  working_group_session
+  committee_of_the_whole
+  keynote
+  address
+  statement
+  question_time
+  opening
+  closing
+  break
+  reception
+  registration
+  networking
+  other
+}
