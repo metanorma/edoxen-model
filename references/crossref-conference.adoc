@@ -1,0 +1,268 @@
+Crossref Conference Proceedings
+===============================
+
+Crossref is the official DOI registration agency for scholarly works.
+The `event` metadata block in Crossref records is the most
+widely-deployed schema for *conferences as published artifacts* —
+DOIs for ACM, IEEE, Springer LNCS, NeurIPS, ACL and thousands of
+other venues all register through Crossref using the same fields.
+
+Source schema:
+https://www.crossref.org/documentation/schema-library/markup-guide-metadata-segments/conference-proceedings/
+
+API:
+- `GET https://api.crossref.org/works/{doi}` — full JSON record
+- `GET https://api.crossref.org/works?query.bibliographic=...` —
+  full-text search across the 150M+ record corpus
+- API docs: https://github.com/CrossRef/rest-api-doc
+
+
+== What Crossref gives Edoxen
+
+The Crossref `event` object is the de-facto standard for "the
+conference that a paper belongs to":
+
+- `event.name` — full human title (with year marker if customary)
+- `event.acronym` — short form ("PASC '23", "CHI 2023")
+- `event.location` — venue as a free-text string
+  ("Davos Switzerland", "Baltimore, MD, USA")
+- `event.sponsor[]` — sponsoring organizations / SIGHPC / ACM
+  Special Interest Groups
+- `event.start` / `event.end` — date-parts arrays (ISO 8601
+  day-level granularity)
+- `event.theme` — optional theme for the conference
+- `event.number` — edition number (e.g., 23 for the 23rd PASC)
+
+Crossref also distinguishes two related work types that Edoxen
+must handle differently:
+
+| Crossref type | What it represents | Edoxen counterpart |
+|---|---|---|
+| `proceedings`            | The published bound volume (ISBN, container) | Conference-level Meeting (the event) |
+| `proceedings-series`     | A series (annual, recurring) of proceedings | MeetingSeries (parent of recurring meetings) |
+| `proceedings-article`    | One paper inside the proceedings | (deferred — paper layer is out of scope for now) |
+
+The `proceedings` type carries the `event` block; `proceedings-article`
+also carries the same `event` block plus `container-title[]`
+pointing back at the parent `proceedings`.
+
+
+== Live example 1 — proceedings (parent container)
+
+`GET https://api.crossref.org/works/10.1145/3592979`
+
+Verbatim from the live API on 2026-07-02:
+
+  {
+    "DOI": "10.1145/3592979",
+    "type": "proceedings",
+    "title": [
+      "Proceedings of the Platform for Advanced Scientific Computing Conference"
+    ],
+    "publisher": "ACM",
+    "publisher-location": "New York, NY, USA",
+    "ISBN": [
+      "9798400701900"
+    ],
+    "isbn-type": [
+      {
+        "value": "9798400701900",
+        "type": "print"
+      }
+    ],
+    "published-print": { "date-parts": [[2023, 6, 26]] },
+    "published-online": { "date-parts": [[2023, 6, 26]] },
+    "event": {
+      "name": "PASC '23: Platform for Advanced Scientific Computing Conference",
+      "acronym": "PASC '23",
+      "location": "Davos Switzerland",
+      "sponsor": [
+        "SIGHPC ACM Special Interest Group on High Performance Computing, Special Interest Group on High Performance Computing",
+        "ETH Zurich / CSCS"
+      ]
+    }
+  }
+
+
+== Live example 2 — proceedings-article (single paper)
+
+`GET https://api.crossref.org/works/10.1145/3592979.3593400`
+
+Verbatim from the live API on 2026-07-02:
+
+  {
+    "DOI": "10.1145/3592979.3593400",
+    "type": "proceedings-article",
+    "title": [
+      "Causal Discovery and Optimal Experimental Design for Genome-Scale Biological Network Recovery"
+    ],
+    "container-title": [
+      "Proceedings of the Platform for Advanced Scientific Computing Conference"
+    ],
+    "publisher": "ACM",
+    "published-print": { "date-parts": [[2023, 6, 26]] },
+    "published-online": { "date-parts": [[2023, 6, 26]] },
+    "page": "1-11",
+    "author": [
+      {
+        "given": "Ashka", "family": "Shah",
+        "sequence": "first",
+        "ORCID": "https://orcid.org/0009-0007-6307-8154",
+        "affiliation": [
+          { "name": "University of Chicago, Chicago, United States of America" },
+          { "name": "Argonne National Laboratory, Lemont, IL, USA" }
+        ],
+        "role": [ { "role": "author", "vocabulary": "crossref" } ]
+      },
+      ...
+    ],
+    "event": {
+      "name": "PASC '23: Platform for Advanced Scientific Computing Conference",
+      "acronym": "PASC '23",
+      "location": "Davos Switzerland",
+      "sponsor": [
+        "SIGHPC ACM Special Interest Group on High Performance Computing, ...",
+        "ETH Zurich / CSCS"
+      ]
+    }
+  }
+
+
+== Real-world event.start / event.end
+
+A second proceedings-article, IEEE Plasma Science 2004, has
+explicit start/end dates — most Crossref records omit these
+but they exist in the schema:
+
+  {
+    "DOI": "10.1109/plasma.2004.1339585",
+    "type": "proceedings-article",
+    "title": [
+      "Conference Information - IEEE International Conference on Plasma Science / Conference Location / Conference Session Format"
+    ],
+    "event": {
+      "name": "IEEE Conference Record - Abstracts. 31st IEEE International Conference On Plasma Science",
+      "start": { "date-parts": [[2004, 7, 1]] },
+      "end":   { "date-parts": [[2004, 7, 1]] },
+      "location": "Baltimore, MD, USA"
+    }
+  }
+
+
+== Full Crossref `event` schema
+
+From the Crossref Metadata Schema
+(https://data.crossref.org/reports/help/schema_doc/4.4.2/index.html):
+
+  event:
+    name:       text — the conference name, with year marker
+                ("PASC '23: Platform for Advanced Scientific ...")
+    acronym:    text — short form ("PASC '23")
+    location:   text — venue as free text
+                ("Davos Switzerland", "Baltimore, MD, USA")
+    number:     text — edition number ("23")
+    sponsor[]:  text[] — sponsoring organizations
+    theme:      text — conference theme
+    start:      date-parts — opening day
+    end:        date-parts — closing day
+
+`date-parts` is itself a Crossref structured date:
+
+  date-parts: [ [YYYY, MM, DD] ]      calendar date
+              [ [YYYY, MM] ]          year-month
+              [ [YYYY] ]              year only
+              [YYYY, MM, DD, ...]    date-time (rare)
+
+
+== What Crossref does NOT have
+
+Stated explicitly because it's load-bearing:
+
+1. **Agenda items, tracks, sessions.** Crossref describes the
+   *bound volume* (proceedings) and its *papers* (articles).
+   It does not model the *program schedule* — which track,
+   which room, what time, what session title. That lives in
+   the conference's own website / scheduler (e.g., PASC's
+   conference site, Indico, Sched).
+
+2. **Minutes / decisions / votes.** Crossref records are
+   bibliographic metadata about published works. The
+   conference's organizational decisions (PC chairs, accepted
+   papers list, keynote selection) happen outside Crossref.
+
+3. **Officers beyond the publisher.** Crossref records the
+   *publisher* (ACM, IEEE, Springer) and *event sponsors*
+   (ACM SIGs, universities). It does not model conference
+   chairs, program committee members, or keynote speakers
+   as first-class entities — those appear only in the
+   metadata of individual proceedings-articles (`chair`,
+   `editor` properties).
+
+4. **Virtual / hybrid attendance.** The schema is silent on
+   whether attendees were physical or remote. This information
+   must come from the conference's own site, not Crossref.
+
+5. **Recurrence rules.** Crossref knows about `proceedings-series`
+   (a series of proceedings), but doesn't carry an RRULE-style
+   recurrence model. Series-join logic is by DOI prefix +
+   successive years, not a programmatic rule.
+
+
+== Net contribution to Edoxen
+
+The Crossref `event` block gives Edoxen the canonical
+*conference-as-published-artifact* shape. Concrete fields
+Edoxen should adopt:
+
+- `Meeting.acronym: String` (from `event.acronym`) — useful
+  for disambiguation ("CGPM 27" vs "CGPM 28" — same body,
+  different meeting)
+- `Meeting.location: String` — already exists as a string
+  field; align semantics with `event.location`'s free-text
+  convention
+- `Meeting.sponsors: HostRef[]` (from `event.sponsor[]`) —
+  SIGHPC, IEEE Computer Society, etc. would map onto a new
+  `HostRef` type
+- `Meeting.published_doi: String` (from the `proceedings`
+  DOI) — the DOI of the bound proceedings volume
+- `Meeting.published_isbn: String` (from `ISBN`)
+- `Meeting.event_kind: Enum {standards_body, scientific_conference,
+  corporate, parliamentary, community, ...}` — needed because
+  "Meeting" now spans heterogeneous domains
+
+Plus the *series* concept that Crossref exposes via
+`proceedings-series`:
+
+- `MeetingSeries` — parent entity that owns a recurring
+  Meeting each year; crossref `proceedings-series` DOI
+  identifies the series, individual `proceedings` DOIs
+  identify each instance.
+
+Things Edoxen must NOT take from Crossref (out of scope
+for the broadened Meeting model):
+
+- Paper-level metadata (authors, affiliations, abstracts,
+  references, ORCIDs) — deferred until a third concrete
+  driver forces the paper layer.
+- Bibliographic citation chains (`reference[]` array).
+- License URLs and content-domain restrictions.
+- Funding data (`funder[]`).
+- Clinical-trial numbers, assertion groups — irrelevant
+  to meetings/agendas.
+
+
+== How Edoxen relates to Crossref
+
+- Edoxen `Meeting.published_doi` ↔ Crossref `proceedings`
+  DOI (1:1).
+- Edoxen `MeetingCollection.metadata.doi` (already exists
+  for the standards-body side) generalizes to all domains
+  and follows Crossref DOI registration.
+- Edoxen does NOT replicate Crossref's bibliographic role
+  (article metadata, references, funder data). Edoxen
+  models the meeting-side; Crossref models the
+  publication-side. They join at DOI.
+
+This is the same division of labor as iCalendar
+(`references/icalendar.adoc`): each layer governs what it
+owns and they meet at URN / DOI.

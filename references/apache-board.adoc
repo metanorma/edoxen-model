@@ -1,0 +1,347 @@
+Apache Software Foundation Board Minutes
+==========================================
+The Apache Software Foundation (ASF) Board of Directors meets
+monthly via teleconference. Meeting minutes have been published
+publicly for every meeting since 1999 — a 25+ year corpus of
+formal corporate-board minutes with motions, votes, attendance
+rolls, and resolutions.
+
+This is the canonical open-data reference for the *corporate
+board meeting* pattern — officers, roll call, officer reports,
+committee reports, special orders (formal resolutions), action
+items, and adjournment. Edoxen adopts ASF minutes as the
+corporate-meeting reference to complement the standards-body
+references (which have no "Board Chair / Treasurer / Secretary"
+distinction) and the IETF reference (which has no formal
+motions/votes).
+
+
+== Real corpus used
+
+Source: `https://www.apache.org/foundation/board/calendar.html`
+
+Most recent meeting used in this reference:
+`board_minutes_2026_05_20.txt` (20 May 2026, 6,380 lines).
+
+The full corpus spans from 1999 to present, all published as
+plain `.txt` files under
+`https://www.apache.org/foundation/records/minutes/YYYY/board_minutes_YYYY_MM_DD.txt`
+(or `.png` for older scanned minutes pre-2005).
+
+A second view, with categorized navigation:
+`https://whimsy.apache.org/board/minutes/`
+
+
+== Verbatim minutes structure (board_minutes_2026_05_20.txt)
+
+  The Apache Software Foundation
+  Board of Directors Meeting Minutes
+  May 20, 2026
+
+  1. Call to order
+  2. Roll Call
+  3. Minutes from previous meetings
+  4. Executive Officer Reports
+  5. Additional Officer Reports
+  6. Committee Reports
+  7. Special Orders
+  8. Discussion Items
+  9. Review Outstanding Action Items
+  10. Unfinished Business
+  11. New Business
+  12. Announcements
+  13. Adjournment
+
+This 13-section order is the canonical corporate-board agenda,
+per Robert's Rules of Order. Edoxen's `Agenda` model can
+inherit this directly as a default template.
+
+
+== Section-by-section mapping to Edoxen
+
+|===
+| Apache section | What it contains | Edoxen equivalent
+
+| 1. Call to order | Time, quorum recognition, venue ("via Zoom"), backup channel | `MinutesSection.kind=opening`; `Meeting.virtual[]` populated
+| 2. Roll Call | Directors present / absent; Officers present / absent; Guests | `Attendance[]` with `role: director | officer | guest`
+| 3. Minutes from previous | Each prior meeting's status (Approved by General Consent / Tabled) | `MinutesSection.kind=approval` referencing prior `Meeting` URN
+| 4. Executive Officer Reports | Chair, President, Treasurer, Secretary, EVP, VP, Vice Chair | `MinutesSection.kind=report, role=…`
+| 5. Additional Officer Reports | VP W3C, Infra, Travel Assistance, etc. | (same as 4, for non-executive officers)
+| 6. Committee Reports | Brand, Legal, Marketing, Fundraising, etc. | `MinutesSection.kind=report, committee=…`
+| 7. Special Orders | Formal motions ("Establish the Apache X Project") | `MinutesSection.kind=motion` + `Resolution` with `<Resolution>`
+| 8. Discussion Items | Topics for discussion, no vote | `MinutesSection.kind=discussion`
+| 9. Review Outstanding Action Items | Past action items + status | `MinutesSection.kind=action_review` + `Deadline`
+| 10. Unfinished Business | Tabled items from prior meetings | `MinutesSection.kind=continuation`
+| 11. New Business | New items raised this meeting | `MinutesSection.kind=motion` (new) or `discussion`
+| 12. Announcements | Non-actionable notifications | `MinutesSection.kind=announcement`
+| 13. Adjournment | Time the meeting ended | `MinutesSection.kind=closing`
+|===
+
+
+== Roll Call — first real example (verbatim, abbreviated)
+
+  2. Roll Call
+
+    Directors Present:
+        Zili Chen
+        Shane Curcuru
+        Christofer Dutz
+        Emmanuel Lécharny
+        Justin Mclean
+        Jean-Baptiste Onofré
+        Christopher Schultz
+        Greg Stein
+        Sander Striker
+
+    Directors Absent:
+        none
+
+    Executive Officers Present:
+        Craig McClanahan
+        Ruth Suehle
+        Craig L Russell
+        Daniel Ruggeri
+
+    Executive Officers Absent:
+        Matt Sicker
+
+    Guests:
+        Daniel Gruno
+        Alin Jerpelea
+        Paul King
+        ... (17 guests total)
+
+This is a four-tier attendance structure: Directors (board
+members), Executive Officers (paid staff), Additional Officers,
+Guests (observers). Edoxen's `Attendance.role` currently has a
+single enum (`present` / `absent` / `apologies` / `observer` /
+`excused`); ASF data forces a richer structure:
+
+  Attendance {
+    person: Person
+    role: Enum {
+      chair,                  // chair of this meeting
+      director,               // voting board member
+      executive_officer,      // paid staff (CEO, CFO, ...)
+      officer,                // appointed officer (Secretary, Treasurer)
+      guest,                  // observer, non-voting
+    }
+    partstat: Enum { present, absent, apologies, excused }
+    affiliation: String?       // PMCs the director represents
+  }
+
+
+== Officer roles — the second tier of corporate governance
+
+The ASF Board has a full officer hierarchy absent from standards-
+body references:
+
+  - Board Chair (Sander Striker)              — runs the meeting
+  - President (Ruth Suehle)                   — chief executive
+  - Treasurer (Craig McClanahan)              — financials
+  - Secretary (Matt Sicker)                   — minutes, records
+  - Executive Vice President (Daniel Ruggeri)
+  - Vice Chair (Justin Mclean)
+  - VPs (W3C Relations, Infrastructure, ...)
+  - Executive Officers (paid staff)
+
+Edoxen's `Meeting` model has:
+  - chair: Person
+  - secretary: Person
+  - host: String
+
+Missing: president, treasurer, vp, executive_officer, vice_chair.
+
+ASF data forces adding these as optional fields, OR a
+generic `Meeting.officers[]: {role, person}` array that
+captures all officer roles by name. The array form is
+cleaner — it scales to orgs with 3 officers or 30.
+
+
+== Special Orders (formal motions/resolutions) — verbatim
+
+  7. Special Orders
+
+    A. Establish the Apache Magpie Project
+
+       WHEREAS, the Board of Directors deems it to be in the best
+       interests of the Foundation and consistent with the
+       Foundation's purpose to establish a Project Management
+       Committee charged with the creation and maintenance of
+       open-source ...
+
+       Special Order 7A, Establish the Apache Magpie Project, was
+       tabled.
+
+    B. Establish the Apache Livy Project
+
+       WHEREAS, the Board of Directors deems it to be in the best
+       interests of the Foundation and consistent with the
+       Foundation's purpose to establish a Project Management
+       Committee ...
+
+       Special Order 7B, Establish the Apache Livy Project, was
+       approved by Unanimous Vote of the directors present.
+
+The Special Order pattern is the corporate equivalent of
+standards-body resolutions. It carries:
+
+- Identifier (7A, 7B, 7C, …)
+- Title ("Establish the Apache Livy Project")
+- Preamble (WHEREAS clauses — equivalent to Edoxen `Consideration`)
+- Outcome phrase ("approved by Unanimous Vote", "tabled",
+  "approved by General Consent")
+
+Outcome-phrase vocabulary (observed across the corpus):
+
+- `approved by Unanimous Vote`
+- `approved by General Consent` (no objections)
+- `approved by Majority Vote`
+- `tabled` (deferred to a later meeting)
+- `withdrawn`
+- `failed`
+
+Maps onto Edoxen `Resolution.outcome` + new
+`VoteRecord.outcome` enum values. Edoxen currently has
+`ApprovalType` (`affirmative`, `negative`, etc.) but the
+outcome phrasing on a Special Order is a separate concept
+(it's about the MOTION's fate, not individual votes).
+
+
+== WHEREAS clause structure (preamble)
+
+Each Special Order begins with WHEREAS clauses:
+
+  WHEREAS, the Board of Directors deems it to be in the best
+  interests of the Foundation and consistent with the Foundation's
+  purpose to establish a Project Management Committee charged with
+  the creation and maintenance of open-source ...
+
+This is a *finding* or *preamble* — the justification before the
+operative clause. Standards-body references use different words
+(`considering`, `noting`, `recognizing`) but the structure is
+identical.
+
+Direct map onto Edoxen `Resolution.localizations[].considerations`
+which today carries "considering / pursuant / noting / taking
+into account" sub-types. ASF uses only WHEREAS but the structural
+slot is the same.
+
+
+== Logistics / virtual-meeting details
+
+The opening paragraph of every recent ASF meeting:
+
+  1. Call to order
+
+    The meeting was scheduled for 21:00 UTC and began at 21:02 when
+    a sufficient attendance to constitute a quorum was recognized by
+    the chair.
+
+            Other Time Zones: https://www.timeanddate.com/worldclock/fixedtime.html?iso=2026-05-20T21:00:00&msg=ASF+Board+Meeting
+
+    The meeting was held via teleconference, hosted by the Secretary
+    via Zoom.
+
+    The #asfboard channel on the-asf.slack.com was used for backup.
+
+This is the canonical mixed-mode meeting preamble. Concrete
+fields extractable:
+
+- Scheduled start time (UTC)        → `Meeting.date_range.start`
+- Actual start time (UTC)           → `Meeting.actual_start` (new)
+- Quorum recognition                → (informational; not modeled)
+- Venue (teleconference / Zoom)     → `Meeting.virtual_access[]`
+- Backup channel (Slack)            → `Meeting.backup_channel` (new)
+- World-clock link                  → `Meeting.attached_urls[]`
+
+The "scheduled vs actual" distinction is real and load-bearing
+for parliamentary / corporate minutes — standards-body
+references don't show it, but every ASF minutes does. New field
+proposed: `Meeting.actual_start: DateTime` and
+`Meeting.actual_end: DateTime` (already partially in
+`ScheduleItem`).
+
+
+== What ASF data forces onto the Edoxen Meeting model
+
+Concrete additions:
+
+- `Meeting.officers[]: {role, person}` — replaces single
+  `chair`/`secretary` with a typed officers array; supports
+  chair, president, treasurer, secretary, vp, executive_officer,
+  vice_chair, and any org-specific role.
+- `Attendance.role: Enum {director, officer, executive_officer,
+  guest, observer, attendee}` — richer than current single-axis
+  enum.
+- `MinutesSection.kind: Enum {opening, roll_call, approval,
+  report, motion, discussion, action_review, continuation,
+  announcement, closing}` — based on the 13-section ASF order;
+  Edoxen today has no `kind` on `MinutesSection`.
+- `MinutesSection.committee: String?` — for committee reports
+  (Brand, Legal, Marketing, ...)
+- `MinutesSection.outcome_phrase: String?` — verbatim outcome
+  text ("approved by Unanimous Vote", "tabled", "withdrawn")
+- `Meeting.actual_start: DateTime` + `Meeting.actual_end:
+  DateTime` (start/end vs scheduled time)
+- `Meeting.backup_channel: String?` — secondary comms channel
+  ("Slack #asfboard")
+- `Meeting.is_quorum: Boolean?` — set at Call to Order
+- `Resolution.outcome_phrase: String?` — verbatim outcome text
+  from the motion section
+- New `Motion` entity (or boolean flag on `Resolution`):
+  separates the *proposal* (which may be tabled or withdrawn)
+  from the *resolution* (what was adopted)
+
+
+== What ASF does NOT have (and Edoxen must keep)
+
+1. **Multi-day / multi-track / multi-session.** ASF Board is a
+   single 1-hour monthly call, no parallel sessions. The
+   multi-day model comes from IETF (see `references/ietf.adoc`).
+
+2. **Detailed agenda with timing.** ASF has a fixed 13-section
+   order; agenda items don't carry time budgets or presenters.
+   The IETF agenda with durations and presenters is the
+   load-bearing reference for that.
+
+3. **Virtual meeting access URIs.** The minutes SAY "via Zoom"
+   but the actual join URL is not recorded in the minutes (it's
+   in the separate calendar invitation, which is not
+   public). iCalendar's CONFERENCE property captures the URIs
+   properly.
+
+4. **Conference series / tracks.** The ASF meeting is one of
+   ~12 per year, but they're not modeled as a series — each
+   meeting has its own identifier. Series modeling (MeetingSeries)
+   comes from IETF.
+
+5. **Per-attendee partstat (RSVP).** ASF records attendance
+   retroactively (present/absent), not RSVP state (accepted/
+   declined/tentative). iCalendar captures the RSVP layer.
+
+
+== Net contribution to Edoxen
+
+ASF minutes are the *corporate-board formal minutes with motions
+and resolutions* reference. Adopting it forces the corporate-
+governance layer into Edoxen:
+
+- Officers array (chair/president/treasurer/secretary/vp/...)
+- Attendance roles (director/officer/guest/observer)
+- 13-section agenda template (Call to Order → Adjournment)
+- MinutesSection kind enum
+- Outcome phrase as verbatim text on motions
+- Actual vs scheduled time tracking
+- WHEREAS preamble on formal orders (where Edoxen already
+  supports it via `consideration`)
+
+Combined with the other references, Edoxen now has full
+coverage of:
+
+1. **iCalendar** — scheduling, recurrence, virtual access
+2. **Schema.org Event** — public-web identity, status, capacity
+3. **Akoma Ntoso** — parliamentary record structure
+4. **IETF** — multi-day, multi-track, multi-session
+5. **Apache ASF** — corporate-board formal minutes with motions
+6. **ISO/ITU/BIPM/ILO/OIML** — standards-body resolutions (existing)

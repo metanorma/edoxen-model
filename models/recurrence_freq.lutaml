@@ -1,0 +1,9 @@
+enum RecurrenceFreq {
+  secondly
+  minutely
+  hourly
+  daily
+  weekly
+  monthly
+  yearly
+}

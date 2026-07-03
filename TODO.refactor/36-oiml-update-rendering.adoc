@@ -1,0 +1,39 @@
+= 36 — OIML: Update rendering code with /frontend-design
+
+== Why
+
+`oimlsmart/resolutions-data/browser/` has rendering code (likely Vue or similar). Update for new model + redesign with /frontend-design skill.
+
+== Files to update
+
+- `browser/` (entire directory)
+- `scripts/` (rendering scripts if any)
+
+== Approach
+
+1. Invoke `/frontend-design` skill
+2. Audit existing browser/ structure
+3. Map new model fields to UI components:
+   - Decision list / detail
+   - Meeting list / detail
+   - Motion timeline
+   - Voting results display (ayes/noes visual)
+   - Officer roster
+   - Venue display (physical + virtual hybrid)
+4. Redesign for distinctive, accessible UX
+
+== Specific rendering needs
+
+- **Voting results**: visualize ayes/noes/abstentions with bar chart or pie
+- **Motion timeline**: state machine transitions
+- **Decision lifecycle**: draft → proposed → decided
+- **Polymorphic Venue display**: physical address + map + virtual join links
+- **Multi-lingual**: EN/FR toggle (OIML is bilingual)
+
+== Acceptance criteria
+
+- All new model fields renderable
+- Frontend redesigned (not generic)
+- Accessibility WCAG 2.1 AA
+- Mobile-responsive
+- Bilingual EN/FR

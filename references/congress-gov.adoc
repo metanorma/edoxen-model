@@ -1,0 +1,264 @@
+US Congressional Meetings and Hearings
+======================================
+
+Source: GovInfo.gov (U.S. Government Publishing Office),
+the official source for US Congressional publications.
+
+Collection: Congressional Hearings (CHRG)
+https://www.govinfo.gov/app/collection/chrg
+Metadata schema documentation:
+https://www.govinfo.gov/help/chrg
+
+The Edoxen model adopts govinfo CHRG as the canonical
+record shape for *government / legislative committee
+meetings* — including hearings, markups, and oversight
+sessions of House, Senate, and joint committees.
+
+
+== What a Congressional Hearing is (per GovInfo)
+
+From https://www.govinfo.gov/help/chrg (verbatim):
+
+> A hearing is a meeting or session of a Senate, House,
+> joint, or special committee of Congress, usually open
+> to the public, to obtain information and opinions on
+> proposed legislation, conduct an investigation, or
+> evaluate/oversee the activities of a government
+> department or the implementation of a Federal law.
+> In addition, hearings may also be purely exploratory
+> in nature, providing testimony and data about topics
+> of current interest.
+
+Coverage:
+
+- GovInfo has select House and Senate hearings for the
+  104th Congress (1995–96) forward.
+- Most congressional hearings are published two months to
+  two years after they are held.
+- Not all hearings are released on GovInfo — the publishing
+  decision belongs to each committee.
+
+
+== Canonical CHRG metadata schema (verbatim from govinfo.gov/help/chrg)
+
+These are the search-indexed fields govinfo exposes for
+every Congressional Hearing. Edoxen adopts them as the
+canonical *government-meeting* schema, with one addition
+(see "What GovInfo CHRG lacks" below).
+
+| Field              | Example value                                  | Notes |
+|--------------------|------------------------------------------------|-------|
+| `language`         | `eng`                                          | ISO 639 |
+| `ilsid`            | `000943346`                                    | GPO ILS — not transferable |
+| `sudocclass`       | `"y 4.c 73/8:"`                                | SuDoc class stem (SuDocs of government publications) |
+| `ingestdate`       | `2009-12-29`                                   | When ingested into preservation repo |
+| `url`              | `"/pkg/CHRG-109hhrg30415/pdf/CHRG-109hhrg30415.pdf"` | Electronic location |
+| `publisher`        | `"u.s. government publishing office"`          | |
+| `branch`           | `legislative`                                  | Values: executive, legislative, judicial |
+| `typeofresource`   | `text`                                         | MODS standard |
+| `waisdbname`       | `"109_senate_hearings"`                        | Legacy GPO Access database name |
+| `recordorigin`     | `"machine generated"`                          | |
+| **`title`**        | `(railroad safety)`                            | |
+| **`congress`**     | `110`                                          | 110th = 2007–2008 |
+| **`session`**      | `1` or `2`                                     | First or second session |
+| **`chamber`**      | `house` / `senate`                             | Plus `joint` for joint hearings |
+| **`hearingnum`**   | `20`                                           | Number within committee/subcommittee |
+| `doctype`          | `hhrg` / `shrg`                                | House or Senate Report code |
+| **`hearingsubtype`** | Field, markup, oversight, authorization, appropriation, nomination, treaty, general | Single-letter codes: `f`, `m`, `o`, `au`, `ap`, `n`, `t`, `g` |
+| `isappropriation`  | `true` / `false`                               | |
+| `isnomination`     | `true` / `false`                               | |
+| `heading`          | `"part 2"`, `"volume 1"`, `"errata"`           | Multi-part hearing identifier |
+| **`dateheld`**     | `2005-05-26`                                   | Date(s) hearing was held |
+| **`committee`**    | `transportation`                               | Committee name |
+| **`subcommittee`** | `aviation`                                     | If applicable |
+| `member`           | `clinton`                                      | Members present (no full attendee list — see below) |
+| `hearingagency`    | `agriculture`                                  | For appropriation hearings |
+| `nominee`          | `portman`                                      | Nomination hearings only |
+| `nominee_position` | (positions being nominated)                    | Nomination hearings only |
+
+Three properties Edoxen must add (they are structurally
+implied but not explicit in govinfo CHRG):
+
+- `witnesses: Person[]` — persons who testified. GovInfo
+  records them only inside the PDF; they are not in the
+  search-indexed metadata. Edoxen must extract and model.
+- `related_legislation: BillRef[]` — bills under
+  consideration (joint committee print, related CRPT, or
+  bill number mentioned). Not in CHRG schema; common in
+  associated CPRT and BILLSTATUS records.
+- `transcript_url: String` — separate from the hearing PDF,
+  the verbatim transcript (when published).
+
+
+== Hearing subtype taxonomy (load-bearing for Edoxen `meeting_type`)
+
+The CHRG `hearingsubtype` enumeration is the most
+authoritative government-meeting taxonomy we have:
+
+  f   Field         — held outside Washington, at the site
+                       of the matter under investigation
+  m   Markup        — committee session to mark up
+                       (amend) a bill before reporting it out
+  o   Oversight     — review of executive-branch activities
+  au  Authorization — review of agency authorization bills
+  ap  Appropriation — review of agency budget requests
+  n   Nomination    — confirmation hearings for executive
+                       appointments and judicial nominations
+  t   Treaty        — Senate advice and consent on treaties
+  g   General       — catch-all for exploratory / informational
+
+This taxonomy is *categorically distinct* from Edoxen's
+current `meeting_type.lutaml` enum:
+
+  Edoxen current:                  CHRG-aligned:
+  - plenary                        - (no equivalent — chrg
+  - working_group                     doesn't have plenary
+  - task_group                        meetings; House/Senate
+  - ad_hoc                            floor sessions live in
+  - joint                             CREC, not CHRG)
+  - conference_session
+
+The right move is to extend Edoxen's `MeetingType` with the
+CHRG subtypes (and a `floor_session` for CREC). Mapping:
+
+| Edoxen current | CHRG equivalent |
+|---|---|
+| `plenary`         | (House/Senate floor; lives in CREC) |
+| `working_group`   | `g` (General committee hearing) |
+| `task_group`      | `o` (Oversight) or `g` |
+| `ad_hoc`          | `o` (Oversight, ad-hoc committee) |
+| `joint`           | CHRG chamber=`joint` |
+| `conference_session` | (no equivalent — this is a misnomer for a plenary-grade constitutional meeting; rename to `general_assembly` per existing Gap 1 from scope discussion) |
+| —                 | `m` (Markup)        |
+| —                 | `au` (Authorization) |
+| —                 | `ap` (Appropriation) |
+| —                 | `n` (Nomination)    |
+| —                 | `t` (Treaty)        |
+| —                 | `f` (Field)         |
+
+
+== Chamber / Branch / Session (load-bearing for Edoxen)
+
+The Edoxen Meeting model needs to express *legislative
+position* explicitly when the meeting is a Congressional
+committee session. The CHRG schema provides the canonical
+fields:
+
+- `Meeting.legislative.chamber: Enum {house, senate, joint}`
+  — directly from `chamber`
+- `Meeting.legislative.congress_number: Integer` — from
+  `congress` (110th Congress = 2007–2008)
+- `Meeting.legislative.session: Integer (1|2)` — from
+  `session`
+- `Meeting.legislative.branch: Enum {legislative, ...}` —
+  from `branch` (almost always `legislative` for CHRG;
+  exists for cross-domain future use)
+- `Meeting.legislative.committee: String`
+- `Meeting.legislative.subcommittee: String`
+- `Meeting.legislative.hearing_number: Integer` (from
+  `hearingnum`)
+- `Meeting.legislative.is_appropriation: Boolean`
+- `Meeting.legislative.is_nomination: Boolean`
+- `Meeting.legislative.heading: String` ("part 2",
+  "volume 1", "errata")
+
+For the broader Edoxen model (post-broadening), this
+suggests a new top-level entity:
+
+  Meeting
+    legislative: MeetingLegislative[0..1]
+      chamber, congress_number, session,
+      committee, subcommittee,
+      hearing_number, heading,
+      is_appropriation, is_nomination,
+      related_legislation, witnesses
+
+That keeps the standards-body side (ISO, ITU, OIML, ILO)
+unchanged — they have no legislative sub-structure — and
+adds the government dimension cleanly. Alternatively the
+fields could live directly on `Meeting`, but the `legislative`
+sub-object keeps the model clean for non-government meetings.
+
+
+== What GovInfo CHRG does NOT have
+
+1. **Witness lists as a structured field.** Witnesses are
+   only in the published PDF. The `nominee` field exists
+   for nomination hearings but is unstructured (just a
+   search term). Edoxen must extract witnesses from PDFs
+   or accept them as derived/curated input.
+
+2. **Attendee roll-call.** Members of Congress present at
+   a hearing appear in `member[]` but only as search terms
+   (last name). No structured attendance record, no party,
+   no vote record per member.
+
+3. **Vote records.** Committee markups produce votes, but
+   the CHRG record carries only the hearing as a whole —
+   individual member positions are not exposed.
+
+4. **Agenda items.** Like iCalendar, the CHRG schema
+   captures *when* and *where* the hearing happened, plus
+   *who* sponsored it, but not the ordered list of bills
+   considered or witnesses heard. The agenda lives in the
+   committee's own notice, which is often distributed as a
+   separate PDF.
+
+5. **Virtual / hybrid attendance.** Congressional hearings
+   became hybrid during COVID-19 (2020–2022) and a number
+   of committees now routinely allow remote testimony. The
+   CHRG schema is silent on this dimension.
+
+6. **Officers beyond chair / ranking member.** CHRG records
+   identify the committee (which implies the chair and
+   ranking member) but does not surface officers as a
+   structured field. Edoxen's `chair` / `secretary`
+   abstraction still applies.
+
+
+== Net contribution to Edoxen
+
+Concrete additions CHRG forces onto the Edoxen Meeting model:
+
+- New enum `LegislativeChamber = {house, senate, joint}`
+  (and likely `floor` for CREC)
+- New enum `HearingSubtype = {field, markup, oversight,
+  authorization, appropriation, nomination, treaty,
+  general}` aligned to CHRG codes
+- New optional block `Meeting.legislative: MeetingLegislative`
+  carrying chamber / congress_number / session / committee
+  / subcommittee / hearing_number / heading / boolean flags
+- Edoxen's existing `MeetingType` extended (per the mapping
+  table above) — `markup`, `appropriation`, `nomination`,
+  `treaty`, `field` added as first-class values
+- `Meeting.witnesses: Person[]` (new) — for proceedings
+  where testimony is given, even outside government
+- `Meeting.related_legislation: BillRef[]` (new) — for
+  linking to bills, motions, or measures under consideration
+
+The legislative sub-block is the cleanest way to model
+"this meeting is part of a recurring committee + Congress"
+without polluting the corporate / community / scientific
+Meeting shape. Standards bodies and academic conferences
+will simply not populate it.
+
+
+== How Edoxen relates to GovInfo CHRG
+
+- Edoxen `Meeting.legislative.chamber` / `congress_number` /
+  `session` / `committee` / `subcommittee` / `hearing_number`
+  ↔ CHRG `chamber` / `congress` / `session` / `committee` /
+  `subcommittee` / `hearingnum` (1:1)
+- Edoxen `Meeting.urn` (existing) ↔ constructed
+  `urn:gpo:chrg:{congress}{chamber}{hearingnum}:{heading}`
+  (1:1)
+- Edoxen `Meeting.source_urls[]` (existing) ↔ CHRG `url`
+  (the PDF on GovInfo)
+- Edoxen `Meeting.date_range` (existing) ↔ CHRG `dateheld`
+  (which is "date or dates on which the hearing occurred")
+- Edoxen `Meeting.title` (per-language) ↔ CHRG `title`
+
+This makes Edoxen an interoperable front for CHRG: any
+CHRG record can be losslessly mapped into Edoxen, and
+Edoxen Meetings can be published back to CHRG-compatible
+output (PDF + URN + chamber-coded metadata).

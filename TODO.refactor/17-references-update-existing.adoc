@@ -1,0 +1,85 @@
+= 17 — Update existing references with generic-core mapping
+
+== Why
+
+The 8 reference docs (icalendar, schema-org-event, akoma-ntoso,
+ietf, apache-board, congress-gov, hansard, crossref-conference)
+were written BEFORE the generic-core redesign. Their "Net
+contribution to Edoxen" sections propose additions that need
+to be re-mapped to the new core (Decision, Motion, Voting,
+Venue, etc.) instead of the old (Resolution, virtual: Boolean,
+etc.).
+
+== Files to update
+
+- `references/icalendar.adoc`
+- `references/schema-org-event.adoc`
+- `references/akoma-ntoso.adoc`
+- `references/ietf.adoc`
+- `references/apache-board.adoc`
+- `references/congress-gov.adoc`
+- `references/hansard.adoc`
+- `references/crossref-conference.adoc`
+
+== Update pattern
+
+For each reference:
+
+1. Update "Net contribution to Edoxen" section to use new
+   entity names (Decision not Resolution; MeetingComponent not
+   Track; Venue polymorphic not Location+VirtualAccess)
+2. Add "Profile mapping" subsection showing which reference
+   concepts become profile extensions (e.g., LegCo's Petition
+   → MeetingExtension with profile="legco" kind="petition")
+3. Cross-link to relevant TODO files where appropriate
+
+== Specific updates
+
+=== icalendar.adoc
+- `Meeting.virtual: VirtualAccess[]` → `Venue{kind=virtual}` polymorphic
+- `AttendanceRole`, `AttendanceResponse` (not PARTSTAT) — already correct
+- `Recurrence` references ISO 8601-2 (not RRULE) — add cross-link to TODO 10
+
+=== schema-org-event.adoc
+- `eventAttendanceMode` → derived from `Meeting.venues[].kind` (not separate field)
+- `VirtualLocation` → `Venue{kind=virtual}`
+
+=== akoma-ntoso.adoc
+- `<debateRecord>` → `MeetingComponent{kind=debate}`
+- `<event>` → `Meeting`
+- `<minutes>` → `Minutes`
+
+=== ietf.adoc
+- "session" → `MeetingComponent{kind=session}`
+- "track" → `MeetingComponent{kind=track}`
+- "BoF" → `MeetingComponent{kind=bof}`
+
+=== apache-board.adoc
+- "officer" → `Officer` with role
+- "resolution" → `Decision{kind=resolution}`
+
+=== congress-gov.adoc
+- "witness" → `MeetingExtension{profile=us-congress, kind=witness}` OR
+  `Person{kind=witness}` (decide)
+- "hearing subtype" → `MeetingExtension{profile=us-congress, kind=hearing-subtype}`
+  with `attributes: [{key: subtype, value: markup}]`
+- "bill" → `TopicDocument` with `kind="bill"` extension
+
+=== hansard.adoc (HK LegCo)
+- "Rundown" → `AgendaItem` (with `seq`, `bookmark`, `section_code` as extensions)
+- "Subjects with ResumptionOf" → `Topic.resumption_of`
+- "Speeches" → `MinutesSection` with speech-level granularity
+- All LegCo-specific entities (Bill, Petition, Address, Statement, Question,
+  VotingResult, SummoningBell) → profile extensions (see TODO 16)
+
+=== crossref-conference.adoc
+- `event` block → `Meeting` core fields (acronym, location, sponsors)
+- `proceedings-series` → `MeetingSeries`
+- Crossref DOI → `Meeting.source_urls[]` with `kind=crossref_doi`
+
+== Acceptance criteria
+
+- All 8 reference docs updated
+- Each has a "Profile mapping" subsection
+- No remaining references to removed concepts (VirtualAccess as separate
+  class, MeetingDocument, etc.)

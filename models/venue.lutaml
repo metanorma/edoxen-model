@@ -1,0 +1,11 @@
+class Venue {
+  kind: VenueKind
+  name: String
+  label: String
+  description: String
+  capacity: Integer
+  url: String
+  physical: PhysicalDetails
+  virtual: VirtualDetails
+  extensions: MeetingExtension[0..*]
+}

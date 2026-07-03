@@ -1,0 +1,54 @@
+= 23 — Gem: Add new model classes
+
+== Why
+
+Mirror the LutaML model in Ruby. Every LutaML class becomes a Ruby class using `lutaml-model`.
+
+== Files to create
+
+Mirror of TODOs 01-10 in `lib/edoxen/`:
+- `venue.rb`, `physical_details.rb`, `virtual_details.rb`
+- `decision.rb` (rename of resolution.rb)
+- `motion.rb`
+- `voting.rb`, `voting_counts.rb`
+- `topic.rb`, `topic_document.rb`, `topic_asset.rb`
+- `meeting_series.rb`
+- `meeting_component.rb`
+- `officer.rb`
+- `meeting_extension.rb`, `extension_attribute.rb`
+- `recurrence.rb`, `recurrence_by_day.rb`
+
+== Files to rename
+
+- `resolution.rb` → `decision.rb`
+- `resolution_collection.rb` → `decision_collection.rb`
+- `resolution_metadata.rb` → `decision_metadata.rb`
+- `resolution_date.rb` → `decision_date.rb`
+- `resolution_relation.rb` → `decision_relation.rb`
+
+== Pattern (lutaml-model)
+
+```ruby
+module Edoxen
+  class Decision < Lutaml::Model::Serializable
+    attribute :identifier, StructuredIdentifier, collection: true
+    attribute :urn, :string
+    attribute :kind, DecisionKind
+    attribute :status, DecisionStatus
+    # ...
+
+    mapping do
+      map :identifier, to: :identifier
+      map :urn, to: :urn
+      # ...
+    end
+  end
+end
+```
+
+== Acceptance criteria
+
+- All new LutaML entities have Ruby class counterparts
+- All renamed entities have Ruby class rename (no Resolution class left)
+- All classes use lutaml-model (no hand-rolled to_h/from_h)
+- All classes registered for autoload in lib/edoxen.rb (TODO 21)

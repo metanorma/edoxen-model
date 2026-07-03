@@ -1,0 +1,83 @@
+= 05 — Topic / TopicDocument / TopicAsset
+
+== Why
+
+User (2026-07-03): "TopicDocument/TopicAsset is better than
+MeetingDocument? Agenda points to a Topic (one or more, each
+with one or more TopicDocument?)? e.g. it's an image or dataset?
+Or just points to Reference objects?"
+
+Three distinct concepts:
+- **Topic** — the subject of discussion (a bill, a project, an issue)
+- **TopicDocument** — text-bearing document about the topic (bill text,
+  ISO draft, report)
+- **TopicAsset** — non-text resource (image, dataset, model, video)
+
+A Topic can have 0 or more of each. AgendaItem points to Topics.
+
+== Files to create
+
+- `models/topic.lutaml`
+- `models/topic_status.lutaml`
+- `models/topic_document.lutaml`
+- `models/topic_asset.lutaml`
+
+== Schema
+
+```lutaml
+class Topic {
+  identifier: String
+  urn: String
+  title: String
+  description: String
+  status: TopicStatus
+  resumption_of: String[0..1]          # URN of prior Topic (cross-meeting threading)
+  documents: TopicDocument[0..*]
+  assets: TopicAsset[0..*]
+  references: Reference[0..*]
+  motions: String[0..*]                 # URNs → Meeting.motions
+  decisions: String[0..*]               # URNs → Meeting.decisions
+  extensions: MeetingExtension[0..*]
+}
+
+class TopicDocument {
+  identifier: String
+  title: String
+  version: String
+  status: String                        # draft | final | superseded
+  url: String
+  format: String                        # pdf | docx | html | ...
+  language_code: String                 # ISO 639-3
+  localizations: TopicDocumentLocalization[0..*]
+  extensions: MeetingExtension[0..*]
+}
+
+class TopicAsset {
+  identifier: String
+  title: String
+  kind: String                          # image | dataset | model | video | ...
+  url: String
+  format: String
+  extensions: MeetingExtension[0..*]
+}
+
+enum TopicStatus {
+  open,
+  under_discussion,
+  decided,
+  deferred,
+  withdrawn
+}
+```
+
+== Dependencies
+
+- TODO 09 (MeetingExtension)
+- Existing `models/reference.lutaml` (keep; Topic references it)
+
+== Acceptance criteria
+
+- Three classes: Topic, TopicDocument, TopicAsset
+- Topic has `resumption_of` for cross-meeting threading (LegCo pattern)
+- TopicStatus has 5 values
+- AgendaItem.topics[] is `Topic[0..*]` (0 allowed — AOB)

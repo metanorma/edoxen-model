@@ -1,0 +1,33 @@
+= 28 — Gem: Update RBS signatures
+
+== Why
+
+The gem has `sig/edoxen.rbs` (Ruby Signature file for type checking). Must reflect new model.
+
+== Files to modify
+
+- `sig/edoxen.rbs`
+
+== Pattern
+
+```rbs
+module Edoxen
+  class Decision < Lutaml::Model::Serializable
+    attr_reader identifier: Array[StructuredIdentifier]
+    attr_reader urn: String?
+    attr_reader kind: DecisionKind
+    attr_reader status: DecisionStatus
+    # ...
+  end
+
+  class DecisionKind < Lutaml::Model::Type::Enum
+  end
+end
+```
+
+== Acceptance criteria
+
+- RBS for all new classes
+- RBS for all new enums
+- `bundle exec rbs validate` passes
+- Steep type checking passes (if configured)

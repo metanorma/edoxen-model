@@ -1,0 +1,90 @@
+= 04 — Voting: state machine with methods and outcomes
+
+== Why
+
+User (2026-07-03): "did you consider things like voting, call
+for voting, voting status?"
+
+The current model has `VoteRecord` (one person's vote) but no
+`Voting` entity to group them with state, method, and outcome.
+Parliamentary procedure has a real state machine:
+
+  question put → voting in progress → result declared
+
+Multiple votings can occur on the same motion (voice vote
+unclear → chair calls a formal division → that's a second
+Voting instance).
+
+== Files to create
+
+- `models/voting.lutaml`
+- `models/voting_status.lutaml`
+- `models/voting_method.lutaml`
+- `models/voting_outcome.lutaml`
+- `models/voting_counts.lutaml`
+
+== Schema
+
+```lutaml
+class Voting {
+  identifier: String
+  urn: String
+  on_motion: String                     # URN of the Motion
+  status: VotingStatus
+  method: VotingMethod
+  called_by: Person                     # chair or mover who put question
+  called_at: DateTime
+  result_declared_at: DateTime[0..1]
+  result: VotingOutcome[0..1]           # null until decided
+  counts: VotingCounts[0..1]            # null until decided
+  casting_vote: VoteRecord[0..1]        # chair's tie-breaker
+  vote_records: VoteRecord[0..*]        # canonical location
+  extensions: MeetingExtension[0..*]
+}
+
+class VotingCounts {
+  ayes: Integer
+  noes: Integer
+  abstentions: Integer
+  absent: Integer
+}
+
+enum VotingStatus {
+  called,           # chair has put the question
+  in_progress,      # members voting
+  decided,          # result declared
+  withdrawn,        # motion withdrawn mid-vote
+  deferred          # voting postponed
+}
+
+enum VotingMethod {
+  voice,                 # "all those in favor say aye"
+  division,              # formal walk-through lobbies
+  show_of_hands,
+  roll_call,             # named members called in order
+  electronic,
+  secret_ballot,
+  unanimous_consent,     # passed without formal vote
+  consensus              # informal consensus
+}
+
+enum VotingOutcome {
+  passed,
+  negatived,
+  tied,
+  withdrawn
+}
+```
+
+== Dependencies
+
+- TODO 03 (Motion)
+- TODO 09 (MeetingExtension)
+- Existing `models/vote_record.lutaml` (keep; Voting references it)
+
+== Acceptance criteria
+
+- `models/voting.lutaml` defines Voting with state machine
+- 5 voting methods + 4 outcomes + 5 statuses
+- `Voting.vote_records[]` is canonical (Meeting.vote_records REMOVED — derivable)
+- `Voting.casting_vote` is a single VoteRecord (chair's tie-breaker)

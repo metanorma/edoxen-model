@@ -1,0 +1,426 @@
+Schema.org Event
+=================
+Schema.org (https://schema.org/) is the public-web vocabulary
+jointly maintained by Google, Microsoft, Yahoo, and Yandex. It is
+the de facto standard for marking up events on web pages, ingested
+by Google Search, Apple Maps, Bing, etc.
+
+Unlike iCalendar (which models *the act of scheduling and being
+invited*), Schema.org models *the public description of an event*.
+Edoxen adopts Schema.org as the *public-web identity layer* for a
+Meeting: title, summary, image, location (physical or virtual URL),
+offers/registration, sub-event / super-event relationships, status
+(postponed/cancelled), and the crucial physical/virtual/hybrid axis.
+
+Schema.org has no agenda, no minutes, no motions. It is a *public
+description vocabulary*. Agenda and minutes stay in Edoxen; Schema.org
+gives us what we currently lack on the web-facing side.
+
+
+== Core type: Event
+
+Source: https://schema.org/Event
+
+   Schema.org Type: Event — An event happening at a certain time
+   and location, such as a concert, lecture, or festival. Ticketing
+   information may be added via the [[offers]] property. Repeated
+   events may be structured as separate Event objects.
+
+Equivalent class:
+
+   owl:equivalentClass: dcmitype:Event
+   (Dublin Core's Event type — schema.org Event IS Dublin Core Event)
+
+Subtypes (from the Event page):
+
+- BusinessEvent
+- ChildrensEvent
+- ComedyEvent
+- ConferenceEvent  ← exactly the user's "conferences" need
+- CourseInstance
+- DanceEvent
+- DeliveryEvent
+- EducationEvent
+- ExhibitionEvent
+- Festival
+- FoodEvent
+- LiteraryEvent
+- MusicEvent
+- PerformingArtsEvent
+- PublicationEvent
+- SaleEvent
+- ScreeningEvent
+- SocialEvent
+- SportsEvent
+- TheaterEvent
+- VisualArtsEvent
+- BroadcastEvent
+- EventSeries  ← THE recurring-series type
+
+So Schema.org already gives us the taxonomy the user asked for:
+"all meetings and agendas (e.g. web conference details also),
+including conferences, meetings, etc." → the root Event type covers
+all of it; subtypes distinguish; EventSeries handles the recurring-
+meeting case directly.
+
+
+== Physical / virtual / hybrid: EventAttendanceModeEnumeration
+
+Source: https://schema.org/EventAttendanceModeEnumeration
+
+Three values, defined exactly as the user flagged:
+
+- OfflineEventAttendanceMode  — in-person only
+- OnlineEventAttendanceMode   — virtual only
+- MixedEventAttendanceMode    — hybrid (physical + virtual)
+
+Property:
+
+   eventAttendanceMode:
+     The eventAttendanceMode of an event indicates whether it
+     occurs online, offline, or a mix.
+
+Used in conjunction with:
+
+- maximumPhysicalAttendeeCapacity (for the in-room cap)
+- maximumVirtualAttendeeCapacity  (for the streaming cap)
+- maximumAttendeeCapacity         (total combined)
+- remainingAttendeeCapacity       (remaining across both)
+
+Direct replacement for Edoxen's current `Meeting.virtual: Boolean`.
+Schema.org's three-way enum + two capacity numbers is a much richer
+expression than a boolean flag.
+
+
+== Event lifecycle: EventStatusType
+
+Source: https://schema.org/EventStatusType
+
+Four values:
+
+- EventScheduled    — confirmed, will happen
+- EventCancelled    — cancelled outright
+- EventPostponed    — postponed (rescheduled not yet known)
+- EventRescheduled  — moved to a different time (use previousStartDate)
+
+Property:
+
+   eventStatus:
+     An eventStatus of an event represents its status; particularly
+     useful when an event is cancelled or rescheduled.
+
+Related property:
+
+   previousStartDate:
+     Used in conjunction with eventStatus for rescheduled or
+     cancelled events. This property contains the previously
+     scheduled start date. For rescheduled events, the startDate
+     property should be used for the newly scheduled start date.
+     In the (rare) case of an event that has been postponed and
+     rescheduled multiple times, this field may be repeated.
+
+Maps cleanly onto Edoxen `MeetingStatus` (currently
+`planned` / `confirmed` / `cancelled` / `completed` / `in_session`)
+with two additions: `postponed` (distinct from cancelled) and
+`rescheduled` (distinct from postponed). The postponed/rescheduled
+distinction matters operationally — "we're postponing" means
+"wait, date TBD"; "we're rescheduling" means "now on date X".
+
+
+== Event series: superEvent / subEvent
+
+   subEvent:
+     An Event that is part of this event. For example, a
+     conference event includes many presentations, each of which
+     is a subEvent of the conference.
+
+   superEvent:
+     An event that this event is a part of. For example, a
+     collection of individual music performances might each have a
+     music festival as their superEvent.
+
+iCalendar models series via RRULE; Schema.org models series via
+subEvent/superEvent links + the EventSeries subtype. Both are
+load-bearing. Edoxen today has neither — it treats every meeting
+as a discrete event. After acquisition, Edoxen adopts
+superEvent/subEvent for one-shot series relationships (e.g.,
+"WSIS Forum 2025 High-Level Track" subEvent of "WSIS Forum 2025")
+and a new `MeetingSeries` entity (or RRULE field) for recurring
+series.
+
+
+== Event properties (selected)
+
+From https://schema.org/Event:
+
+|===
+| Property | Type | Description (verbatim)
+
+| name | Text | (from Thing) The name of the item.
+| description | Text | (from Thing) A description of the item.
+| startDate | Date / DateTime | The start date and time of the item.
+| endDate | Date / DateTime | The end date and time of the item.
+| doorTime | DateTime | The time admission will commence.
+| location | Place / VirtualLocation / Text | The location of the event.
+| eventAttendanceMode | EventAttendanceModeEnumeration | online/offline/mixed.
+| eventStatus | EventStatusType | scheduled/cancelled/postponed/rescheduled.
+| previousStartDate | Date | For rescheduled events.
+| organizer | Organization / Person | An organizer of an Event.
+| attendees | Person | A person attending the event.
+| performer | Person / PerformingGroup | A performer at the event.
+| offers | Offer | Offers to provide this item — for tickets/registration.
+| inLanguage | Language / Text | The language of the content.
+| isAccessibleForFree | Boolean | Indicates if free.
+| keywords | Text | Keywords/tags.
+| typicalAgeRange | Text | The target audience age range.
+| maximumAttendeeCapacity | Integer | Total cap.
+| maximumPhysicalAttendeeCapacity | Integer | Physical-only cap.
+| maximumVirtualAttendeeCapacity | Integer | Virtual-only cap.
+| remainingAttendeeCapacity | Integer | Remaining (live update).
+| subEvent | Event | Sub-events.
+| superEvent | Event | Parent event.
+| image | URL / ImageObject | Image(s) of the event.
+| url | URL | URL of the event.
+| sponsor | Organization / Person | Sponsor.
+| funder | Organization / Person | Funder.
+| about | Thing | Subject matter.
+| actor | Person | (from CreativeWork) An actor (rare for meetings).
+| duration | Duration (ISO 8601) | Duration. Use with startDate to derive endDate.
+| recordedIn | CreativeWork | Where the event is recorded (transcript, video).
+| review | Review | A review of the item.
+| workFeatured / workPerformed | CreativeWork | (rarely for meetings).
+|===
+
+Of these, the load-bearing additions for Edoxen Meeting are:
+
+- `eventAttendanceMode` (3-way enum, replaces `virtual: Boolean`)
+- `eventStatus` (adds postponed/rescheduled to current set)
+- `previousStartDate` (new — for rescheduled events)
+- `organizer` (already in Edoxen as `chair`, but Schema.org allows
+  Person OR Organization — Edoxen today has chair: Person only)
+- `offers` (registration/ ticketing — Edoxen today has
+  `registration_url: String` only; `offers` is structured)
+- `maximumAttendeeCapacity` / `maximumPhysicalAttendeeCapacity` /
+  `maximumVirtualAttendeeCapacity` (new — meeting caps)
+- `remainingAttendeeCapacity` (new — for live updates)
+- `subEvent` / `superEvent` (new — series structure)
+- `isAccessibleForFree` (new — public/free/paid dimension)
+- `inLanguage` (already partially in Edoxen via Localization)
+- `typicalAgeRange` (new — audience scoping)
+- `doorTime` (new — distinguishes doors-open from event-start)
+
+
+== VirtualLocation
+
+Source: https://schema.org/VirtualLocation
+
+   A VirtualLocation is a location established by virtual means,
+   such as a video call or an augmented reality environment. It can
+   be used to specify the URL of a virtual meeting or the URL of a
+   virtual event.
+
+Property:
+- url  — the URL of the virtual location
+
+Used as:
+
+   "location": {
+     "@type": "VirtualLocation",
+     "url": "https://zoom.us/j/123456789"
+   }
+
+vs physical:
+
+   "location": {
+     "@type": "Place",
+     "name": "OIML Headquarters",
+     "address": {
+       "@type": "PostalAddress",
+       "streetAddress": "11 Rue Turgot",
+       "addressLocality": "Paris",
+       "postalCode": "75009",
+       "addressCountry": "FR"
+     }
+   }
+
+vs hybrid (with both):
+
+   "eventAttendanceMode": "https://schema.org/MixedEventAttendanceMode",
+   "location": [
+     {"@type": "Place", "name": "...", "address": {...}},
+     {"@type": "VirtualLocation", "url": "..."}
+   ]
+
+VirtualLocation is essentially the Schema.org counterpart to
+iCalendar's CONFERENCE property. Edoxen already has `Meeting.virtual:
+Boolean`; the real structure is:
+
+   Meeting.virtual_access[]: {
+     kind: Enum {audio_video, phone, chat, in_person},  // CONFERENCE FEATURE
+     uri: String,
+     label: String?  // moderator / attendee / region-specific
+   }
+
+
+== Offer (registration / ticketing)
+
+Source: https://schema.org/Offer
+
+An Offer represents the *availability* of an Event: price, currency,
+URL to buy, availability window, valid-from/to. Used as
+`Event.offers`:
+
+   "offers": {
+     "@type": "Offer",
+     "url": "https://oiml.org/ciml/register",
+     "price": "0",
+     "priceCurrency": "EUR",
+     "availability": "https://schema.org/InStock",
+     "validFrom": "2026-08-01T00:00"
+   }
+
+Edoxen today has `registration_url: String` only — a scalar URL.
+Schema.org's Offer is structured: free vs paid, currency, availability
+window, valid period, sold-out status. Whether Edoxen needs the full
+Offer is a scope decision, but for academic conferences and paid
+webinars it's necessary.
+
+
+== EventSeries
+
+Source: https://schema.org/EventSeries
+
+   A Series of Events. Included events can relate with the
+   superEvent / subEvent relations.
+
+Use cases:
+- "IETF 2026 meetings" (series of 3 per year)
+- "Apache Board meetings" (monthly)
+- "City Council sessions" (recurring)
+
+Direct precedent for an Edoxen `MeetingSeries` entity:
+
+   MeetingSeries {
+     name: String
+     organizer: Person | Organization
+     events: Meeting[]  // 0..* children via superEvent
+   }
+
+
+== Example JSON-LD Event (verbatim from schema.org/Event)
+
+<script type="application/ld+json">
+{
+  "@context" : "https://schema.org",
+  "@type" : "Event",
+  "name" : "Typhoon with Radiation City",
+  "startDate" : "2013-09-14T21:30",
+  "location" : {
+    "@type" : "Place",
+    "sameAs" : "http://www.hi-dive.com",
+    "name" : "The Hi-Dive",
+    "address" : {
+      "@type" : "PostalAddress",
+      "streetAddress" : "7 S. Broadway",
+      "addressLocality" : "Denver",
+      "addressRegion" : "CO",
+      "postalCode" : "80209",
+      "addressCountry" : "US"
+    }
+  },
+  "offers" : {
+    "@type" : "Offer",
+    "url" : "https://www.example.com/event_offer/12345_201803180430",
+    "price" : "13.00",
+    "priceCurrency" : "USD",
+    "availability" : "https://schema.org/InStock",
+    "validFrom" : "2013-08-14"
+  },
+  "performer" : [
+    { "@type" : "Person", "name" : "Typhoon" },
+    { "@type" : "Person", "name" : "Radiation City" }
+  ],
+  "typicalAgeRange" : "18+",
+  "eventStatus" : "https://schema.org/EventScheduled"
+}
+</script>
+
+
+== What Schema.org does NOT have (and Edoxen must keep)
+
+Stated up front because it shapes the boundary:
+
+1. **Agenda items.** Schema.org Event has `description` (one block),
+   `about` (one Thing subject), `keywords` (flat list). No
+   structured numbered list of agenda items with presenters,
+   attachments, outcomes. Edoxen's `Agenda` / `AgendaItem` stay.
+
+2. **Minutes.** `recordedIn` points to a CreativeWork where the
+   record lives — but the record itself (who said what, in what
+   order, with what outcome) is not modeled. Edoxen's `Minutes` /
+   `MinutesSection` stay.
+
+3. **Motions, votes, decisions.** Not in Schema.org at all. The
+   closest is `eventStatus` (cancelled/postponed/etc.) on the whole
+   event and `attendees` as an undifferentiated list. Edoxen's
+   `Resolution`, `VoteRecord`, `Action`, `Approval`, `Consideration`
+   stay.
+
+4. **Officer roles.** `organizer` is one role; nothing for chair,
+   secretary, host, parliamentarian, rapporteur. Edoxen's
+   `chair` / `secretary` / `host` stay.
+
+5. **Recurrence rules.** `subEvent`/`superEvent` model *group
+   relationships*, not recurrence. A weekly standup is N Event
+   objects pointing at each other via superEvent, NOT a recurrence
+   rule. Schema.org punts recurrence back to iCalendar (RRULE).
+
+6. **Participation state per attendee.** `attendees` is just a list.
+   No RSVP state (accepted/declined/tentative), no role
+   (chair/required/optional), no delegation. This is iCalendar's
+   territory.
+
+
+== Net contribution to Edoxen
+
+Schema.org is the *public-web identity + physical/virtual/hybrid
+axis + series structure + registration/offers* layer. Edoxen adopts
+it for these dimensions and keeps its own model for agenda/minutes/
+decisions/officers/recurrence.
+
+Concrete additions Schema.org forces onto the Edoxen Meeting model:
+
+- `Meeting.attendance_mode: Enum {offline, online, mixed}` (from
+  eventAttendanceMode) — replaces `virtual: Boolean`
+- `Meeting.max_attendees: Integer` (total cap)
+- `Meeting.max_physical_attendees: Integer`
+- `Meeting.max_virtual_attendees: Integer`
+- `Meeting.status: Enum` extended to include `postponed`,
+  `rescheduled` (from eventStatus)
+- `Meeting.previous_start_date: Date` (from previousStartDate)
+- `Meeting.is_free: Boolean` (from isAccessibleForFree)
+- `Meeting.virtual_access: VirtualAccess[] {kind, uri, label}`
+  (from VirtualLocation + iCalendar CONFERENCE)
+- `Meeting.physical_location: Place` (from location) — alongside
+  existing `venues[]`
+- `Meeting.typical_age_range: String` (from typicalAgeRange)
+- `Meeting.door_time: Time` (from doorTime)
+- `Meeting.image: ImageObject` (from image)
+- `Meeting.series: MeetingSeries` (from subEvent/superEvent +
+  EventSeries)
+- `Meeting.offers: Offer[] {url, price, currency, availability,
+  valid_from}` (from offers) — replaces `registration_url: String`
+  for paid events; free events keep `registration_url: String`
+- `Meeting.organizer_org: Organization` (from organizer type —
+  optional alongside `chair: Person`)
+
+Concrete things Schema.org does NOT replace in Edoxen:
+
+- `Meeting.agenda` (with `AgendaItem[]`)
+- `Meeting.minutes` (with `MinutesSection[]`)
+- `Meeting.vote_records[]`
+- `Meeting.chair` / `secretary` / `host` officer model
+- Per-attendee RSVP state, role, delegation (iCalendar's territory)
+- Recurrence rules (iCalendar's territory)
+- `Meeting.resolution_refs[]` and the ResolutionCollection side
+- Multi-track session structure (still need new `Track` entity)

@@ -1,0 +1,4 @@
+enum VenueKind {
+  physical
+  virtual
+}

@@ -1,0 +1,67 @@
+= 43 — Cross-cutting: CHANGELOG with breaking changes + migration notes
+
+== Why
+
+Formal CHANGELOG following Keep a Changelog format. Documents v2.0.0 as a breaking release.
+
+== Files to create/modify
+
+- `edoxen-model/CHANGELOG.adoc` (this repo)
+- `edoxen/CHANGELOG.md` (gem)
+- `edoxen.github.io/blog/v2-release-notes.md` (announcement)
+
+== CHANGELOG entry
+
+```adoc
+## [2.0.0] — 2026-07-XX
+
+### Breaking changes
+
+- Renamed `Resolution` → `Decision`. `Resolution` is now a `DecisionKind` value.
+- Removed `Meeting.virtual: Boolean`. Replaced with polymorphic `Meeting.venues: Venue[]`.
+- Removed `Meeting.chair` and `Meeting.secretary`. Replaced with `Meeting.officers: Officer[]`.
+- Removed `Meeting.schedule: ScheduleItem[]`. Replaced with `Meeting.components: MeetingComponent[]`.
+- Removed `Meeting.host` (singular String). Use `Meeting.hosts: HostRef[]`.
+- Removed `Meeting.year` (derivable from `date_range.start`).
+- Renamed `Meeting.resolution_refs` → `Meeting.decisions`.
+
+### Added
+
+- `Decision` base type with `kind`, `status`, and 9 kind values
+- `Motion` entity (procedural act with state machine)
+- `Voting` entity (state machine, methods, outcomes)
+- `Topic`, `TopicDocument`, `TopicAsset` (replaces MeetingDocument concept)
+- `MeetingSeries` (parent of recurring meetings)
+- `MeetingComponent` (flat sub-events, replaces ScheduleItem)
+- `Officer` + `OfficerRole` (replaces chair/secretary shortcuts)
+- `MeetingExtension` + `ExtensionAttribute` (profile mechanism, ISO 8601-2 §15)
+- `Recurrence` (structured ISO 8601-2 §13, queryable)
+- `Venue` polymorphic (kind: physical | virtual)
+- `PhysicalDetails` (with UNLOCODE + IATA code fields)
+- `VirtualDetails` (uri, features, passcode, dial-in numbers)
+- New enums: VenueKind, VirtualFeature, Visibility, AttendanceRole,
+  AttendanceResponse, ComponentKind, DecisionKind, DecisionStatus,
+  MotionStatus, VotingStatus, VotingMethod, VotingOutcome, TopicStatus,
+  OfficerRole, RecurrenceFreq
+
+### Integration
+
+- `unlocodes` gem for UN/LOCODE validation
+- `iata` gem for IATA code validation
+
+### References
+
+- iCalendar (RFC 5545/7986/5546/9253) — referenced, not duplicated
+- ISO 8601-2 (2026) — referenced for date/time/recurrence
+
+### Migration
+
+See `docs/migration-v2.adoc` for the full guide.
+```
+
+== Acceptance criteria
+
+- CHANGELOG entry follows Keep a Changelog format
+- All breaking changes documented
+- Migration notes link to guide (TODO 42)
+- Version bumped to 2.0.0

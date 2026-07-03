@@ -1,0 +1,30 @@
+= 37 — TC154: Migrate site data to new schema
+
+== Why
+
+`isotc154/www.isotc154.org/` uses Vue + Jekyll-style content. Data in `_data/` (YAML) needs migration.
+
+== Files to migrate
+
+- `_data/events/*.yaml`
+- `_data/events-edoxen/*.yaml`
+- `_data/group_events.yaml`
+- `_data/history.yaml`
+- `_minutes/*.yaml` (if present)
+- `content/agenda/*` (AsciiDoc)
+
+== Migration approach
+
+Same as TODO 35 — write a migration script, preserve originals.
+
+== Site-specific concerns
+
+- Vue.js data layer (`src/data/`, `src/domain/`)
+- Type definitions in `src/types/`
+- Jekyll data integration
+
+== Acceptance criteria
+
+- All TC154 data migrated to new schema
+- Vue types updated
+- Site builds successfully

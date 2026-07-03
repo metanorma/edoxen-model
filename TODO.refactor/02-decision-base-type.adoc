@@ -1,0 +1,93 @@
+= 02 — Decision base type (rename from Resolution)
+
+== Why
+
+User (2026-07-03): "a 'decision' is the base type, a resolution
+is a kind of decision. it is called differently in different
+contexts and orgs."
+
+Same formal concept, many names: resolution (standards/parliamentary),
+order (House Order), ruling (judicial), determination (regulatory),
+finding (audit), opinion (advisory), recommendation (non-binding),
+statement (position).
+
+Rename `Resolution` → `Decision`. Add `kind` field. Existing
+`ResolutionType` becomes `DecisionKind` with expanded values.
+
+== Files to create
+
+- `models/decision.lutaml` (rename of resolution.lutaml)
+- `models/decision_kind.lutaml` (rename of resolution_type.lutaml)
+- `models/decision_status.lutaml` (NEW — state machine)
+- `models/decision_collection.lutaml` (rename)
+- `models/decision_collection_metadata.lutaml` (rename)
+- `models/decision_metadata.lutaml` (rename)
+- `models/decision_date.lutaml` (rename)
+- `models/decision_date_type.lutaml` (rename)
+- `models/decision_relation.lutaml` (rename)
+- `models/decision_relation_type.lutaml` (rename)
+
+== Files to remove
+
+- `models/resolution.lutaml`
+- `models/resolution_type.lutaml`
+- `models/resolution_collection.lutaml`
+- `models/resolution_collection_metadata.lutaml`
+- `models/resolution_metadata.lutaml`
+- `models/resolution_date.lutaml`
+- `models/resolution_date_type.lutaml`
+- `models/resolution_relation.lutaml`
+- `models/resolution_relation_type.lutaml`
+
+== Schema
+
+```lutaml
+class Decision {
+  identifier: StructuredIdentifier[1..*]
+  urn: String
+  kind: DecisionKind              # resolution | order | ruling | ...
+  status: DecisionStatus          # state machine
+  categories: String[0..*]
+  dates: DecisionDate[0..*]
+  agenda_item: String
+  doi: String
+  ...
+  brought_by_motions: String[0..*]      # URNs → Meeting.motions
+  about_topics: String[0..*]            # URNs → AgendaItem.topics
+  made_in_component: String[0..1]       # URN → Meeting.components
+  localizations: Localization[0..*]
+  relations: DecisionRelation[0..*]
+  urls: Url[0..*]
+  extensions: MeetingExtension[0..*]
+}
+
+enum DecisionKind {
+  resolution, order, ruling, determination,
+  recommendation, statement, finding, opinion,
+  other                                  # adopter-defined via extension
+}
+
+enum DecisionStatus {
+  draft,                 # text being drafted
+  proposed,              # formally tabled (often via a Motion)
+  under_consideration,   # being debated
+  decided,               # adopted (a "draft resolution" → real resolution)
+  negatived,             # voted down
+  withdrawn,             # withdrawn before vote
+  deferred               # postponed to a later meeting
+}
+```
+
+== Dependencies
+
+- TODO 03 (Motion) — for `brought_by_motions[]`
+- TODO 09 (MeetingExtension)
+- TODO 14 (rename Resolution references across all entities)
+
+== Acceptance criteria
+
+- All `resolution*.lutaml` files renamed to `decision*.lutaml`
+- `DecisionKind` enum has 9 values (including `other`)
+- `DecisionStatus` enum has 7 values (state machine)
+- `Decision` has `brought_by_motions[]`, `about_topics[]`, `made_in_component`
+- No remaining references to `Resolution` class anywhere in `models/`

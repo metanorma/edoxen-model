@@ -1,0 +1,780 @@
+iCalendar
+============
+iCalendar (RFC 5545 + RFC 7986 + RFC 5546 + RFC 9253) is the
+universal scheduling/interoperability format — every calendar app
+(Apple Calendar, Google Calendar, Outlook, Exchange, Office 365),
+every scheduling assistant (x.ai, Clara, CalendarHero), and every
+group-scheduling product outputs and consumes it.
+
+Edoxen adopts iCalendar as the *logistics + participation + virtual-
+meeting* layer. It is the only reference that provides real semantics
+for attendee participation state, recurrence/series, RSVP lifecycle,
+and video-conference access.
+
+But it must be stated up front: iCalendar has NO agenda, NO minutes,
+NO motions, NO decisions, NO officers beyond ORGANIZER. It models
+*when, where, who, what dial-in, what status* — never the agenda or
+the record of what happened. Agenda and minutes stay governed by
+the existing Edoxen model; iCalendar plugs into it via the logistics
+fields (DTSTART/DTEND, LOCATION, ATTENDEE, ORGANIZER, CONFERENCE,
+RRULE).
+
+
+== RFC 5545 — Internet Calendaring and Scheduling Core Object Specification
+
+Source: https://www.rfc-editor.org/rfc/rfc5545.txt
+Author: B. Desruisseaux (Oracle), September 2009, Standards Track.
+
+The iCalendar data format for representing and exchanging calendaring
+and scheduling information such as events, to-dos, journal entries,
+and free/busy information, independent of any particular calendar
+service or protocol.
+
+
+=== Component Name: VEVENT (RFC 5545 §3.6.1)
+
+A "VEVENT" calendar component is a grouping of component
+properties that describes an event.
+
+   The "VEVENT" calendar component cannot be nested within another
+   calendar component. However, "VEVENT" calendar components can be
+   related to each other or to a "VTODO" or to a "VJOURNAL" calendar
+   component with the "RELATED-TO" property.
+
+   The "DTSTART" property for a "VEVENT" specifies the inclusive
+   start of the event. The "DTEND" property for a "VEVENT" calendar
+   component specifies the non-inclusive end of the event. For cases
+   where a "VEVENT" calendar component specifies a "DTSTART" property
+   with a DATE-TIME value type but no "DTEND" nor "DURATION" property,
+   the event's duration is taken to be one day.
+
+   The "DTEND" property type for a "VEVENT" calendar component with a
+   DATE value type MUST be set to the day after the event's end date.
+
+
+=== Canonical VEVENT properties that map onto Edoxen Meeting
+
+|===
+| iCalendar property | RFC §  | Edoxen Meeting field
+
+| `UID` | 3.8.4.7 | `Meeting.identifier[0].number` or URN
+| `DTSTAMP` | 3.8.7.2 | (provenance only — last-modified)
+| `DTSTART` / `DTEND` | 3.8.2.4 / 3.8.2.2 | `Meeting.date_range`
+| `SUMMARY` | 3.8.1.12 | `MeetingLocalization.title` (per-language)
+| `DESCRIPTION` | 3.8.1.5 | `MeetingLocalization.description` (per-language)
+| `LOCATION` / `GEO` | 3.8.1.7 / 3.8.1.6 | `Meeting.venues[0]`
+| `ORGANIZER` | 3.8.4.3 | `Meeting.chair`
+| `ATTENDEE` | 3.8.4.1 | `Meeting.attendance[]`
+| `CATEGORIES` | 3.8.1.2 | topic tags (new; not in current Edoxen)
+| `RESOURCES` | 3.8.1.10 | `Meeting.venues[].name` or `rooms[]`
+| `STATUS` | 3.8.1.11 | `Meeting.status` (TENTATIVE/CONFIRMED/CANCELLED)
+| `CLASS` | 3.8.1.3 | `Meeting.visibility` (PUBLIC/PRIVATE/CONFIDENTIAL)
+| `PRIORITY` | 3.8.1.9 | (not currently mapped; possible `priority`)
+| `RRULE` / `RDATE` / `EXDATE` | 3.8.5.3 / 3.8.5.2 / 3.8.5.1 | (new) `Meeting.recurrence`
+| `RELATED-TO;RELTYPE=PARENT|CHILD|SIBLING` | 3.8.4.5 + 3.2.15 | `Meeting.relations[]`
+| `SEQUENCE` | 3.8.7.4 | (revision number for status updates)
+| `LAST-MODIFIED` / `CREATED` | 3.8.7.3 / 3.8.7.1 | (provenance)
+| `URL` | 3.8.4.6 | `Meeting.landing_url`
+| `ATTACH` (with FMTTYPE) | 3.8.1.1 | `Meeting.source_urls[]`
+| `IMAGE` (RFC 7986 §5.4) | RFC 7986 | (new) `Meeting.image_url`
+| `CONFERENCE` (RFC 7986 §5.11) | RFC 7986 | (new) `Meeting.virtual[]`
+| `COMMENT` | 3.8.1.4 | (free text notes)
+| `CONTACT` | 3.8.4.2 | (organizational contact)
+| `VALARM` (subcomponent) | 3.6.6 | (new) `Meeting.deadlines[]` (subset)
+| `EXDATE` | 3.8.5.1 | exception dates for recurrence
+|===
+
+=== Status (RFC 5545 §3.8.1.11)
+
+   Format Definition:  The property is defined by the following
+   notation:
+
+      status      = "STATUS" ";" statvalue ":" CRLF
+
+      statvalue   = "TENTATIVE"    ; Indicates event is tentative
+                   / "CONFIRMED"   ; Indicates event is definite
+                   / "CANCELLED"   ; Indicates event was cancelled
+
+   Default value type is TEXT.
+
+Three values, mapping directly onto Edoxen `MeetingStatus`
+(currently `planned` / `confirmed` / `cancelled` — but Edoxen
+also has `completed` and `in_session`; iCalendar has no equivalent
+of "completed" — when an event's DTEND is past, iCalendar simply
+stops being current).
+
+
+=== Class (RFC 5545 §3.8.1.3)
+
+   Format Definition:
+
+      class      = "CLASS" ";" classvalue ":" CRLF
+
+      classvalue = "PUBLIC"          / "PRIVATE"
+                 / "CONFIDENTIAL"   ; PRIVATE property is overriding
+                                    ; default
+                 / iana-token
+                 / x-name
+
+   Description:  This property defines the access classification for
+   a calendar component.
+
+Edoxen has no `visibility` / `class` concept today. iCalendar forces
+us to add one (PUBLIC for public meetings, PRIVATE for board closed
+sessions, CONFIDENTIAL for embargoed matters).
+
+
+=== Transp (RFC 5545 §3.8.2.7)
+
+   Format Definition:
+
+      transp     = "TRANSP" ";" transpvalue ":" CRLF
+
+      transpvalue = "OPAQUE"
+                  / "TRANSPARENT"
+
+   Description:  This property defines whether or not an event is
+   transparent to busy time searches.  Events that consume actual
+   time for the calendar user MUST be recorded as OPAQUE.  Other
+   events, which do not consume the calendar user's time, are
+   recorded as TRANSPARENT.
+
+A typical meeting is OPAQUE (blocks calendar); an anniversary or
+"festival" notice is TRANSPARENT (does not block). Edoxen's
+`ScheduleItem.transparency` could mirror this.
+
+
+=== Priority (RFC 5545 §3.8.1.9)
+
+   Format Definition:  The property is defined by the following
+   notation:
+
+      prio       = "PRIORITY" ";" integervalue ":" CRLF
+
+   Description:  This property defines the relative priority for a
+   calendar component.  ... For VTODO, an integer 0 specifies an
+   undefined priority; integers 1-4 specify high priority; 5
+   specifies normal priority; 6-9 specify low priority.
+
+Not directly mappable to Edoxen Meeting (no current priority field),
+but useful for queue-ordering draft agendas.
+
+
+== ATTENDEE and its parameters (RFC 5545 §3.8.4.1)
+
+   Format Definition:  This property is defined by the following
+   notation:
+
+      attendee   = "ATTENDEE" attparam ":" cal-address CRLF
+
+      attparam   = *(
+                  ;
+                  ; The following are OPTIONAL,
+                  ; but MUST NOT occur more than once.
+                  ;
+                  (";" cutypeparam) / (";" delfromparam) /
+                  (";" deltoparam) / (";" dirparam) /
+                  (";" languageparam) / (";" partstatparam) /
+                  (";" roleparam) / (";" rsvpparam) /
+                  (";" sentbyparam) / (";" cnparam) /
+                  (";" other-param)
+                  ;
+                  ; The following is OPTIONAL,
+                  ; and MAY occur more than once.
+                  ;
+                  (";" memberparam)
+                  ;
+                  )
+
+This is the most parameter-rich property in iCalendar and the
+strongest direct fit with Edoxen's `Attendance` model.
+
+=== CUTYPE — Calendar User Type (RFC 5545 §3.2.3)
+
+      cutypeparam        = "CUTYPE" "="
+                         ("INDIVIDUAL"   ; An individual
+                        / "GROUP"        ; A group of individuals
+                        / "RESOURCE"     ; A physical resource
+                        / "ROOM"         ; A room resource
+                        / "UNKNOWN"      ; Otherwise not known
+                        / x-name         ; Experimental type
+                        / iana-token)    ; Other IANA-registered
+                                         ; type
+      ; Default is INDIVIDUAL
+
+Direct fit with Edoxen `Attendance.role`: `individual` / `group`
+(e.g., delegation head) / `resource` (whiteboard, projector) /
+`room` (venue) / `unknown`.
+
+=== ROLE — Participation Role (RFC 5545 §3.2.16)
+
+      roleparam  = "ROLE" "="
+                 ("CHAIR"             ; Indicates chair of the
+                                      ; calendar entity
+                / "REQ-PARTICIPANT"   ; Indicates a participant whose
+                                      ; participation is required
+                / "OPT-PARTICIPANT"   ; Indicates a participant whose
+                                      ; participation is optional
+                / "NON-PARTICIPANT"   ; Indicates a participant who
+                                      ; is copied for information
+                                      ; purposes only
+                / x-name              ; Experimental role
+                / iana-token)         ; Other IANA role
+      ; Default is REQ-PARTICIPANT
+
+iCalendar's `CHAIR` maps onto Edoxen `Meeting.chair` (when the
+chair is an attendee of the event, distinct from the `ORGANIZER`
+property which owns the event).
+
+The four-quadrant (CHAIR / REQ / OPT / NON) is richer than
+Edoxen's current `ParticipationStatus` (present/absent/apologies/
+observer/excused) because iCalendar combines ROLE (structural
+importance) and PARTSTAT (current state of THIS attendee).
+
+=== PARTSTAT — Participation Status (RFC 5545 §3.2.12)
+
+For VEVENT (the only partstat list relevant to meetings):
+
+      partstat-event   = ("NEEDS-ACTION"    ; Event needs action
+                        / "ACCEPTED"         ; Event accepted
+                        / "DECLINED"         ; Event declined
+                        / "TENTATIVE"        ; Event tentatively
+                                             ; accepted
+                        / "DELEGATED"        ; Event delegated
+                        / x-name             ; Experimental status
+                        / iana-token)        ; Other IANA-registered
+                                             ; status
+      ; Default is NEEDS-ACTION.
+
+For VTODO, two more values are added: `COMPLETED` and `IN-PROCESS`.
+For VJOURNAL: `NEEDS-ACTION` / `ACCEPTED` / `DECLINED` only.
+
+The PARTSTAT+ROLE separation is structurally important:
+"chair who declined" is different from "chair who accepted";
+"required participant who tentatively accepted" is different from
+"required participant who declined". Edoxen's current
+`Attendance` has only one status field and conflates these.
+
+Example:
+
+   ATTENDEE;RSVP=TRUE;ROLE=REQ-PARTICIPANT:mailto:
+    jsmith@example.com
+
+=== DELEGATED-FROM / DELEGATED-TO (RFC 5545 §3.2.4 / 3.2.5)
+
+   ATTENDEE;DELEGATED-FROM="mailto:jsmith@example.com":mailto:
+    jdoe@example.com
+
+   ATTENDEE;DELEGATED-TO="mailto:jdoe@example.com","mailto:jqpublic
+    @example.com":mailto:jsmith@example.com
+
+First-class delegation. iCalendar handles the case where
+"J. Smith cannot attend; delegates to J. Doe" by giving J. Smith
+PARTSTAT=DELEGATED with DELEGATED-TO=jdoe, and J. Doe a separate
+ATTENDEE with DELEGATED-FROM=jsmith. Edoxen's current model has
+`Attendance.proxy_for: Person` (one level only); iCalendar supports
+chains.
+
+=== MEMBER (RFC 5545 §3.2.11)
+
+   ATTENDEE;MEMBER="mailto:ietf-calsch@example.org":mailto:
+    ietf-calsch@example.org
+
+Used with CUTYPE=GROUP to list the group's members. Direct
+precedent for the Edoxen `Attendance` model when an organization
+or delegation list is invited as a unit.
+
+=== Example — RFC 5545 §3.6.1
+
+The canonical meeting example from the RFC itself:
+
+   BEGIN:VEVENT
+   UID:19970901T130000Z-123401@example.com
+   DTSTAMP:19970901T130000Z
+   DTSTART:19970903T163000Z
+   DTEND:19970903T190000Z
+   SUMMARY:Annual Employee Review
+   CLASS:PRIVATE
+   CATEGORIES:BUSINESS,HUMAN RESOURCES
+   END:VEVENT
+
+Multi-day event example:
+
+   BEGIN:VEVENT
+   UID:20070423T123432Z-541111@example.com
+   DTSTAMP:20070423T123432Z
+   DTSTART;VALUE=DATE:20070628
+   DTEND;VALUE=DATE:20070709
+   SUMMARY:Festival International de Jazz de Montreal
+   TRANSP:TRANSPARENT
+   END:VEVENT
+
+Recurring anniversary:
+
+   BEGIN:VEVENT
+   UID:19970901T130000Z-123403@example.com
+   DTSTAMP:19970901T130000Z
+   DTSTART;VALUE=DATE:19971102
+   SUMMARY:Our Blissful Anniversary
+   TRANSP:TRANSPARENT
+   CLASS:CONFIDENTIAL
+   CATEGORIES:ANNIVERSARY,PERSONAL,SPECIAL OCCASION
+   RRULE:FREQ=YEARLY
+   END:VEVENT
+
+
+== RELTYPE — Relationship Type (RFC 5545 §3.2.15)
+
+      reltypeparam       = "RELTYPE" "="
+                         ("PARENT"    ; Parent relationship - Default
+                        / "CHILD"     ; Child relationship
+                        / "SIBLING"   ; Sibling relationship
+                        / iana-token  ; Some other IANA-registered
+                                      ; iCalendar relationship type
+                        / x-name)     ; A non-standard, experimental
+                                      ; relationship type
+
+Used on the `RELATED-TO` property to express hierarchy between
+VEVENTs (e.g., "IETF 113" is PARENT of "IETF 113 — TSAG meeting").
+
+iCalendar already had three values in 2009; RFC 9253 (2022) added
+several more, including temporal ones for project scheduling:
+
+   - FINISHTOSTART, FINISHTOFINISH, STARTTOFINISH, STARTTOSTART
+     (predecessor/successor relationships between events)
+   - DEPENDS-ON
+   - DUEDATE  (for VTODO)
+
+Direct precedent for Edoxen `MeetingRelationType`. The current
+Edoxen enum has its own values (predecessor / successor / replaces /
+replaced_by / sibling / parent / child — see
+`models/meeting_relation_type.lutaml`) which overlap heavily
+with iCalendar but aren't aligned. After acquisition, the
+iCalendar-derived values should win for standardization, with
+Edoxen's standards-body-specific ones added as a superset.
+
+
+== RRULE — Recurrence Rule (RFC 5545 §3.3.10 / 3.8.5.3)
+
+The RECUR value type — used inside the `RRULE` property:
+
+      recur           = recur-rule-part *( ";" recur-rule-part )
+
+      recur-rule-part = ( "FREQ" "=" freq )
+                      / ( "UNTIL" "=" enddate )
+                      / ( "COUNT" "=" 1*DIGIT )
+                      / ( "INTERVAL" "=" 1*DIGIT )
+                      / ( "BYSECOND" "=" byseclist )
+                      / ( "BYMINUTE" "=" byminlist )
+                      / ( "BYHOUR" "=" byhrlist )
+                      / ( "BYDAY" "=" bywdaylist )
+                      / ( "BYMONTHDAY" "=" bymodaylist )
+                      / ( "BYYEARDAY" "=" byyrdaylist )
+                      / ( "BYWEEKNO" "=" bywknolist )
+                      / ( "BYMONTH" "=" bymolist )
+                      / ( "BYSETPOS" "=" bysplist )
+                      / ( "WKST" "=" weekday )
+
+      freq        = "SECONDLY" / "MINUTELY" / "HOURLY" / "DAILY"
+                  / "WEEKLY" / "MONTHLY" / "YEARLY"
+
+      weekday     = "SU" / "MO" / "TU" / "WE" / "TH" / "FR" / "SA"
+
+Examples of recurring meeting series:
+
+   RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR           ; every Mon/Wed/Fri
+   RRULE:FREQ=MONTHLY;BYDAY=-1MO             ; last Monday of month
+   RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=2TH    ; 2nd Thursday of October
+   RRULE:FREQ=DAILY;COUNT=10                 ; daily standup for 10 days
+   RRULE:FREQ=WEEKLY;UNTIL=20261231T235959Z  ; weekly until end of 2026
+
+   The INTERVAL rule part contains a positive integer representing at
+   which intervals the recurrence rule repeats. The default value is
+   "1", meaning every second for a SECONDLY rule, every minute for a
+   MINUTELY rule, every hour for an HOURLY rule, every day for a
+   DAILY rule, every week for a WEEKLY rule, every month for a
+   MONTHLY rule, and every year for a YEARLY rule. For example,
+   within a DAILY rule, a value of "8" means every eight days.
+
+Direct precedent for a `Meeting.recurrence` field (or a separate
+`MeetingSeries` entity that owns many Meeting instances). Edoxen
+currently has no recurrence model — every meeting is a discrete
+event with its own identifier.
+
+
+== CONFERENCE — Video/Web/Tele conferencing (RFC 7986 §5.11)
+
+Source: https://www.rfc-editor.org/rfc/rfc7986.txt
+Author: C. Daboo (Apple), October 2016, Standards Track.
+
+   Property Name:  CONFERENCE
+
+   Purpose:  This property specifies information for accessing a
+      conferencing system.
+
+   Value Type:  URI -- no default.
+
+   Property Parameters:  IANA, non-standard, feature, and label
+      property parameters can be specified on this property.
+
+   Conformance:  This property can be specified multiple times in a
+      "VEVENT" or "VTODO" calendar component.
+
+   Description:  This property specifies information for accessing
+      a conferencing system for attendees of a meeting or task.
+      This might be for a telephone-based conference number dial-in
+      with access codes included (such as a tel: URI [RFC3966] or a
+      sip: or sips: URI [RFC3261]), for a web-based video chat
+      (such as an http: or https: URI [RFC7230]), or for an instant
+      messaging group chat room (such as an xmpp: URI [RFC5122]).
+      If a specific URI for a conferencing system is not available,
+      a data: URI [RFC2397] containing a text description can be
+      used.
+
+      A conference system can be a bidirectional communication
+      channel or a uni-directional "broadcast feed".
+
+      The "FEATURE" property parameter is used to describe the key
+      capabilities of the conference system to allow a client to
+      choose the ones that give the required level of interaction
+      from a set of multiple properties.
+
+      The "LABEL" property parameter is used to convey additional
+      details on the use of the URI. For example, the URIs or access
+      codes for the moderator and attendee of a teleconference system
+      could be different, and the "LABEL" property parameter could
+      be used to "tag" each "CONFERENCE" property to indicate which
+      is which.
+
+=== FEATURE — Conference Feature Type (RFC 7986 §6.3)
+
+      featureparam = "FEATURE" "=" featuretext *("," featuretext)
+      featuretext  =  ("AUDIO" /     ; Audio capability
+                      "CHAT" /      ; Chat or instant messaging
+                      "FEED" /      ; Blog or Atom feed
+                      "MODERATOR" / ; Moderator dial-in code
+                      "PHONE" /     ; Phone conference
+                      "SCREEN" /    ; Screen sharing
+                      "VIDEO" /     ; Video capability
+                      x-name /      ; Experimental type
+                      iana-token)   ; Other IANA-registered type
+
+   Description:  This property parameter MAY be specified on the
+      "CONFERENCE" property.  Multiple values can be specified.  The
+      "MODERATOR" value is used to indicate that the property value
+      is specific to the owner/initiator of the conference and
+      contains a URI that "activates" the system (e.g., a
+      "moderator" access code for a phone conference system that is
+      different from the "regular" access code).
+
+=== Real-world CONFERENCE examples (RFC 7986 §5.11)
+
+   CONFERENCE;VALUE=URI;FEATURE=PHONE,MODERATOR;
+    LABEL=Moderator dial-in:tel:+1-412-555-0123,,,654321
+   CONFERENCE;VALUE=URI;FEATURE=PHONE;
+    LABEL=Attendee dial-in:tel:+1-412-555-0123,,,555123
+   CONFERENCE;VALUE=URI;FEATURE=PHONE;
+    LABEL=Attendee dial-in:tel:+1-888-555-0456,,,555123
+   CONFERENCE;VALUE=URI;FEATURE=CHAT;
+    LABEL=Chat room:xmpp:chat-123@conference.example.com
+   CONFERENCE;VALUE=URI;FEATURE=AUDIO,VIDEO;
+    LABEL=Attendee dial-in:https://chat.example.com/audio?id=123456
+
+   CONFERENCE;VALUE=URI;FEATURE=AUDIO:rtsp://audio.example.com/
+    event
+   CONFERENCE;VALUE=URI;FEATURE=AUDIO,VIDEO:https://video-chat.exam
+    ple.com/;group-id=1234
+
+   CONFERENCE;VALUE=URI;FEATURE=VIDEO;
+    LABEL="Web video chat, access code=76543";
+    :https://video-chat.example.com/;group-id=1234
+
+Note the structure: ONE CONFERENCE property per access method
+(video, audio phone, chat, moderator dial-in). This is the natural
+fit for a `Meeting.virtual[]` collection — each entry is one
+dial-in / URL with `kind` (audio/video/chat), `label` (moderator /
+attendee / country-specific dial-in), and `uri`.
+
+=== Other RFC 7986 additions
+
+- `NAME` (RFC 7986 §5.6) — display name for a calendar (NOT per-
+  VEVENT; the calendar object's display name).
+- `IMAGE` (RFC 7986 §5.4) — `IMAGE;VALUE=URI;DISPLAY=BADGE,
+  GRAPHIC;FMTTYPE=image/png:https://example.com/logo.png`
+  — promotional image per VEVENT.
+- `COLOR` (RFC 7986 §5.7) — `COLOR:navy` (CSS named color).
+- `STRUCTURED-DATA` (RFC 7986 §5.10) — link to JSON-LD or other
+  structured payload; `STRUCTURED-DATA;SCHEMA="https://schema.org/
+  Event";VALUE=URI:https://example.com/event.jsonld` — directly
+  hooks iCalendar into Schema.org Event and any other vocabulary.
+
+
+== RFC 5546 — iCalendar Transport-Independent Interoperability Protocol (iTIP)
+
+Source: https://www.rfc-editor.org/rfc/rfc5546.txt
+Author: C. Daboo (Apple), December 2009, Standards Track.
+
+iTIP defines the *messages* that flow between Organizer and
+Attendees. Edoxen doesn't model messages (it models the resulting
+record), but the methods map cleanly onto Edoxen `MeetingStatus`
+transitions and `MeetingRelationType`.
+
+=== Methods (RFC 5546 §1.1)
+
++----------------+--------------------------------------------------+
+| Method         | Description                                      |
++----------------+--------------------------------------------------+
+| PUBLISH        | Used to publish an iCalendar object to one or    |
+|                | more "Calendar Users". There is no              |
+|                | interactivity between the publisher and any      |
+|                | other "Calendar User". An example might include |
+|                | a baseball team publishing its schedule to the   |
+|                | public.                                          |
+|                |                                                  |
+| REQUEST        | Used to schedule an iCalendar object with other  |
+|                | "Calendar Users". Requests are interactive in   |
+|                | that they require the receiver to respond using |
+|                | the reply methods. Meeting requests, busy-time  |
+|                | requests, and the assignment of tasks to other  |
+|                | "Calendar Users" are all examples. Requests are |
+|                | also used by the Organizer to update the status |
+|                | of an iCalendar object.                          |
+|                |                                                  |
+| REPLY          | A reply is used in response to a request to      |
+|                | convey Attendee status to the Organizer.         |
+|                | Replies are commonly used to respond to meeting |
+|                | and task requests.                               |
+|                |                                                  |
+| ADD            | Add one or more new instances to an existing     |
+|                | recurring iCalendar object.                      |
+|                |                                                  |
+| CANCEL         | Cancel one or more instances of an existing      |
+|                | iCalendar object.                                |
+|                |                                                  |
+| REFRESH        | Used by an Attendee to request the latest        |
+|                | version of an iCalendar object.                  |
+|                |                                                  |
+| COUNTER        | Used by an Attendee to negotiate a change in an  |
+|                | iCalendar object. Examples include the request  |
+|                | to change a proposed event time or change the    |
+|                | due date for a task.                             |
+|                |                                                  |
+| DECLINECOUNTER | Used by the Organizer to decline the proposed    |
+|                | counter proposal.                                |
++----------------+--------------------------------------------------+
+
+Originator methods:
+
+   +------------+------------------------------------------------------+
+   | Originator | Methods                                              |
+   +------------+------------------------------------------------------+
+   | Organizer  | PUBLISH, REQUEST, ADD, CANCEL, DECLINECOUNTER        |
+   | Attendee   | REPLY, REFRESH, COUNTER, REQUEST (only when          |
+   |            | delegating)                                          |
+   +------------+------------------------------------------------------+
+
+iTIP method → Edoxen mapping:
+- REQUEST (initial invite)   → Meeting.status = TENTATIVE
+                              + Attendance.partstat = NEEDS-ACTION
+- REPLY (attendee accepts)   → Attendance.partstat = ACCEPTED
+- REPLY (attendee declines)  → Attendance.partstat = DECLINED
+- REPLY (tentative)          → Attendance.partstat = TENTATIVE
+- REPLY (delegates)          → Attendance.partstat = DELEGATED
+- REQUEST (update)           → Meeting.status → SEQUENCE incremented
+- ADD (new instances)        → Meeting.recurrence extended
+- CANCEL                     → Meeting.status = CANCELLED
+- COUNTER (propose change)   → AttendanceRelation(proposed_change)
+- DECLINECOUNTER             → (organizer rejects; status unchanged)
+
+=== REQUEST-STATUS codes (RFC 5546 §3.6)
+
+The "REQUEST-STATUS" property is used to convey status information
+about a "REPLY", "COUNTER", or "DECLINECOUNTER" iTIP message. ...
+
+   If the "REQUEST-STATUS" property is not present in one of these
+   iTIP messages, then a status code of "2.0" (success) MUST be
+   assumed.
+
+Defined ranges:
+
+- 2.x  Success
+  - 2.0  Success
+  - 2.1  Success, but fallback taken on one or more property values
+  - 2.2  Success, but invalid property ignored
+  - 2.3  Success, but with property ignored (delegation not supported)
+  - 2.4  Success, but with property ignored (multiple match on CUTYPE)
+  - 2.5  Success, but with property ignored (private comment)
+  - 2.6  Success, but with property ignored (RSVP expected for
+         delegation)
+  - 2.7  Success, but with property ignored (invalid CAL-ID)
+  - 2.8  Success, but with property ignored (multiple ATTACH not
+         supported)
+  - 2.9  Success, but with property ignored (invalid ORGANIZER)
+  - 2.10 Success, but with property ignored (invalid X-property or
+         iana-parameter)
+  - 2.11 Success, but with property ignored (X- property not
+         supported)
+- 3.x  Error (client must do something)
+- 4.x  Scheduling error
+- 5.x  Server-side failure
+
+Not a primary Edoxen mapping (we don't model the transport
+messages) — but the codes are useful when ingesting external
+iCalendar feeds.
+
+
+== RFC 9253 — Support for iCalendar Relationships
+
+Source: https://www.rfc-editor.org/rfc/rfc9253.txt
+Author: M. Douglass (Bedework), August 2022, Standards Track.
+Updates: RFC 5545.
+
+Adds three new properties and new RELTYPE values to support
+relationships between iCalendar entities and between an iCalendar
+entity and external data.
+
+=== LINK Property (RFC 9253 §8.2)
+
+A typed link from one iCalendar component to another resource. Has
+a `REL` parameter (a link-relation type) and a `FMTTYPE` parameter
+to identify the type of the linked resource.
+
+Example:
+
+   LINK;REL=describedby;FMTTYPE="application/json":
+    https://example.com/event/123.json
+
+Use cases for Edoxen:
+- Link a Meeting to its published Agenda JSON document
+  (`REL=describedby`, `FMTTYPE=application/json`)
+- Link a Meeting to its webcast stream (`REL=alternate`)
+- Link a Resolution to its adopter organization (`REL=author`)
+- Link a Meeting to its parent series (`REL=up`)
+
+=== CONCEPT Property (RFC 9253 §8.1)
+
+A URI that identifies the semantic concept the iCalendar object
+represents. E.g.:
+
+   CONCEPT:https://schema.org/Event
+
+Direct hook into Schema.org / Wikidata / any other concept
+vocabulary. Edoxen can adopt this to assert that "this Meeting
+is a Schema.org Event" or "this Resolution is a Wikidata Q1234567".
+
+=== REFID Property (RFC 9253 §8.3)
+
+A reference identifier for an external entity. Used when the
+iCalendar entity IS the record for an externally-known thing
+(e.g., a Wikidata QID).
+
+Example:
+
+   REFID:https://www.wikidata.org/wiki/Q12345
+
+=== New RELTYPE values (RFC 9253 §4 and §5)
+
+Temporal relationships (modeled after project-management
+predecessor/successor):
+
+   - FINISHTOSTART  (A must finish before B starts; default for
+                    DEPENDS-ON)
+   - FINISHTOFINISH (A and B must finish together)
+   - STARTTOFINISH  (A must start before B finishes)
+   - STARTTOSTART   (A and B must start together)
+
+General relationships:
+
+   - DEPENDS-ON (predecessor)
+   - REFID (referenced entity)
+
+Edoxen `MeetingRelationType` already has its own predecessor /
+successor / parent / child / sibling / replaces / replaced_by
+values. After acquisition, the RFC 9253 temporal set should be
+adopted as canonical, with Edoxen's standards-body-specific
+values layered on top.
+
+
+== What iCalendar does NOT have (and Edoxen must keep)
+
+Stated up front because it's load-bearing for the model design:
+
+1. **Agenda items.** VEVENT has `SUMMARY` (one-line title),
+   `DESCRIPTION` (one block of free text), and `CATEGORIES`
+   (flat tag list). None of these is a structured list of agenda
+   items with numbers, presenters, attachments, or outcomes.
+   iCalendar's whole premise is *when/where/who* of a single
+   event — the agenda is upstream of the event (a document
+   published before) and minutes are downstream (a document
+   published after). Edoxen's `Agenda` and `AgendaItem` stay.
+
+2. **Minutes.** VJOURNAL is a free-text journal entry tied to a
+   date — explicitly not a structured record of "who said what,
+   in what order, with what outcome". Edoxen's `Minutes` and
+   `MinutesSection` stay.
+
+3. **Motions, votes, decisions.** Not in iCalendar at all. The
+   closest is `STATUS` (TENTATIVE/CONFIRMED/CANCELLED) on the
+   whole event and `PARTSTAT` on each attendee — these are
+   *participation states*, not *decisions taken at the event*.
+   Edoxen's `Resolution`, `VoteRecord`, `Action`, `Approval`,
+   `Consideration` stay.
+
+4. **Officer roles beyond ORGANIZER.** iCalendar has exactly one
+   organizational role: `ORGANIZER` (the one whose calendar the
+   event lives in, who sends out REQUESTs and CANCELs).
+   `ATTENDEE;ROLE=CHAIR` is just one attendee tagged as chair
+   of THIS event's discussion — not a permanent officer
+   position. Edoxen's `chair` / `secretary` / `host` stay.
+
+5. **Track / parallel session structure.** iCalendar has no track
+   concept. A multi-track conference in iCalendar is N
+   independent VEVENTs, optionally linked by RELATED-TO with
+   PARENT/CHILD. The grouping is implicit. Edoxen's `ScheduleItem`
+   is currently flat — to model multi-track conferences, we will
+   need a new `Track` entity, not expressible in iCalendar.
+
+
+== Net contribution to Edoxen
+
+iCalendar is the *logistics + participation + virtual-meeting +
+series* layer. Edoxen adopts it for these dimensions and keeps
+its own model for agenda/minutes/decisions/officers/tracks.
+
+Concrete additions iCalendar forces onto the Edoxen Meeting model:
+
+- `Meeting.visibility: Enum {public, private, confidential}` (from
+  CLASS)
+- `Meeting.transparency: Enum {opaque, transparent}` (from TRANSP)
+- `Meeting.recurrence: Recurrence {freq, interval, count_or_until,
+  byday, bymonthday, bymonth, wkst, exdate[]}` (from RRULE)
+- `Meeting.virtual: VirtualAccess[] {kind, uri, label, features[]}`
+  (from CONFERENCE + FEATURE) — replaces the current
+  `Meeting.virtual: Boolean` with a real structure
+- `Meeting.image: Image {uri, display, fmttype}` (from IMAGE)
+- `Attendance.role: Enum {chair, required, optional, non_participant}`
+  (from ROLE) — alongside the existing `ParticipationStatus`
+- `Attendance.partstat: Enum {needs_action, accepted, declined,
+  tentative, delegated}` (from PARTSTAT for VEVENT) — replaces
+  the current `ParticipationStatus`
+- `Attendance.delegation: {from: Person[], to: Person[]}` (from
+  DELEGATED-FROM/TO)
+- `Meeting.relation.rel_type: Enum` aligned to RFC 9253 RELTYPE
+  values + Edoxen superset
+- `Meeting.link: Link[] {rel, fmttype, uri}` (from RFC 9253 LINK)
+- `Meeting.concept: Uri` (from RFC 9253 CONCEPT)
+- `Meeting.external_refid: Uri` (from RFC 9253 REFID)
+
+Concrete things iCalendar does NOT replace in Edoxen:
+
+- `Meeting.agenda` (with `AgendaItem[]`)
+- `Meeting.minutes` (with `MinutesSection[]`)
+- `Meeting.vote_records[]`
+- `Meeting.chair` / `secretary` / `host` (officer model beyond
+  ORGANIZER)
+- Multi-track session structure (will need new `Track` entity)
+- `Meeting.resolution_refs[]` and the ResolutionCollection side
+
+This gives a clear division of labor: iCalendar handles the
+calendar-of-meetings layer; Edoxen handles the records-of-what-
+happened layer; they share identifiers via URN.

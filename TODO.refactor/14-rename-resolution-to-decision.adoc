@@ -1,0 +1,60 @@
+= 14 — Rename Resolution → Decision across all files
+
+== Why
+
+User (2026-07-03): "a 'decision' is the base type, a resolution
+is a kind of decision."
+
+The rename affects:
+- All `resolution*.lutaml` files (handled in TODO 02)
+- All entities that reference Resolution:
+  - `action.lutaml`, `consideration.lutaml`, `approval.lutaml`
+    (used inside Localization, which is used by Resolution)
+  - `agenda_item.lutaml` — `resolution_ref` → `decision_ref`
+  - `vote_record.lutaml` — references resolution
+  - `subject_body.lutaml` — used in Resolution's subject
+  - `localization.lutaml` — used by Resolution
+  - `meeting.lutaml` — `resolution_refs[]` → `decision_refs[]`
+  - `meeting_collection_metadata.lutaml` — may reference resolution
+  - `meeting_localization.lutaml`
+- README.adoc
+- All `references/*.adoc` files
+
+== Files to scan and update
+
+```
+models/action.lutaml
+models/consideration.lutaml
+models/approval.lutaml
+models/agenda_item.lutaml        # resolution_ref → decision_ref
+models/vote_record.lutaml         # references resolution
+models/subject_body.lutaml
+models/localization.lutaml
+models/meeting_localization.lutaml
+models/meeting_collection_metadata.lutaml
+README.adoc
+references/*.adoc
+```
+
+== Rename patterns
+
+- `Resolution` → `Decision`
+- `resolution` → `decision`
+- `ResolutionType` → `DecisionKind`
+- `ResolutionCollection` → `DecisionCollection`
+- `ResolutionMetadata` → `DecisionMetadata`
+- `ResolutionRelation` → `DecisionRelation`
+- `ResolutionRelationType` → `DecisionRelationType`
+- `ResolutionDate` → `DecisionDate`
+- `ResolutionDateType` → `DecisionDateType`
+- `resolution_refs` → `decision_refs`
+- `resolution_ref` → `decision_ref`
+
+== Acceptance criteria
+
+- `grep -ri resolution models/` returns nothing (other than possibly
+  in extension profile examples where "resolution" is a DecisionKind value)
+- `grep -ri resolution references/` only shows historical context
+  (e.g., "the OIML Resolution 47 of 1994 is modelled as Decision.kind=resolution")
+- README uses `Decision` consistently
+- All cross-references updated
