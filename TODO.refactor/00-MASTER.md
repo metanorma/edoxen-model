@@ -166,3 +166,12 @@ This plan represents 100+ hours of work. In one session:
 
 User can review after Phase A and redirect before Phase B
 touches the gem.
+## Phase E — v2.1 architectural follow-ups (post-v2.0-merge)
+
+These are NOT blocking v2.0 — they're the architectural debt the audit
+identified. Track them as separate issues for the v2.1 cycle.
+
+- [44 — EntityRef: typed cross-references (replacing bare String)](44-entityref-typed-cross-references.md)
+- [45 — MECE: collapse bidirectional arrays storing the same relationship](45-mece-collapse-bidirectional-arrays.md)
+- [46 — Open enums: replace `other` escape hatches with body_vocabulary](46-open-enums-body-vocabulary.md)
+- [47 — Tighten MeetingExtension (document kind/ref, drop recursion, polymorphize value)](47-tighten-meeting-extension.md)
