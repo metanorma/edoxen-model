@@ -13,9 +13,9 @@
 
 | Repo | Path | Branch | PR |
 |------|------|--------|-----|
-| edoxen-model | `/Users/mulgogi/src/edoxen/edoxen-model` | `feat/complete-meeting-model` | pushed |
-| edoxen gem | `/Users/mulgogi/src/edoxen/edoxen` | `feat/v2-broadened-scope` | pushed |
-| edoxen.github.io | `/Users/mulgogi/src/edoxen/edoxen.github.io` | `feat/v2-broadened-scope` | pushed |
+| edoxen-model | `/Users/mulgogi/src/edoxen/edoxen-model` | `feat/complete-meeting-model` | [#13](https://github.com/edoxen/edoxen-model/pull/13) |
+| edoxen gem | `/Users/mulgogi/src/edoxen/edoxen` | `feat/v2-broadened-scope` | [#20](https://github.com/edoxen/edoxen/pull/20) |
+| edoxen.github.io | `/Users/mulgogi/src/edoxen/edoxen.github.io` | `feat/v2-broadened-scope` | [#13](https://github.com/edoxen/edoxen.github.io/pull/13) |
 | OIML | `/Users/mulgogi/src/oimlsmart/resolutions-data` | TBD | TBD |
 | TC154 | `/Users/mulgogi/src/isotc154/www.isotc154.org` | TBD | TBD |
 | TC184/SC4 | `/Users/mulgogi/src/isotc184sc4/resolutions` | TBD | TBD |
@@ -24,47 +24,51 @@
 
 **Status: COMPLETE.** All 20 TODOs done.
 
-Commits pushed to `feat/complete-meeting-model`:
-- 47f1d58 — broaden scope: 8 references + TODO plan + foundation entities
-- c246ab0 — procedural core (Decision, Motion, Voting) + Topic + structural
-- d252390 — rename Resolution → Decision + extend Meeting/Attendance/Agenda/Person
-- 91b36f9 — convert snake_case to camelCase in new lutaml files
-- 3b388be — references/iso8601-2.adoc + legco profile
-- 9038717 — README rewrite for broadened generic scope
-- ad3fac2 — sample YAMLs (3 files: OIML, LegCo, hybrid board)
-
-Deliverables:
 - 81 lutaml model files (33 new in v2.0)
 - 8 reference docs + 1 new (iso8601-2)
 - 1 profile example (legco)
-- 3 sample YAMLs
-- Updated README
+- 3 sample YAMLs (snake_case wire names, flattened polymorphic Venue)
+- Updated README + new CHANGELOG.adoc
 
 ## Phase B — edoxen gem (TODOs 21-29)
 
 **Status: COMPLETE.** All 9 TODOs done.
 
-Deliverables:
-- 5 Resolution → Decision file renames (decision.rb, decision_collection.rb, decision_metadata.rb, decision_date.rb, decision_relation.rb)
-- 17 new model files (venue.rb, physical_venue.rb, virtual_venue.rb, motion.rb, voting.rb, voting_counts.rb, topic.rb, topic_document.rb, topic_asset.rb, meeting_series.rb, meeting_component.rb, component_localization.rb, officer.rb, meeting_extension.rb, extension_attribute.rb, recurrence.rb, recurrence_by_day.rb, venue_validator.rb)
-- 6 updated files (lib/edoxen.rb, enums.rb, meeting.rb, attendance.rb, agenda_item.rb, person.rb, vote_record.rb, reference_data.rb)
+- 5 Resolution → Decision file renames
+- 17 new model files
+- 6 updated files
 - All new enums added to Edoxen::Enums
-- IATA gem dependency added
-- Version 2.0.0
-- Schema/CLI/RBS/specs fully migrated to v2.0 terminology
+- IATA gem dependency added; version 2.0.0
+- Schema/CLI/RBS fully migrated to v2.0
+- **591 specs, 0 failures** (added 11 new spec files for v2 entities)
+- Comprehensive RBS in `sig/edoxen.rbs`
+- Rewritten README.adoc + new CHANGELOG.md
 
 ## Phase C — edoxen.github.io (TODOs 30-34)
 
 **Status: COMPLETE.**
 
-- `docs/` restructured for new model terminology
-- New pages: decision, motion, voting, venue, topic, meeting-series, component, officer, extension, recurrence
-- Existing pages: `resolution.md` → `decision.md`; `resolution-set.md` → `decision-collection.md`; cross-links updated
-- VitePress sidebar reflects new model tree
+- `docs/` restructured: 4 renames + 9 new pages (decision, motion,
+  voting, topic, venue, officer, meeting-component, meeting-series,
+  recurrence, extension).
+- VitePress nav restructured into Model dropdown + 6 sidebar groups.
+- Hero rewritten for v2.0 generic-meeting focus.
+- YamlSpecimen replaced with ACME hybrid board meeting.
+- AnatomyStrip reframed: Meeting / Motion→Voting→Decision /
+  MeetingExtension.
+- Introduction + Architecture + Origin pages updated for v2.0.
+- New blog post: `2026-07-03-edoxen-2-0-release.md`.
 
 ## Phase D — Downstream migrations (TODOs 35-43)
 
-**Status: NOT STARTED.** Each downstream repo is its own multi-hour project, deferred to dedicated sessions per repo.
+**Status: NOT STARTED.** Each downstream repo is its own multi-hour
+project, deferred to dedicated sessions per repo. The migration guide
+(TODO 42) and CHANGELOG (TODO 43) are done.
+
+## TODO file format
+
+All TODO files are in markdown (`.md`), converted from AsciiDoc (`.adoc`)
+in a one-shot batch. The conversion script is `scripts/adoc_to_md.rb`.
 
 ## Session discipline
 

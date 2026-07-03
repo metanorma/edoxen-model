@@ -1,0 +1,80 @@
+= Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on https://keepachangelog.com/en/1.1.0/[Keep a Changelog],
+and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Versioning].
+
+== [2.0.0] — 2026-07-XX
+
+Edoxen-model v2.0 broadens the canonical information model from a
+standards-body-specific Resolution model to a **generic meeting, agenda,
+motion, voting, and decision model** with profile extensions for
+domain-specific concepts.
+
+=== Breaking changes
+
+* Renamed `Resolution` → `Decision`. `Resolution` is now a `DecisionKind` value.
+* Renamed `ResolutionCollection` → `DecisionCollection`.
+* Renamed `ResolutionMetadata` → `DecisionMetadata`.
+* Renamed `ResolutionDate` → `DecisionDate`; `ResolutionDateType` → `DecisionDateType`.
+* Renamed `ResolutionRelation` → `DecisionRelation`; `ResolutionRelationType` → `DecisionRelationType`.
+* Renamed `ResolutionType` → `DecisionKind` with expanded values.
+* Renamed `Voting.method` → `Voting.votingMethod`.
+* Renamed `VirtualVenue.meeting_id` → `meetingId` for camelCase consistency.
+* Removed `Meeting.virtual`. Replaced with polymorphic `Meeting.venues: Venue[0..*]`.
+* Removed `Meeting.chair` and `Meeting.secretary`. Replaced with `Meeting.officers: Officer[0..*]`.
+* Removed `Meeting.schedule`. Replaced with `Meeting.components: MeetingComponent[0..*]`.
+* Removed `Meeting.host`. Use `Meeting.hosts`.
+* Removed `Meeting.year`. Derivable from `dateRange.start`.
+* Removed `Meeting.resolutionRefs`. Use `Meeting.decisions`.
+* Removed `Agenda.openingSession` / `closingSession`. Use MeetingComponents.
+* Removed `AgendaItem.resolutionRef`. Use `decisionRef`.
+* Removed `VoteRecord.resolutionRef`. Use `decisionRef` + `votingRef`.
+
+=== Added
+
+* `Decision` base type with `kind`, `status`, and procedural fields.
+* `Motion` entity — procedural act with state machine.
+* `Voting` + `VotingCounts` — vote state machine with method + outcome.
+* `Topic`, `TopicDocument`, `TopicAsset` — subject of discussion with
+  cross-meeting threading via `resumptionOf`.
+* `MeetingSeries` — parent of recurring meetings.
+* `MeetingComponent` + `ComponentLocalization` — flat sub-events.
+* `Officer` + `OfficerRole` — replaces chair/secretary shortcuts.
+* `MeetingExtension` + `ExtensionAttribute` — ISO 8601-2 §15 profile mechanism.
+* `Recurrence` + `RecurrenceByDay` — structured ISO 8601-2 §13.
+* `Venue` polymorphic (kind: physical | virtual).
+* `PhysicalVenue`, `VirtualVenue` subclasses.
+* Extended `Attendance` with `role` and `response`.
+* Extended `AgendaItem` with `topics` and `components`.
+* Extended `Person` with `kind` and `orcid`.
+* Extended `Meeting` with `urn`, `ordinal`, `seriesRef`, `visibility`,
+  `recurrence`, `landingUrl`, `registrationUrl`.
+* New enums: `VenueKind`, `VirtualFeature`, `Visibility`,
+  `AttendanceRole`, `AttendanceResponse`, `ComponentKind`,
+  `DecisionKind`, `DecisionStatus`, `MotionStatus`, `VotingStatus`,
+  `VotingMethod`, `VotingOutcome`, `TopicStatus`, `OfficerRole`,
+  `RecurrenceFreq`.
+* New references: `iso8601-2.adoc` with `@includes` for date/recurrence.
+* New profile: `references/profiles/legco.adoc` — first reference profile.
+* Sample YAMLs: `oiml-ciml-56.yaml`, `legco-sitting-2024-01-15.yaml`,
+  `hybrid-board-meeting.yaml`.
+
+=== References
+
+* iCalendar (RFC 5545/7986/5546/9253) — referenced, not duplicated.
+* ISO 8601-2 (2026) §13 for recurrence, §15 for profile mechanism.
+
+=== Migration
+
+See the https://github.com/edoxen/edoxen.github.io/blob/main/docs/migration-v2.md[migration guide]
+for the full v0.x → v2.0 transformation.
+
+== [1.0.0] — 2026-06-30
+
+Initial public release. Standards-body-focused Resolution model.
+
+== [0.1.0] — 2025-XX-XX
+
+Initial development release.
