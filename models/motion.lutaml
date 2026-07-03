@@ -5,9 +5,9 @@ class Motion {
   mover: Person
   seconders: Person[0..*]
   status: MotionStatus
-  introduced_at: DateTime
-  proposed_decision: String
-  resulting_decision: String
+  introducedAt: DateTime
+  proposedDecision: String
+  resultingDecision: String
   votings: String[0..*]
   extensions: MeetingExtension[0..*]
 }

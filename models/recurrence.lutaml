@@ -3,15 +3,15 @@ class Recurrence {
   interval: Integer
   count: Integer
   until: DateTime
-  by_day: RecurrenceByDay[0..*]
-  by_month_day: Integer[0..*]
-  by_month: Integer[0..*]
-  by_week_no: Integer[0..*]
-  by_year_day: Integer[0..*]
-  by_hour: Integer[0..*]
-  by_minute: Integer[0..*]
-  by_second: Integer[0..*]
-  by_set_pos: Integer[0..*]
-  week_start: String
+  byDay: RecurrenceByDay[0..*]
+  byMonthDay: Integer[0..*]
+  byMonth: Integer[0..*]
+  byWeekNo: Integer[0..*]
+  byYearDay: Integer[0..*]
+  byHour: Integer[0..*]
+  byMinute: Integer[0..*]
+  bySecond: Integer[0..*]
+  bySetPos: Integer[0..*]
+  weekStart: String
   extensions: MeetingExtension[0..*]
 }

@@ -4,7 +4,7 @@ class Topic {
   title: String
   description: String
   status: TopicStatus
-  resumption_of: String
+  resumptionOf: String
   documents: TopicDocument[0..*]
   assets: TopicAsset[0..*]
   references: Reference[0..*]

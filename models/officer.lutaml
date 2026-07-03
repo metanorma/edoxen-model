@@ -1,7 +1,7 @@
 class Officer {
   role: OfficerRole
   person: Person
-  term_start: Date
-  term_end: Date
+  termStart: Date
+  termEnd: Date
   extensions: MeetingExtension[0..*]
 }

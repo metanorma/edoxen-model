@@ -1,5 +1,5 @@
 class ComponentLocalization {
-  language_code: String
+  languageCode: String
   script: String
   title: String
   description: String

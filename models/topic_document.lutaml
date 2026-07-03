@@ -5,6 +5,6 @@ class TopicDocument {
   status: String
   url: String
   format: String
-  language_code: String
+  languageCode: String
   extensions: MeetingExtension[0..*]
 }

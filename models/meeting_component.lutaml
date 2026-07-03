@@ -4,13 +4,13 @@ class MeetingComponent {
   kind: ComponentKind
   title: String
   description: String
-  starts_at: DateTime
-  ends_at: DateTime
-  venue_refs: String[0..*]
+  startsAt: DateTime
+  endsAt: DateTime
+  venueRefs: String[0..*]
   chair: Person
-  agenda_ref: String
-  minutes_ref: String
-  attendance_refs: String[0..*]
+  agendaRef: String
+  minutesRef: String
+  attendanceRefs: String[0..*]
   localizations: ComponentLocalization[0..*]
   extensions: MeetingExtension[0..*]
 }
