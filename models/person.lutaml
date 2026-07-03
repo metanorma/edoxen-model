@@ -1,8 +1,10 @@
 class Person {
   name: String
+  kind: String
   role: String
   affiliation: String
   email: String
   phone: String
   orcid: String
+  extensions: MeetingExtension[0..*]
 }

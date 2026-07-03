@@ -1,3 +1,6 @@
+// Superseded by decision_kind.lutaml.
+// Kept for backward traceability; do not use in new code.
+// The Resolution concept is now a kind of Decision (DecisionKind.resolution).
 enum ResolutionType {
   resolution
   recommendation

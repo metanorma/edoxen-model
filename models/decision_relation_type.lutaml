@@ -1,0 +1,43 @@
+enum DecisionRelationType {
+  annexOf {
+    definition {
+      This decision is an annex to the target decision.
+    }
+  }
+
+  hasAnnex {
+    definition {
+      The target decision is an annex of the source decision.
+    }
+  }
+
+  updates {
+    definition {
+      This decision updates the target decision.
+    }
+  }
+
+  refines {
+    definition {
+      This decision refines the target decision.
+    }
+  }
+
+  replaces {
+    definition {
+      This decision replaces or obsoletes the target decision.
+    }
+  }
+
+  considers {
+    definition {
+      This decision is made in consideration of the target decision.
+    }
+  }
+
+  cites {
+    definition {
+      This decision cites the target decision as authority.
+    }
+  }
+}

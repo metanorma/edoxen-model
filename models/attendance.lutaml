@@ -1,7 +1,10 @@
 class Attendance {
   person: Person
   status: ParticipationStatus
+  role: AttendanceRole
+  response: AttendanceResponse
   affiliation: String
-  proxy_for: Person
+  proxyFor: Person
   notes: String
+  extensions: MeetingExtension[0..*]
 }
