@@ -1,0 +1,69 @@
+# 13 — Extend Attendance, AgendaItem, Person
+
+## Why
+
+Three existing entities need new fields:
+- Attendance — add `role` (iCalendar ROLE) and `response` (iCalendar PARTSTAT, plain English)
+- AgendaItem — add `topics[]` and `extensions[]`
+- Person — add `extensions[]`
+
+## Files to modify
+
+- `models/attendance.lutaml`
+- `models/agenda_item.lutaml`
+- `models/person.lutaml`
+
+## Schema changes
+
+### Attendance (add)
+
+```lutaml
+class Attendance {
+  # ... existing fields (person, status, proxy_for, affiliation, notes) ...
+  role: AttendanceRole               # NEW — chair | required | optional | non_participant
+  response: AttendanceResponse       # NEW — pending | confirmed | declined | tentative | delegated
+  extensions: MeetingExtension[0..*] # NEW
+}
+```
+
+Note: existing `status: ParticipationStatus` (present/absent/apologies/observer/excused)
+STAYS. It captures the IN-MEETING observation. `response` captures
+the RSVP state (will you come?). Both useful, semantically distinct.
+
+### AgendaItem (add)
+
+```lutaml
+class AgendaItem {
+  # ... existing fields (label, kind, title, outcome, resolution_ref) ...
+  topics: Topic[0..*]                # NEW — 0 allowed (AOB)
+  components: String[0..*]           # NEW — URN refs to MeetingComponent
+  extensions: MeetingExtension[0..*] # NEW
+}
+```
+
+Note: existing `resolution_ref` (single URN to Resolution) is renamed
+`decision_ref` (URN to Decision). Multiple decisions on one agenda
+item are reached via `topics[].decisions[]`.
+
+### Person (add)
+
+```lutaml
+class Person {
+  # ... existing fields (name, role, affiliation, email, orcid, ...) ...
+  kind: String                       # NEW — member | public_officer | presiding_officer |
+                                     #        clerk | witness | expert | other
+  extensions: MeetingExtension[0..*] # NEW
+}
+```
+
+## Dependencies
+
+- TODO 05 (Topic)
+- TODO 09 (MeetingExtension)
+- TODO 11 (AttendanceRole, AttendanceResponse)
+
+## Acceptance criteria
+
+- Attendance has `role`, `response`, `extensions[]`
+- AgendaItem has `topics[]`, `components[]`, `extensions[]`, and `decision_ref` (renamed)
+- Person has `kind` and `extensions[]`

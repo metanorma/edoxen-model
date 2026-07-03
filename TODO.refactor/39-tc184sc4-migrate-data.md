@@ -1,0 +1,25 @@
+# 39 — TC184/SC4: Migrate plenary YAML to new schema
+
+## Why
+
+`isotc184sc4/resolutions/plenary/` has 30+ years of plenary meeting YAMLs. Migrate all.
+
+## Files to migrate
+
+- `plenary/plenary-*.yaml` (each one is a Meeting + its Decisions)
+
+## Migration approach
+
+Same pattern as TODO 35 + 37. Plenary meetings are larger (multi-day, many resolutions).
+
+## Special concerns
+
+- Plenary meetings span multiple days
+- Multiple tracks (working groups, plenaries)
+- International attendance (multilingual)
+
+## Acceptance criteria
+
+- All 30+ years of plenary YAMLs migrated
+- Historical integrity preserved
+- Validation passes against new schema
