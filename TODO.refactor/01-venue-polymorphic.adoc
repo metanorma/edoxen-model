@@ -11,47 +11,47 @@ The user (2026-07-03) pointed out the MECE violation: having
 `physical_access` doesn't make sense (physical isn't an "access
 method" — it's just being at the place).
 
-Fix: ONE polymorphic `Venue` class. `kind` discriminates
-physical vs virtual. Composition (not inheritance) for
-type-specific details — LutaML-friendly.
+Fix: ONE polymorphic `Venue` BASE TYPE with two SUBTYPES
+(`PhysicalVenue`, `VirtualVenue`) using inheritance. The user
+clarified (2026-07-03): "physical and virtual is a type and
+polymorphic, not an attribute." So they are SUBCLASSES, not
+optional attributes.
 
 UNLOCODE (5-char UN location codes) and IATA (3-char airport
 codes) are added as canonical identifiers for physical venues,
 integrated via the `unlocodes` and `iata` gems.
 
-== Files to create
+== Files
 
-- `models/venue.lutaml` — polymorphic Venue class
+- `models/venue.lutaml` — BASE TYPE (kind, name, label, etc.)
 - `models/venue_kind.lutaml` — enum: `physical`, `virtual`
-- `models/physical_details.lutaml` — address + UNLOCODE + IATA + geo
-- `models/virtual_details.lutaml` — URI + features + passcode + dial-in
+- `models/physical_venue.lutaml` — `class PhysicalVenue < Venue`
+- `models/virtual_venue.lutaml` — `class VirtualVenue < Venue`
 - `models/virtual_feature.lutaml` — enum: audio, video, chat, phone, screen, feed
 
 == Files to remove (or deprecate)
 
-- `models/location.lutaml` — replaced by `venue.lutaml` + `physical_details.lutaml`
+- `models/location.lutaml` — replaced by Venue hierarchy
 
 == Schema
 
 ```lutaml
 class Venue {
-  kind: VenueKind
+  kind: VenueKind                # discriminator: physical | virtual
   name: String
   label: String
   description: String
   capacity: Integer
   url: String
-  physical: PhysicalDetails[0..1]
-  virtual: VirtualDetails[0..1]
   extensions: MeetingExtension[0..*]
 }
 
-class PhysicalDetails {
-  unlocode: String              # 5-char UN/LOCODE (e.g. "FRPAR")
-  iata_code: String             # 3-char IATA airport/city (e.g. "CDG")
+class PhysicalVenue < Venue {
+  unlocode: String               # 5-char UN/LOCODE (e.g. "FRPAR")
+  iata_code: String              # 3-char IATA airport/city (e.g. "CDG")
   address: String
   city: String
-  country_code: String          # ISO 3166-1 alpha-2
+  country_code: String           # ISO 3166-1 alpha-2
   lat: Float
   lon: Float
   building: String
@@ -60,8 +60,8 @@ class PhysicalDetails {
   access_notes: String
 }
 
-class VirtualDetails {
-  uri: String                   # tel: https: sip: xmpp: rtsp:
+class VirtualVenue < Venue {
+  uri: String                    # tel: https: sip: xmpp: rtsp:
   features: VirtualFeature[0..*]
   passcode: String
   meeting_id: String
@@ -74,6 +74,9 @@ enum VenueKind { physical, virtual }
 enum VirtualFeature { audio, video, chat, phone, screen, feed }
 ```
 
+`Meeting.venues: Venue[0..*]` is polymorphic — each entry is
+either a PhysicalVenue or a VirtualVenue instance.
+
 == Dependencies
 
 - TODO 09 (MeetingExtension) — for the `extensions[]` slot
@@ -81,9 +84,9 @@ enum VirtualFeature { audio, video, chat, phone, screen, feed }
 
 == Acceptance criteria
 
-- `models/venue.lutaml` defines polymorphic Venue
-- PhysicalDetails has UNLOCODE + IATA fields (Strings, validated downstream)
-- VirtualDetails has URI + multi-dial-in + waiting_room
+- `Venue` is base class; `PhysicalVenue` and `VirtualVenue` are `< Venue`
+- PhysicalVenue has UNLOCODE + IATA fields (Strings, validated downstream)
+- VirtualVenue has URI + multi-dial-in + waiting_room
 - All physical-virtual combinations representable (see MECE table in plan)
 - Existing `models/location.lutaml` removed
 - `unlocodes` and `iata` gems referenced in documentation as canonical sources

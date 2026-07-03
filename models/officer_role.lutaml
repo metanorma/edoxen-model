@@ -1,0 +1,11 @@
+enum OfficerRole {
+  chair
+  vice_chair
+  deputy_chair
+  secretary
+  treasurer
+  parliamentarian
+  presiding_officer
+  sergeant_at_arms
+  other
+}

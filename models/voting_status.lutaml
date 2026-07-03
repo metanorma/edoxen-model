@@ -1,0 +1,7 @@
+enum VotingStatus {
+  called
+  in_progress
+  decided
+  withdrawn
+  deferred
+}

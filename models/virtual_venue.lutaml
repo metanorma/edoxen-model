@@ -1,4 +1,4 @@
-class VirtualDetails {
+class VirtualVenue < Venue {
   uri: String
   features: VirtualFeature[0..*]
   passcode: String

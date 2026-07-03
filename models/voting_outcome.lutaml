@@ -1,0 +1,6 @@
+enum VotingOutcome {
+  passed
+  negatived
+  tied
+  withdrawn
+}

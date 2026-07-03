@@ -1,4 +1,4 @@
-class PhysicalDetails {
+class PhysicalVenue < Venue {
   unlocode: String
   iata_code: String
   address: String

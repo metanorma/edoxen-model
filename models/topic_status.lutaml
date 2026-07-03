@@ -1,0 +1,7 @@
+enum TopicStatus {
+  open
+  under_discussion
+  decided
+  deferred
+  withdrawn
+}

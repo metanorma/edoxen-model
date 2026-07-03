@@ -1,0 +1,11 @@
+enum DecisionKind {
+  resolution
+  order
+  ruling
+  determination
+  recommendation
+  statement
+  finding
+  opinion
+  other
+}
