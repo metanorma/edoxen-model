@@ -3,7 +3,7 @@ class Voting {
   urn: String
   onMotion: String
   status: VotingStatus
-  method: VotingMethod
+  votingMethod: VotingMethod
   calledBy: Person
   calledAt: DateTime
   resultDeclaredAt: DateTime

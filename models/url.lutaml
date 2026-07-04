@@ -1,0 +1,7 @@
+// URL with a kind (access / report) and an optional format hint.
+// Used by Decision#urls.
+class Url {
+  kind: UrlKind
+  ref: String
+  format: String
+}
