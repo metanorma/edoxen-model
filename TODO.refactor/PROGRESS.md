@@ -109,3 +109,19 @@ in a one-shot batch. The conversion script is `scripts/adoc_to_md.rb`.
 
 The v2.1 design tighten is the next planned minor release. The
 deferred TODOs need design decisions, not just code.
+
+## Phase F — Downstream consumers (TODO 48)
+
+**Status: AUDIT COMPLETE; migrations deferred.**
+
+TODO 48 (`48-downstream-consumers-audit.md`) documents the path-to-v2.1
+for each downstream repo (OIML, TC154, TC184/SC4):
+
+- All three have valid GHA workflows today.
+- All three currently consume edoxen v0.x (OIML explicitly pinned;
+  TC154 and TC184 implicitly via no-pin).
+- Migration to v2.1 requires per-repo data migration scripts +
+  rendering updates — each is a multi-hour sub-project.
+
+Out of scope for v2.1 model + gem release; tracked for the next
+quarter.
