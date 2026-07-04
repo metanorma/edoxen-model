@@ -4,4 +4,6 @@ enum AgendaItemOutcome {
   deferred
   adopted
   withdrawn
+  carried
+  negatived
 }
