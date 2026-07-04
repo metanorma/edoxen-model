@@ -1,4 +1,38 @@
+// ExtensionAttribute — one typed key/value pair within a
+// MeetingExtension.
+//
+// `key` is the field name within the profile (free-form String).
+//
+// `value` is the polymorphic payload. Exactly one of the value
+// fields should be set; consumers read whichever is non-nil via
+// `#typed_value`. The `type` discriminator lets serializers emit a
+// single wire field without losing the type, and lets schema validators
+// enforce the type without ambiguity.
+//
+// Wire form (v2.1+, per TODO.refactor/47):
+//
+//   - key: "quorum"
+//     type: "integer"
+//     integerValue: 7
+//
+//   - key: "name"
+//     type: "string"
+//     value: "quic"
+//
+//   - key: "start"
+//     type: "datetime"
+//     dateTimeValue: 2026-07-04T10:00:00Z
+//
+// String values use the bare `value:` wire name for back-compat with
+// v2.0 fixtures. Typed variants (integer/float/boolean/date/datetime)
+// use camelCase wire names. The gem unifies them behind `#typed_value`.
 class ExtensionAttribute {
   key: String
   value: String
+  integerValue: Integer
+  floatValue: Float
+  booleanValue: Boolean
+  dateValue: Date
+  dateTimeValue: DateTime
+  type: String
 }

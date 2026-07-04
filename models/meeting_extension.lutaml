@@ -1,7 +1,37 @@
+// MeetingExtension — the profile mechanism (ISO 8601-2 §15).
+//
+// Every core entity has an `extensions: MeetingExtension[0..*]` slot.
+// Adopters register their own profile namespace (e.g. "legco",
+// "us-congress", "ietf") and define `kind` values within it.
+//
+// Field semantics (tightened v2.1, per TODO.refactor/47):
+//
+//   profile  — the profile namespace (lowercase, hyphen-separated).
+//              Adopters pick this once and use it consistently.
+//
+//   kind     — discriminator within the profile. Profiles use this to
+//              separate extension types (e.g. legco's "vote_block" vs
+//              "public_bill_committee_stage"). Free-form String so
+//              profiles don't need a core change to add new kinds.
+//
+//   ref      — URN of the profile document this extension comes from.
+//              Use when the extension is a stub pointing at richer
+//              data hosted elsewhere. Leave empty when the data lives
+//              inline in `attributes[]`.
+//
+//   attributes — key/value pairs carrying the inline profile data.
+//                ExtensionAttribute is polymorphic on value type
+//                (string / integer / float / boolean / date /
+//                date_time) so consumers don't have to re-parse.
+//
+// Recursion (`extensions: MeetingExtension[0..*]`) was removed in
+// v2.1 — no use case was documented, and nested key/value pairs cover
+// the same ground without the complexity. Profiles that genuinely
+// need nesting can encode it via dotted keys ("vote.count": 7,
+// "vote.method": "division") in `attributes[]`.
 class MeetingExtension {
   profile: String
   kind: String
   ref: String
   attributes: ExtensionAttribute[0..*]
-  extensions: MeetingExtension[0..*]
 }

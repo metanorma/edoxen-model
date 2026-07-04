@@ -73,3 +73,35 @@ Then:
 - [ ] Architectural spec asserts "every cross-entity reference uses
       EntityRef, not bare String" (this is the load-bearing invariant)
 - [ ] Migration guide for downstream consumers
+
+## Decision log (2026-07-05 review)
+
+**Deferred to v2.1 implementation.** The phase-1 introduction (step 1
+of the migration plan — add EntityRef as an additive class) is safe
+and could land anytime. The phase-2 parallel-field rollout is also
+non-breaking but adds API surface that needs careful thought:
+
+- **Question to resolve**: should EntityRef carry a single identity
+  (URN XOR StructuredIdentifier XOR localRef) or a list of equivalent
+  identities (so consumers can pick)? The TODO shows three separate
+  fields with "at least one of the three required"; the alternative
+  is `identities: EntityIdentity[]` which is more flexible but loses
+  static "this is a URN" type info.
+
+- **Question to resolve**: should the optional `kind`, `role`, `note`
+  metadata fields be on EntityRef itself or carried via a separate
+  CitationMetadata class? Putting them on EntityRef bloats every
+  reference; separating them risks losing the link.
+
+- **Question to resolve**: which String fields get the EntityRef
+  parallel variant in v2.1? The TODO lists 16 sites; rolling out
+  parallel fields on all 16 in one PR is a lot of spec work.
+
+**Recommendation**: start with phase 1 (EntityRef class) +
+`Motion.resultingDecisionRef` as the single pilot parallel field.
+Validate the design against the legco profile's vote-block reference
+shape. If it works, roll out to the other 15 sites in a follow-up PR.
+
+Until these design questions are answered, the TODO stays deferred.
+The architectural risk is low because the v2.0 String references
+work — EntityRef is a type-safety improvement, not a bug fix.

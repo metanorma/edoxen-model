@@ -66,3 +66,39 @@ Without this fix, the v2 model carries the same kind of invisible-drift
 risk that v1 had with `Resolution.agenda_item` ↔ `AgendaItem.resolution_ref`.
 The whole point of v2 was to fix that class of bug. Don't ship v2 with
 the same anti-pattern in five new places.
+
+## Decision log (2026-07-05 review)
+
+**Deferred to v2.1 implementation.** Each bidirectional relationship
+needs a per-relationship decision on which side is canonical:
+
+- **Motion ↔ Decision**: store `Motion.resultingDecision`; derive
+  `Decision.brought_by_motions`. Risk: lose the ability to read a
+  Decision file standalone and see what motion brought it without
+  loading the Meeting. Mitigation: keep `Decision.brought_by_motions`
+  as an optional convenience field that's nullable but populated
+  when known.
+
+- **Decision ↔ Topic**: same shape — `Decision.aboutTopics` stored,
+  `Topic.decisions` derived.
+
+- **Motion ↔ Voting**: `Voting.onMotion` stored (single value, atomic);
+  `Motion.votings` derived.
+
+- **Decision ↔ Component**: TODO proposes adding
+  `MeetingComponent.decisionRefs` as the inverse. Risk: this is a NEW
+  field, not just a derivation. Worth deciding whether meeting-
+  component owners want this query path.
+
+- **Topic ↔ Motion**: TODO says "no inverse needed; topics don't have
+  to know motions". Confirm this — some consumers may want
+  `Topic.motions` for query paths.
+
+**Recommendation**: ship v2.1 with the derivations as computed
+accessors (additive, non-breaking), and document the storage side as
+canonical. Remove the redundant inverse *storage* in v3.0 after one
+release of dual-write.
+
+The architectural invariant ("no relationship is stored from both
+sides") should land as a spec AFTER the migration, not before —
+otherwise CI breaks the moment the derivations are added.

@@ -97,3 +97,41 @@ baking org-specific terminology into the canonical model. Long enums
 with `other` revert that principle. The body_vocabulary mechanism gives
 adopters the flexibility they need without forcing core changes for
 every new body onboarded.
+
+## Decision log (2026-07-05 review)
+
+**Deferred — needs maintainer call on body_vocabulary shape.** This
+is the most disruptive of the v2.1 TODOs because it changes the
+meaning of three load-bearing enums (MeetingType, ComponentKind,
+DecisionKind) and adds a new collection-metadata concept
+(`body_vocabulary`).
+
+**Open questions before implementation:**
+
+- **Canonical value count.** TODO proposes 4 canonical values per
+  enum. Should we agree on a hard cap (5? 7?) or a soft convention?
+
+- **body_vocabulary location.** TODO proposes
+  `MeetingCollectionMetadata.body_vocabulary[]`. But decisions can
+  also be published standalone (DecisionCollection) — should that
+  have body_vocabulary too? And what about Meetings that aren't in a
+  collection (single-file Meeting at the root)?
+
+- **Vocabulary resolution.** When a `body_type: "CIML Meeting"` is
+  used but no body_vocabulary is declared, what happens? Strict
+  (validation fails) or permissive (string passes through)?
+
+- **Migration of existing fixtures.** Mapping tables (old → new
+  canonical + body_type) need to be defined for every existing value
+  (17 MeetingType + 19 ComponentKind + 9 DecisionKind = 45 mappings).
+
+- **Profile interaction.** body_vocabulary overlaps with
+  MeetingExtension (profile mechanism). Is body_vocabulary a special
+  built-in profile, or a separate orthogonal concept?
+
+**Recommendation**: do NOT implement without a maintainer review
+session. The cost of getting this wrong is high — every fixture in
+every downstream repo needs migration, and the body_vocabulary
+mechanism becomes a new core concept that's hard to remove later.
+
+In the meantime, the long enums work. They're ugly but stable.
