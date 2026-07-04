@@ -1,13 +1,7 @@
+// PhysicalVenue — Ruby-only type marker for a Venue with kind ==
+// "physical". The wire format is flat on Venue (all fields live there);
+// this subclass exists for type-checking and to host physical-only
+// helpers so callers can ask `venue.is_a?(PhysicalVenue)` and
+// validators can dispatch by type.
 class PhysicalVenue < Venue {
-  unlocode: String
-  iataCode: String
-  address: String
-  city: String
-  countryCode: String
-  lat: Float
-  lon: Float
-  building: String
-  floor: String
-  room: String
-  accessNotes: String
 }
