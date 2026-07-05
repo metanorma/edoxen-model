@@ -1,4 +1,5 @@
 class MeetingCollectionMetadata {
   title: String
   source: String
+  bodyVocabulary: BodyVocabularyEntry[0..*]
 }

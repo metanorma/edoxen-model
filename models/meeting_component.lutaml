@@ -2,6 +2,7 @@ class MeetingComponent {
   identifier: String
   urn: String
   kind: ComponentKind
+  bodyType: String
   title: String
   description: String
   startsAt: DateTime

@@ -2,6 +2,7 @@ class Decision {
   identifier: StructuredIdentifier[1..*]
   kind: DecisionKind
   status: DecisionStatus
+  bodyType: String
   doi: String
   urn: String
   agendaItem: String
