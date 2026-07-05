@@ -1,6 +1,8 @@
+// Superseded by component_localization.lutaml. Kept for backward
+// traceability; do not use in new code.
 class ScheduleItemLocalization {
-  language_code: Iso639ThreeCharCode
-  script: Iso15924Code
+  language_code: String
+  script: String
   event: String
   description: String
 }

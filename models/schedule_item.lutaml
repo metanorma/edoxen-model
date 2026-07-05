@@ -1,3 +1,8 @@
+// Superseded by the MeetingComponent hierarchy (meeting_component.lutaml,
+// component_localization.lutaml). Kept for backward traceability; do not
+// use in new code. The flat MeetingComponent base class replaces this
+// ScheduleItem class — schedule entries are now MeetingComponent
+// instances with kind = opening | closing | break | reception | etc.
 class ScheduleItem {
   date: Date
   time: String

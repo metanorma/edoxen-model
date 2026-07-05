@@ -74,3 +74,54 @@ in a one-shot batch. The conversion script is `scripts/adoc_to_md.rb`.
 
 - Commit + push regularly so context-loss between sessions does not block progress.
 - TODO files in this directory are the long-term plan-of-record; update them as work shifts.
+
+## Phase E — v2.1 design tighten (TODOs 44-47)
+
+**Status: 1 of 4 done; 3 deferred with rationale.**
+
+- **TODO 47 (Tighten MeetingExtension)**: COMPLETE 2026-07-05.
+  Documented `kind` and `ref` semantics; removed recursive
+  `extensions[]` slot (YAGNI); polymorphized `ExtensionAttribute.value`
+  with typed variants (string/integer/float/boolean/date/datetime)
+  plus a `type` discriminator. v2.0 wire shape (`value: String`)
+  remains valid for back-compat. Updated schema (edoxen.yaml +
+  meeting.yaml), RBS, shared examples.
+
+- **TODO 44 (EntityRef)**: DEFERRED. Added a Decision Log section to
+  the TODO with three open questions (identity cardinality, metadata
+  placement, pilot field selection). Recommended starting with
+  phase 1 (EntityRef class) + a single pilot parallel field
+  (`Motion.resultingDecisionRef`) to validate the design before
+  rolling out to all 16 sites.
+
+- **TODO 45 (MECE collapse)**: DEFERRED. Added a Decision Log section
+  with per-relationship canonical-side recommendations. Recommended
+  shipping v2.1 with derivations as computed accessors (additive),
+  removing redundant inverse *storage* in v3.0 after one release of
+  dual-write.
+
+- **TODO 46 (Open enums + body_vocabulary)**: DEFERRED. Added a
+  Decision Log section with five open questions (canonical count,
+  vocabulary location, missing-vocabulary behavior, migration
+  mapping, profile interaction). Recommended NOT implementing
+  without a maintainer review session — the migration cost is high
+  across every downstream repo.
+
+The v2.1 design tighten is the next planned minor release. The
+deferred TODOs need design decisions, not just code.
+
+## Phase F — Downstream consumers (TODO 48)
+
+**Status: AUDIT COMPLETE; migrations deferred.**
+
+TODO 48 (`48-downstream-consumers-audit.md`) documents the path-to-v2.1
+for each downstream repo (OIML, TC154, TC184/SC4):
+
+- All three have valid GHA workflows today.
+- All three currently consume edoxen v0.x (OIML explicitly pinned;
+  TC154 and TC184 implicitly via no-pin).
+- Migration to v2.1 requires per-repo data migration scripts +
+  rendering updates — each is a multi-hour sub-project.
+
+Out of scope for v2.1 model + gem release; tracked for the next
+quarter.

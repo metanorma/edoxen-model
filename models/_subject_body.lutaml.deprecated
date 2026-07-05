@@ -1,0 +1,17 @@
+// DEPRECATED 2026-07-04 — removed from the canonical model per the v2.0
+// post-launch drift audit (TODO.refactor/20-post-v2-gem-drift.md §B1).
+//
+// The gem never implemented this; Localization#subject is a plain String.
+// Structured-subject use cases (parliamentary bill numbers, committee
+// codes) should go through the profile mechanism — MeetingExtension's
+// attributes[] slot — when they arise.
+//
+// Kept as .deprecated (not deleted) per the project's source-preservation
+// rule. Will not be picked up by *.lutaml parsers.
+class SubjectBody {
+  name: String
+  organization: String
+  identifier: String
+  role: String
+  kind: String
+}

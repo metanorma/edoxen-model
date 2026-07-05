@@ -1,8 +1,11 @@
+// Per-language content for a Meeting. Mirrors the glossarist
+// pattern used by `Localization` for Decisions: language-agnostic
+// admin fields live on the parent Meeting; per-language content
+// lives here.
 class MeetingLocalization {
-  languageCode: Iso639ThreeCharCode
-  script: Iso15924Code
+  languageCode: String
+  script: String
   title: String
   generalArea: String
   practicalInfo: String
-  description: String
 }

@@ -6,6 +6,7 @@ class Meeting {
   type: MeetingType
   status: MeetingStatus
   visibility: Visibility
+  bodyType: String
   dateRange: DateRange
   recurrence: Recurrence
   venues: Venue[0..*]

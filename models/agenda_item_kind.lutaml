@@ -4,4 +4,5 @@ enum AgendaItemKind {
   header
   opening
   closing
+  aob
 }

@@ -5,12 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on https://keepachangelog.com/en/1.1.0/[Keep a Changelog],
 and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
-== [2.0.0] — 2026-07-XX
+== [2.0.0] — 2026-07-04
 
 Edoxen-model v2.0 broadens the canonical information model from a
 standards-body-specific Resolution model to a **generic meeting, agenda,
 motion, voting, and decision model** with profile extensions for
 domain-specific concepts.
+
+=== Post-launch drift closures (2026-07-04)
+
+Per the post-v2 model↔gem drift audit (`TODO.refactor/20-post-v2-gem-drift.md`):
+
+* Renamed `Voting.method` → `Voting.votingMethod` (the gem rename in
+  commit 11a57ba missed the lutaml file; closes the `Object#method`
+  shadowing that the rename was meant to prevent).
+* `Agenda`: removed `openingSession` / `closingSession` (use
+  MeetingComponents), renamed `source_doc` → `sourceDoc` (camelCase
+  consistency), added `extensions: MeetingExtension[0..*]`.
+* Added `models/url.lutaml` and `models/url_kind.lutaml` — the gem's
+  `Url` class now has a canonical model source.
+* Deprecated `models/subject_body.lutaml` (renamed to
+  `_subject_body.lutaml.deprecated`) — vapor; never implemented in the
+  gem. Structured-subject use cases should go through
+  `MeetingExtension#attributes` when they arise.
 
 === Breaking changes
 

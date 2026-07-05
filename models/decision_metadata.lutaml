@@ -5,6 +5,7 @@ class DecisionMetadata {
   source: String
   sourceUrls: SourceUrl[0..*]
   meetingUrn: String
+  bodyVocabulary: BodyVocabularyEntry[0..*]
   city: String
   countryCode: String
   extensions: MeetingExtension[0..*]

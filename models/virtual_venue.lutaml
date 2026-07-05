@@ -1,9 +1,7 @@
+// VirtualVenue — Ruby-only type marker for a Venue with kind ==
+// "virtual". The wire format is flat on Venue (all fields live there);
+// this subclass exists for type-checking and to host virtual-only
+// helpers so callers can ask `venue.is_a?(VirtualVenue)` and
+// validators can dispatch by type.
 class VirtualVenue < Venue {
-  uri: String
-  features: VirtualFeature[0..*]
-  passcode: String
-  meetingId: String
-  dialInNumbers: String[0..*]
-  waitingRoom: Boolean
-  registrationRequired: Boolean
 }
