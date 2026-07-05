@@ -1,0 +1,25 @@
+// EntityRef — a typed cross-reference between entities.
+//
+// Replaces the bare `String` cross-references used throughout v2.0
+// (TODO.refactor/44). Single identity: exactly one of `urn`,
+// `identifier`, or `local_ref` should be set. The Ruby class's
+// `#valid?` and `#resolved_identity` enforce / pick whichever is set.
+//
+// Optional metadata:
+//   kind — discriminator for the reference's purpose within its profile
+//          (e.g. "resulting", "brought_by", "votes_on").
+//   role — semantic role of the reference (e.g. "outcome", "source").
+//   note — free-form annotation.
+//
+// The pilot field is `Motion.resultingDecisionRef` (parallel to the
+// existing `resultingDecision: String`). v3.0 will remove the String
+// form once all consumers have migrated.
+class EntityRef {
+  urn: String
+  identifier: StructuredIdentifier
+  localRef: String
+
+  kind: String
+  role: String
+  note: String
+}

@@ -8,6 +8,10 @@ class Motion {
   introducedAt: DateTime
   proposedDecision: String
   resultingDecision: String
+  // Pilot EntityRef field (v2.1, TODO.refactor/44). Parallel to
+  // `resultingDecision` (String). Prefer the typed form in new code;
+  // the bare String form is removed in v3.0.
+  resultingDecisionRef: EntityRef
   votings: String[0..*]
   extensions: MeetingExtension[0..*]
 }
