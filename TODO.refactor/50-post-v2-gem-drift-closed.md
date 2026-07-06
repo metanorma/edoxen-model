@@ -1,4 +1,11 @@
-# 20 — Post-v2 model↔gem drift to close
+# 50 — Post-v2 model↔gem drift to close (CLOSED 2026-07-04)
+
+Status: closed. Every item landed in `ff247a3 fix(model): close four
+post-v2 model<->gem drifts`. Kept for traceability.
+
+Renamed from `20-post-v2-gem-drift.md` on 2026-07-06 to free the 20-/21-
+slot collisions with the model team's `20-specs-for-model.md` and
+`21-lutaml-to-ruby-sync-spec.md`.
 
 ## Context
 
