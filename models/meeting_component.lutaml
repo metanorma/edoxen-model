@@ -7,8 +7,16 @@ class MeetingComponent {
   description: String
   startsAt: DateTime
   endsAt: DateTime
+  // Free-form time display (e.g. "9:00–10:30") for schedules where
+  // exact ISO timestamps aren't available or timezone is unknown.
+  timeLabel: String
+  // References to specific Venue instances (rooms, halls, virtual
+  // breakouts) defined on the parent Meeting. A "room" is just a
+  // Venue with kind=physical — no separate location abstraction.
   venueRefs: String[0..*]
-  chair: Person
+  // Role-discriminated people leading or contributing to this component
+  // (chair, co-chair, moderator, speaker, etc.). Mirrors Meeting.officers.
+  officers: Officer[0..*]
   agendaRef: String
   minutesRef: String
   attendanceRefs: String[0..*]

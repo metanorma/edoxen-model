@@ -14,6 +14,9 @@ class Venue {
   description: String
   capacity: Integer
   url: String
+  // Polymorphic contact channels for this venue (front-desk phone,
+  // reservations email, fax, etc.). Replaces the old `phones` field.
+  contactMethods: ContactMethod[0..*]
   // Physical-venue fields (populated when kind == "physical").
   unlocode: String
   iataCode: String

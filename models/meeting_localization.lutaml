@@ -2,6 +2,11 @@
 // pattern used by `Localization` for Decisions: language-agnostic
 // admin fields live on the parent Meeting; per-language content
 // lives here.
+//
+// Structured practical info (accommodation options, transport details,
+// documents notes) goes via MeetingExtension on the parent Meeting —
+// the profile mechanism handles any body-specific structured data
+// without core model changes.
 class MeetingLocalization {
   languageCode: String
   script: String

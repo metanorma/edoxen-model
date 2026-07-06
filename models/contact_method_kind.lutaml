@@ -1,0 +1,11 @@
+enum ContactMethodKind {
+  phone
+  mobile
+  fax
+  email
+  url
+  mail
+  pager
+  message
+  other
+}

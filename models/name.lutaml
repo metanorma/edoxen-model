@@ -1,0 +1,17 @@
+// Name — structured personal/organisational name. VCARD conventions
+// (RFC 6350): separate structured components (N) from a pre-formatted
+// display string (FN). Either or both may be populated.
+//
+// `formatted` is the display string when callers have it pre-built;
+// the structured fields (`family`, `given`, `additional`, `prefix`,
+// `suffix`) let adopters store parsed components for sorting, indexing,
+// or locale-aware rendering.
+class Name {
+  formatted: String
+  family: String
+  given: String
+  additional: String
+  prefix: String
+  suffix: String
+  extensions: MeetingExtension[0..*]
+}

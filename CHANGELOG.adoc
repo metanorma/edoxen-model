@@ -5,6 +5,68 @@ All notable changes to this project will be documented in this file.
 The format is based on https://keepachangelog.com/en/1.1.0/[Keep a Changelog],
 and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
+== [2.2.0] — Unreleased
+
+Model refinements that close the v2.0 → v2.1 genericity gaps surfaced
+by migrating TC154's 25 custom event files. The core stays generic;
+adopter-specific structured data goes through `MeetingExtension`.
+
+=== Breaking changes (contact identity — VCARD-style)
+
+* New `Contact` class — VCARD-like abstract contact. Generalises
+  Person for cases where the contact may be a person, an organisation,
+  a department, or a role ("Secretariat").
+* New `Name` class — structured personal/organisational name (VCARD
+  N + FN). `Contact.name: Name` replaces `Person.name: String`.
+  Callers that always want a display string use `Name#display`
+  (returns `formatted` if set, else builds from components).
+* Removed `Person.email`, `Person.phone`, `Person.orcid`. Replaced by
+  the new `contactMethods: ContactMethod[0..*]` and `identifiers:
+  ContactIdentifier[0..*]` collections on Contact (Person inherits).
+  New channels and identifier schemes are added via enum values (or
+  `other` + extensions) — the model never changes (OCP).
+* `Person` now inherits from `Contact` (was a peer class). `Person` is
+  an empty subclass; all behaviour is inherited.
+* New `ContactMethod` — one polymorphic communication channel
+  (kind + value + label + primary). `ContactMethodKind`: phone,
+  mobile, fax, email, url, mail, pager, message, other.
+* New `ContactIdentifier` — one polymorphic external identifier
+  (kind + value). `ContactIdentifierKind`: orcid, isni, wikidata, ror,
+  ringgold, github, other.
+* `Venue.phones: String[0..*]` → `Venue.contactMethods: ContactMethod[0..*]`.
+  One polymorphic collection covers phone, fax, email, url, mail, etc.
+* `Meeting.localContact` → `Meeting.contact` — "local" had no
+  symmetric opposite and was indefensible. Type is now `Contact`.
+* `MeetingSeries.organizer` → `MeetingSeries.contact` — the
+  "organizer" semantic lives on `Contact#role`, not as a separate
+  field. Type is now `Contact`.
+* `HostRef.contact` type changed from `Person` to `Contact`.
+
+=== Breaking changes (component / venue location)
+
+* `MeetingComponent.chair: Person` → `MeetingComponent.officers: Officer[0..*]`.
+  One role-discriminated collection (mirrors `Meeting.officers`) instead
+  of a single chair slot — supports co-chairs, moderators, multiple
+  leaders. A derived `MeetingComponent#chair` accessor preserves
+  the convenience query.
+* Removed `MeetingComponent.rooms: String[0..*]`. A "room" is just a
+  `Venue` with `kind=physical`; reference it through the existing
+  `venueRefs` (which already supports both physical and virtual
+  sub-locations). No new field needed — Venue is already OCP for any
+  location kind.
+* `Venue.phone: String` → folded into `Venue.contactMethods`.
+
+=== Added
+
+* `Contact`, `Name`, `ContactMethod`, `ContactIdentifier` — VCARD-like
+  contact abstraction. OCP for new channels, identifier schemes, and
+  name components.
+* `Meeting.note: String` — general-purpose annotation on the meeting.
+* `Meeting.contact: Contact` — general contact (replaces the
+  indefensible `localContact`).
+* `MeetingComponent.timeLabel: String` — free-form time display
+  (e.g. `"9:00–10:30"`) for schedules without exact ISO timestamps.
+
 == [2.0.0] — 2026-07-04
 
 Edoxen-model v2.0 broadens the canonical information model from a
