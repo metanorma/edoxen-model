@@ -1,0 +1,16 @@
+// ContactMethod — one polymorphic communication channel. Replaces the
+// OCP-violating `email`/`phone`/`fax` etc. fields that hard-coded a
+// fixed set of channels on Person and Venue.
+//
+// `kind` discriminates the channel; `value` carries the address/number;
+// `label` is a free-form display hint ("Office", "Front desk",
+// "After hours"). New channel kinds are added via the ContactMethodKind
+// enum (or `other` + extensions for adopter-specific channels) — no
+// model change required.
+class ContactMethod {
+  kind: ContactMethodKind
+  value: String
+  label: String
+  primary: Boolean
+  extensions: MeetingExtension[0..*]
+}

@@ -1,0 +1,9 @@
+enum ContactIdentifierKind {
+  orcid
+  isni
+  wikidata
+  ror
+  ringgold
+  github
+  other
+}

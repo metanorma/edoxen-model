@@ -1,10 +1,7 @@
-class Person {
-  name: String
-  kind: String
-  role: String
-  affiliation: String
-  email: String
-  phone: String
-  orcid: String
-  extensions: MeetingExtension[0..*]
+// Person — a Contact that is specifically an individual human.
+// Inherits name/kind/role/title/affiliation/contactMethods/identifiers/
+// address/extensions from Contact. The old `email`, `phone`, and
+// `orcid` fields are replaced by entries in `contactMethods` (kind=email
+// or phone) and `identifiers` (kind=orcid).
+class Person < Contact {
 }

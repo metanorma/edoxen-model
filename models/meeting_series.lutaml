@@ -5,7 +5,7 @@ class MeetingSeries {
   description: String
   recurrence: Recurrence
   term: String
-  organizer: Person
+  contact: Contact
   hosts: HostRef[0..*]
   kind: String
   meetingRefs: String[0..*]

@@ -1,0 +1,9 @@
+// ContactIdentifier — one polymorphic external identifier for a Contact.
+// Replaces the hard-coded `orcid` field. New identifier schemes (ISNI,
+// Wikidata QID, ROR, Ringgold, GitHub handle, etc.) are added via the
+// ContactIdentifierKind enum (or `other` + extensions) — no model change.
+class ContactIdentifier {
+  kind: ContactIdentifierKind
+  value: String
+  extensions: MeetingExtension[0..*]
+}

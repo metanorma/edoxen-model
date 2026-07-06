@@ -20,6 +20,12 @@ class Meeting {
   sourceUrls: SourceUrl[0..*]
   landingUrl: String
   registrationUrl: String
+  // General-purpose annotation on the meeting (free-form note).
+  note: String
+  // General contact for this meeting (Contact#role discriminates:
+  // "organizer", "secretariat", "local organizer", etc.). Replaces the
+  // v2.2a `localContact` field — "local" had no symmetric opposite.
+  contact: Contact
   agenda: Agenda
   components: MeetingComponent[0..*]
   deadlines: Deadline[0..*]
