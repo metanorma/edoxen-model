@@ -1,11 +1,11 @@
 enum DecisionRelationType {
-  annexOf {
+  annex_of {
     definition {
       This decision is an annex to the target decision.
     }
   }
 
-  hasAnnex {
+  has_annex {
     definition {
       The target decision is an annex of the source decision.
     }
