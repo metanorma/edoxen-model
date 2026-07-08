@@ -1,5 +1,5 @@
 class Consideration {
   type: ConsiderationType
   dateEffective: Date
-  message: Text
+  message: LocalizedString[0..*]
 }

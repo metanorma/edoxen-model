@@ -1,4 +1,4 @@
 class Deadline {
   date: Date
-  description: String
+  description: LocalizedString[0..*]
 }

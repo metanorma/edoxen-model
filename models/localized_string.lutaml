@@ -1,0 +1,19 @@
+// LocalizedString — one language-specific value of a translatable
+// String field. Replaces the v2.x pattern of a separate
+// MeetingLocalization/Localization/ComponentLocalization object that
+// duplicated the entity's translatable fields.
+//
+// `spelling` is an ISO 24229 spelling/conversion system code:
+//   - Spelling system:     {lang}-{script}[-{country}][-{extension}]
+//                          e.g. `eng`, `zho-Hans`, `ind-Latn-pre1972`
+//   - Conversion system:   {authority}:{source-spelling}:{target-spelling}:{identifying}
+//                          e.g. `acadsin:zho-Hani:Latn:2002`, `UN:ara-Arab:Latn:2017`
+//
+// One field captures both native-script content and romanized/
+// transliterated content. Always verbose — even single-language data
+// uses the [{ spelling, value }] shape (no scalar shorthand).
+class LocalizedString {
+  spelling: String
+  value: String
+  extensions: MeetingExtension[0..*]
+}

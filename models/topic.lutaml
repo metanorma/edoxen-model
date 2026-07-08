@@ -1,8 +1,8 @@
 class Topic {
   identifier: String
   urn: String
-  title: String
-  description: String
+  title: LocalizedString[0..*]
+  description: LocalizedString[0..*]
   status: TopicStatus
   resumptionOf: String
   documents: TopicDocument[0..*]

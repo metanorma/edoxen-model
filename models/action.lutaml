@@ -1,5 +1,5 @@
 class Action {
   type: ActionType
   dateEffective: DateTime
-  message: Text
+  message: LocalizedString[0..*]
 }

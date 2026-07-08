@@ -3,16 +3,15 @@ class MeetingComponent {
   urn: String
   kind: ComponentKind
   bodyType: String
-  title: String
-  description: String
+  title: LocalizedString[0..*]
+  description: LocalizedString[0..*]
   startsAt: DateTime
   endsAt: DateTime
   // Free-form time display (e.g. "9:00–10:30") for schedules where
   // exact ISO timestamps aren't available or timezone is unknown.
-  timeLabel: String
+  timeLabel: LocalizedString[0..*]
   // References to specific Venue instances (rooms, halls, virtual
-  // breakouts) defined on the parent Meeting. A "room" is just a
-  // Venue with kind=physical — no separate location abstraction.
+  // breakouts) defined on the parent Meeting or a VenueCollection.
   venueRefs: String[0..*]
   // Role-discriminated people leading or contributing to this component
   // (chair, co-chair, moderator, speaker, etc.). Mirrors Meeting.officers.
@@ -20,6 +19,5 @@ class MeetingComponent {
   agendaRef: String
   minutesRef: String
   attendanceRefs: String[0..*]
-  localizations: ComponentLocalization[0..*]
   extensions: MeetingExtension[0..*]
 }

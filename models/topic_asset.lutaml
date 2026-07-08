@@ -1,6 +1,6 @@
 class TopicAsset {
   identifier: String
-  title: String
+  title: LocalizedString[0..*]
   kind: String
   url: String
   format: String
