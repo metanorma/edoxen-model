@@ -5,258 +5,114 @@ All notable changes to this project will be documented in this file.
 The format is based on https://keepachangelog.com/en/1.1.0/[Keep a Changelog],
 and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
-== [3.0.0] — Unreleased
+== [1.0.0] — Initial release
 
-Per-field localization + scoped URN registries. Breaking change.
+The canonical Edoxen information model: a generic meeting, agenda,
+motion, voting, and decision model with VCARD-style contacts, scoped
+URN registries, and per-field localization per ISO 24229.
 
-The v2.x `Localization[]` pattern (a separate per-language object that
-duplicated the entity's translatable fields) is replaced by per-field
-`Localized<String/Name>[0..*]` — every translatable field carries its
-own language tags directly. Language identification uses a single
-ISO 24229 `spelling` code (covers both native-script content and
-romanized/transliterated content) instead of separate `language_code`
-+ `script` fields.
+=== Identity & Contact (VCARD-style, OCP)
 
-=== Per-field localization
+* `Contact` — VCARD-like abstract contact (person, organisation,
+  department, or role).
+* `Person` — inherits from `Contact` for individual humans.
+* `Name` — structured N + FN components (formatted, family, given,
+  additional, prefix, suffix).
+* `ContactMethod` — polymorphic communication channel (phone, mobile,
+  fax, email, url, mail, pager, message, other).
+* `ContactIdentifier` — polymorphic external ID (orcid, isni,
+  wikidata, ror, ringgold, github, other).
+* `Officer` — role-binding (NOT an entity): binds a Contact to a
+  Meeting or MeetingComponent with a structural role (chair,
+  secretary, treasurer, etc.).
+* `HostRef` — typed reference to a hosting organization.
 
-* New `LocalizedString { spelling, value: String, extensions }`.
-* New `LocalizedName { spelling, value: Name, extensions }`.
-* `spelling` is an ISO 24229 code — either a *spelling system*
+=== Localization (per-field, ISO 24229)
+
+Every translatable field is `Localized<String/Name>[0..*]` — one
+entry per ISO 24229 `spelling` code. There is no separate
+`Localization[]` collection; each field carries its own language tags.
+
+* `LocalizedString` — `{ spelling, value: String, extensions }`.
+* `LocalizedName` — `{ spelling, value: Name, extensions }`.
+* `spelling` accepts ISO 24229 *spelling-system codes*
   (`{lang}-{script}[-{country}][-{extension}]`, e.g. `zho-Hans`,
-  `ind-Latn-pre1972`) or a *conversion system*
+  `ind-Latn-pre1972`) AND *conversion-system codes*
   (`{authority}:{source-spelling}:{target-spelling}:{identifying}`,
   e.g. `acadsin:zho-Hani:Latn:2002`, `UN:ara-Arab:Latn:2017`).
 * Always verbose — single-language data uses the same
-  `[{ spelling, value }]` shape as multi-language data. No scalar
-  shorthand.
+  `[{ spelling, value }]` shape as multi-language data.
 
-=== Removed (Localization pattern)
-
-* `MeetingLocalization`, `Localization` (Decision), `ComponentLocalization`.
-* All `language_code` + `script` field pairs (replaced by `spelling`).
-* All `localizations[]` collections on Meeting, Decision,
-  MeetingComponent, Contact, Venue.
-
-=== Per-field changes
-
-Every translatable field is now `Localized<String/Name>[0..*]`:
-
-|===
-|Entity |Fields converted to Localized<String/Name>
-
-|Contact
-|`name` (LocalizedName), `title`, `affiliation`, `address`
-
-|Venue
-|`name`, `label`, `description`, `address`, `building`, `floor`, `room`, `accessNotes`
-
-|Meeting
-|`title`, `generalArea`, `practicalInfo`, `note`
-
-|MeetingComponent
-|`title`, `description`, `timeLabel`
-
-|Decision
-|`title`, `subject`, `message`, `considering`
-
-|Action / Consideration / Approval
-|`message`
-
-|AgendaItem
-|`title`, `description`
-
-|MinutesSection
-|`title`, `narrative`
-
-|MeetingSeries
-|`name`, `description`
-
-|Motion
-|`text`
-
-|Topic, TopicDocument, TopicAsset
-|`title`, `description`
-
-|Deadline
-|`description`
-
-|Reference
-|`title`
-|===
-
-Non-translatable fields (URNs, identifiers, enum values, dates,
-coordinates, codes, URLs, contact method values, identifier values)
-remain plain String/typed fields.
+Per-field conversions across Contact, Venue, Meeting, MeetingComponent,
+Decision, Action, Consideration, Approval, AgendaItem, MinutesSection,
+MeetingSeries, Motion, Topic, TopicDocument, TopicAsset, Deadline,
+Reference.
 
 === Scoped URN registries
 
-URN format: `urn:edoxen:{entity}:{scope}:{local-id}`. Examples:
-* `urn:edoxen:contact:isotc154:jianfang-zhang`
-* `urn:edoxen:venue:isotc154:fairmont-house-hkma`
-* `urn:edoxen:meeting:isotc154:plenary-42`
-* `urn:edoxen:decision:isotc154:2023-res-41`
+URN format: `urn:edoxen:{entity}:{scope}:{local-id}`.
 
-* New `ContactCollection { scope, title, contacts[] }` — registry of
-  Contacts indexed by scoped URN.
-* New `VenueCollection { scope, title, venues[] }` — registry of Venues.
-* `Contact` and `Venue` gain `urn` (their registry identity) and `ref`
+* `ContactCollection` — registry of Contacts indexed by scoped URN.
+* `VenueCollection` — registry of Venues.
+* `Contact` and `Venue` gain `urn` (registry identity) and `ref`
   (when used as a URN reference; if set, other fields are ignored).
 
-=== Minutes/TopicDocument language fields renamed
+Any entity-typed field accepts either **inline data** (full object) or
+**a URN reference** (`{ ref: urn:edoxen:contact:... }`).
 
-* `Minutes.language_code` + `Minutes.script` → single `Minutes.spelling`.
-* `TopicDocument.languageCode` → `TopicDocument.spelling`.
-* `SourceUrl.languageCode` → `SourceUrl.spelling`.
+=== Meeting/Agenda side
 
-== [2.2.0] — 2026-07-08
+* `Meeting` — one sitting: when, where, who chaired, what was on the
+  agenda, who was there, how they voted, what was said, what came out.
+* `MeetingCollection` — wrapper for many Meetings in a single YAML.
+* `MeetingSeries` — parent of recurring Meeting instances.
+* `MeetingComponent` — flat sub-event (track, session, debate,
+  breakout, keynote, opening, closing, break, reception, etc.).
+  Carries its own `officers[]` collection.
+* `Agenda` + `AgendaItem` — forward-looking business order.
+* `Minutes` + `MinutesSection` — backward-looking narrative record.
+* `Attendance` — who was at the meeting.
+* `VoteRecord` — how each person voted on each Decision.
+* `Venue` — polymorphic by `kind` (physical or virtual); flat wire
+  shape. Validators enforce that fields match `kind`.
+* `Deadline`, `MeetingRelation`, `Recurrence` (structured ISO 8601-2
+  §13).
 
-Model refinements that close the v2.0 → v2.1 genericity gaps surfaced
-by migrating TC154's 25 custom event files. The core stays generic;
-adopter-specific structured data goes through `MeetingExtension`.
+=== Decision side
 
-=== Breaking changes (contact identity — VCARD-style)
+* `Decision` — a single formal outcome (resolution, order, ruling,
+  determination, recommendation, statement, finding, opinion).
+* `DecisionCollection` + `DecisionMetadata` — wrapper + header.
+* `DecisionDate`, `Action`, `Consideration`, `Approval` — leaf content
+  nodes (each with per-field Localized message).
+* `DecisionRelation` — directed relation between two decisions.
+* `SourceUrl` — per-spelling PDF/HTML reference.
 
-* New `Contact` class — VCARD-like abstract contact. Generalises
-  Person for cases where the contact may be a person, an organisation,
-  a department, or a role ("Secretariat").
-* New `Name` class — structured personal/organisational name (VCARD
-  N + FN). `Contact.name: Name` replaces `Person.name: String`.
-  Callers that always want a display string use `Name#display`
-  (returns `formatted` if set, else builds from components).
-* Removed `Person.email`, `Person.phone`, `Person.orcid`. Replaced by
-  the new `contactMethods: ContactMethod[0..*]` and `identifiers:
-  ContactIdentifier[0..*]` collections on Contact (Person inherits).
-  New channels and identifier schemes are added via enum values (or
-  `other` + extensions) — the model never changes (OCP).
-* `Person` now inherits from `Contact` (was a peer class). `Person` is
-  an empty subclass; all behaviour is inherited.
-* New `ContactMethod` — one polymorphic communication channel
-  (kind + value + label + primary). `ContactMethodKind`: phone,
-  mobile, fax, email, url, mail, pager, message, other.
-* New `ContactIdentifier` — one polymorphic external identifier
-  (kind + value). `ContactIdentifierKind`: orcid, isni, wikidata, ror,
-  ringgold, github, other.
-* `Venue.phones: String[0..*]` → `Venue.contactMethods: ContactMethod[0..*]`.
-  One polymorphic collection covers phone, fax, email, url, mail, etc.
-* `Meeting.localContact` → `Meeting.contact` — "local" had no
-  symmetric opposite and was indefensible. Type is now `Contact`.
-* `MeetingSeries.organizer` → `MeetingSeries.contact` — the
-  "organizer" semantic lives on `Contact#role`, not as a separate
-  field. Type is now `Contact`.
-* `HostRef.contact` type changed from `Person` to `Contact`.
+=== Procedural
 
-=== Breaking changes (component / venue location)
-
-* `MeetingComponent.chair: Person` → `MeetingComponent.officers: Officer[0..*]`.
-  One role-discriminated collection (mirrors `Meeting.officers`) instead
-  of a single chair slot — supports co-chairs, moderators, multiple
-  leaders. A derived `MeetingComponent#chair` accessor preserves
-  the convenience query.
-* Removed `MeetingComponent.rooms: String[0..*]`. A "room" is just a
-  `Venue` with `kind=physical`; reference it through the existing
-  `venueRefs` (which already supports both physical and virtual
-  sub-locations). No new field needed — Venue is already OCP for any
-  location kind.
-* `Venue.phone: String` → folded into `Venue.contactMethods`.
-
-=== Added
-
-* `Contact`, `Name`, `ContactMethod`, `ContactIdentifier` — VCARD-like
-  contact abstraction. OCP for new channels, identifier schemes, and
-  name components.
-* `Meeting.note: String` — general-purpose annotation on the meeting.
-* `Meeting.contact: Contact` — general contact (replaces the
-  indefensible `localContact`).
-* `MeetingComponent.timeLabel: String` — free-form time display
-  (e.g. `"9:00–10:30"`) for schedules without exact ISO timestamps.
-
-== [2.0.0] — 2026-07-04
-
-Edoxen-model v2.0 broadens the canonical information model from a
-standards-body-specific Resolution model to a **generic meeting, agenda,
-motion, voting, and decision model** with profile extensions for
-domain-specific concepts.
-
-=== Post-launch drift closures (2026-07-04)
-
-Per the post-v2 model↔gem drift audit (`TODO.refactor/20-post-v2-gem-drift.md`):
-
-* Renamed `Voting.method` → `Voting.votingMethod` (the gem rename in
-  commit 11a57ba missed the lutaml file; closes the `Object#method`
-  shadowing that the rename was meant to prevent).
-* `Agenda`: removed `openingSession` / `closingSession` (use
-  MeetingComponents), renamed `source_doc` → `sourceDoc` (camelCase
-  consistency), added `extensions: MeetingExtension[0..*]`.
-* Added `models/url.lutaml` and `models/url_kind.lutaml` — the gem's
-  `Url` class now has a canonical model source.
-* Deprecated `models/subject_body.lutaml` (renamed to
-  `_subject_body.lutaml.deprecated`) — vapor; never implemented in the
-  gem. Structured-subject use cases should go through
-  `MeetingExtension#attributes` when they arise.
-
-=== Breaking changes
-
-* Renamed `Resolution` → `Decision`. `Resolution` is now a `DecisionKind` value.
-* Renamed `ResolutionCollection` → `DecisionCollection`.
-* Renamed `ResolutionMetadata` → `DecisionMetadata`.
-* Renamed `ResolutionDate` → `DecisionDate`; `ResolutionDateType` → `DecisionDateType`.
-* Renamed `ResolutionRelation` → `DecisionRelation`; `ResolutionRelationType` → `DecisionRelationType`.
-* Renamed `ResolutionType` → `DecisionKind` with expanded values.
-* Renamed `Voting.method` → `Voting.votingMethod`.
-* Renamed `VirtualVenue.meeting_id` → `meetingId` for camelCase consistency.
-* Removed `Meeting.virtual`. Replaced with polymorphic `Meeting.venues: Venue[0..*]`.
-* Removed `Meeting.chair` and `Meeting.secretary`. Replaced with `Meeting.officers: Officer[0..*]`.
-* Removed `Meeting.schedule`. Replaced with `Meeting.components: MeetingComponent[0..*]`.
-* Removed `Meeting.host`. Use `Meeting.hosts`.
-* Removed `Meeting.year`. Derivable from `dateRange.start`.
-* Removed `Meeting.resolutionRefs`. Use `Meeting.decisions`.
-* Removed `Agenda.openingSession` / `closingSession`. Use MeetingComponents.
-* Removed `AgendaItem.resolutionRef`. Use `decisionRef`.
-* Removed `VoteRecord.resolutionRef`. Use `decisionRef` + `votingRef`.
-
-=== Added
-
-* `Decision` base type with `kind`, `status`, and procedural fields.
-* `Motion` entity — procedural act with state machine.
-* `Voting` + `VotingCounts` — vote state machine with method + outcome.
+* `Motion` — procedural act with state machine.
+* `Voting` + `VotingCounts` — vote state machine with method +
+  outcome.
 * `Topic`, `TopicDocument`, `TopicAsset` — subject of discussion with
   cross-meeting threading via `resumptionOf`.
-* `MeetingSeries` — parent of recurring meetings.
-* `MeetingComponent` + `ComponentLocalization` — flat sub-events.
-* `Officer` + `OfficerRole` — replaces chair/secretary shortcuts.
-* `MeetingExtension` + `ExtensionAttribute` — ISO 8601-2 §15 profile mechanism.
-* `Recurrence` + `RecurrenceByDay` — structured ISO 8601-2 §13.
-* `Venue` polymorphic (kind: physical | virtual).
-* `PhysicalVenue`, `VirtualVenue` subclasses.
-* Extended `Attendance` with `role` and `response`.
-* Extended `AgendaItem` with `topics` and `components`.
-* Extended `Person` with `kind` and `orcid`.
-* Extended `Meeting` with `urn`, `ordinal`, `seriesRef`, `visibility`,
-  `recurrence`, `landingUrl`, `registrationUrl`.
-* New enums: `VenueKind`, `VirtualFeature`, `Visibility`,
-  `AttendanceRole`, `AttendanceResponse`, `ComponentKind`,
-  `DecisionKind`, `DecisionStatus`, `MotionStatus`, `VotingStatus`,
-  `VotingMethod`, `VotingOutcome`, `TopicStatus`, `OfficerRole`,
-  `RecurrenceFreq`.
-* New references: `iso8601-2.adoc` with `@includes` for date/recurrence.
-* New profile: `references/profiles/legco.adoc` — first reference profile.
-* Sample YAMLs: `oiml-ciml-56.yaml`, `legco-sitting-2024-01-15.yaml`,
-  `hybrid-board-meeting.yaml`.
+
+=== Profile mechanism (ISO 8601-2 §15)
+
+* `MeetingExtension` + `ExtensionAttribute` — how adopters express
+  body-specific structured data. Core stays generic.
+* `BodyVocabularyEntry` — per-dataset vocabulary mapping (body_type →
+  canonical_type).
+* `EntityRef` — typed cross-reference between entities.
+
+=== Enums
+
+Single source of truth in `Edoxen::Enums` (Ruby) and the schemas'
+`$defs`. Each enum value-list is asserted by sync specs against the
+matching Ruby constant.
 
 === References
 
-* iCalendar (RFC 5545/7986/5546/9253) — referenced, not duplicated.
+* ISO 24229 — spelling/conversion system codes.
+* VCARD (RFC 6350) — N + FN name structure.
 * ISO 8601-2 (2026) §13 for recurrence, §15 for profile mechanism.
-
-=== Migration
-
-See the https://github.com/edoxen/edoxen.github.io/blob/main/docs/migration-v2.md[migration guide]
-for the full v0.x → v2.0 transformation.
-
-== [1.0.0] — 2026-06-30
-
-Initial public release. Standards-body-focused Resolution model.
-
-== [0.1.0] — 2025-XX-XX
-
-Initial development release.
+* iCalendar (RFC 5545/7986/5546/9253) — referenced, not duplicated.

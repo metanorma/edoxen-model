@@ -3,7 +3,7 @@
 // role ("Secretariat"), or any other entity with a name and one or
 // more communication channels.
 //
-// v3.0 changes (per-field localization, ISO 24229):
+// 1.0 changes (per-field localization, ISO 24229):
 //   - All translatable fields are now Localized<String/Name>[0..*]
 //     (one entry per ISO 24229 spelling/conversion system code).
 //   - Removed: `localizations[]` collection, `language_code` + `script`

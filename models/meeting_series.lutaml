@@ -1,5 +1,6 @@
 class MeetingSeries {
   identifier: StructuredIdentifier[1..*]
+  bodyType: String
   urn: String
   name: LocalizedString[0..*]
   description: LocalizedString[0..*]

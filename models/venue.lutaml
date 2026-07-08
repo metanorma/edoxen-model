@@ -5,7 +5,7 @@
 // optional siblings. Validators (Edoxen::VenueValidator) enforce that
 // fields match `kind`.
 //
-// v3.0 changes (per-field localization, ISO 24229):
+// 1.0 changes (per-field localization, ISO 24229):
 //   - All translatable fields (name, label, description, access_notes,
 //     address, room, building, floor) are now Localized<String>[0..*].
 //   - Added: `urn` for registry storage; `ref` for reference-by-URN.

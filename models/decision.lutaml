@@ -14,7 +14,7 @@ class Decision {
   broughtByMotions: String[0..*]
   aboutTopics: String[0..*]
   madeInComponent: String
-  // v3.0: per-field localization replaces the v2.x `localizations[]`
+  // 1.0: per-field localization replaces the v2.x `localizations[]`
   // collection. Each translatable field carries its own language tags
   // via LocalizedString (one entry per ISO 24229 spelling/conversion
   // system code).
