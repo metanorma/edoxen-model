@@ -9,7 +9,7 @@
 // single wire field without losing the type, and lets schema validators
 // enforce the type without ambiguity.
 //
-// Wire form (v2.1+, per TODO.refactor/47):
+// Wire form (1.0+, per TODO.refactor/1.0-design):
 //
 //   - key: "quorum"
 //     type: "integer"
@@ -24,7 +24,7 @@
 //     dateTimeValue: 2026-07-04T10:00:00Z
 //
 // String values use the bare `value:` wire name for back-compat with
-// v2.0 fixtures. Typed variants (integer/float/boolean/date/datetime)
+// 1.0 fixtures. Typed variants (integer/float/boolean/date/datetime)
 // use camelCase wire names. The gem unifies them behind `#typed_value`.
 class ExtensionAttribute {
   key: String

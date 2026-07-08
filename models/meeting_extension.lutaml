@@ -4,7 +4,7 @@
 // Adopters register their own profile namespace (e.g. "legco",
 // "us-congress", "ietf") and define `kind` values within it.
 //
-// Field semantics (tightened v2.1, per TODO.refactor/47):
+// Field semantics (tightened 1.0, per TODO.refactor/1.0-design):
 //
 //   profile  — the profile namespace (lowercase, hyphen-separated).
 //              Adopters pick this once and use it consistently.
@@ -25,7 +25,7 @@
 //                date_time) so consumers don't have to re-parse.
 //
 // Recursion (`extensions: MeetingExtension[0..*]`) was removed in
-// v2.1 — no use case was documented, and nested key/value pairs cover
+// 1.0 — no use case was documented, and nested key/value pairs cover
 // the same ground without the complexity. Profiles that genuinely
 // need nesting can encode it via dotted keys ("vote.count": 7,
 // "vote.method": "division") in `attributes[]`.
