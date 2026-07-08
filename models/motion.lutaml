@@ -1,7 +1,7 @@
 class Motion {
   identifier: String
   urn: String
-  text: String
+  text: LocalizedString[0..*]
   mover: Person
   seconders: Person[0..*]
   status: MotionStatus

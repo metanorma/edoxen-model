@@ -1,8 +1,8 @@
 class AgendaItem {
   label: String
   kind: AgendaItemKind
-  title: String
-  description: String
+  title: LocalizedString[0..*]
+  description: LocalizedString[0..*]
   references: Reference[0..*]
   outcome: AgendaItemOutcome
   decisionRef: String

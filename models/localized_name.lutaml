@@ -1,0 +1,12 @@
+// LocalizedName — one language-specific value of a translatable Name
+// field. Mirrors LocalizedString but carries a structured Name value
+// rather than a plain String.
+//
+// Use case: a single Contact can be known by different names in
+// different languages — `张建方` (zho-Hans) and `Jianfang Zhang`
+// (acadsin:zho-Hani:Latn:2002 Pinyin romanization) are the same person.
+class LocalizedName {
+  spelling: String
+  value: Name
+  extensions: MeetingExtension[0..*]
+}

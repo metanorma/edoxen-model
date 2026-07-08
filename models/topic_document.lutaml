@@ -1,10 +1,10 @@
 class TopicDocument {
   identifier: String
-  title: String
+  title: LocalizedString[0..*]
   version: String
   status: String
   url: String
   format: String
-  languageCode: String
+  spelling: String
   extensions: MeetingExtension[0..*]
 }

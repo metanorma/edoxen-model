@@ -5,7 +5,110 @@ All notable changes to this project will be documented in this file.
 The format is based on https://keepachangelog.com/en/1.1.0/[Keep a Changelog],
 and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
-== [2.2.0] — Unreleased
+== [3.0.0] — Unreleased
+
+Per-field localization + scoped URN registries. Breaking change.
+
+The v2.x `Localization[]` pattern (a separate per-language object that
+duplicated the entity's translatable fields) is replaced by per-field
+`Localized<String/Name>[0..*]` — every translatable field carries its
+own language tags directly. Language identification uses a single
+ISO 24229 `spelling` code (covers both native-script content and
+romanized/transliterated content) instead of separate `language_code`
++ `script` fields.
+
+=== Per-field localization
+
+* New `LocalizedString { spelling, value: String, extensions }`.
+* New `LocalizedName { spelling, value: Name, extensions }`.
+* `spelling` is an ISO 24229 code — either a *spelling system*
+  (`{lang}-{script}[-{country}][-{extension}]`, e.g. `zho-Hans`,
+  `ind-Latn-pre1972`) or a *conversion system*
+  (`{authority}:{source-spelling}:{target-spelling}:{identifying}`,
+  e.g. `acadsin:zho-Hani:Latn:2002`, `UN:ara-Arab:Latn:2017`).
+* Always verbose — single-language data uses the same
+  `[{ spelling, value }]` shape as multi-language data. No scalar
+  shorthand.
+
+=== Removed (Localization pattern)
+
+* `MeetingLocalization`, `Localization` (Decision), `ComponentLocalization`.
+* All `language_code` + `script` field pairs (replaced by `spelling`).
+* All `localizations[]` collections on Meeting, Decision,
+  MeetingComponent, Contact, Venue.
+
+=== Per-field changes
+
+Every translatable field is now `Localized<String/Name>[0..*]`:
+
+|===
+|Entity |Fields converted to Localized<String/Name>
+
+|Contact
+|`name` (LocalizedName), `title`, `affiliation`, `address`
+
+|Venue
+|`name`, `label`, `description`, `address`, `building`, `floor`, `room`, `accessNotes`
+
+|Meeting
+|`title`, `generalArea`, `practicalInfo`, `note`
+
+|MeetingComponent
+|`title`, `description`, `timeLabel`
+
+|Decision
+|`title`, `subject`, `message`, `considering`
+
+|Action / Consideration / Approval
+|`message`
+
+|AgendaItem
+|`title`, `description`
+
+|MinutesSection
+|`title`, `narrative`
+
+|MeetingSeries
+|`name`, `description`
+
+|Motion
+|`text`
+
+|Topic, TopicDocument, TopicAsset
+|`title`, `description`
+
+|Deadline
+|`description`
+
+|Reference
+|`title`
+|===
+
+Non-translatable fields (URNs, identifiers, enum values, dates,
+coordinates, codes, URLs, contact method values, identifier values)
+remain plain String/typed fields.
+
+=== Scoped URN registries
+
+URN format: `urn:edoxen:{entity}:{scope}:{local-id}`. Examples:
+* `urn:edoxen:contact:isotc154:jianfang-zhang`
+* `urn:edoxen:venue:isotc154:fairmont-house-hkma`
+* `urn:edoxen:meeting:isotc154:plenary-42`
+* `urn:edoxen:decision:isotc154:2023-res-41`
+
+* New `ContactCollection { scope, title, contacts[] }` — registry of
+  Contacts indexed by scoped URN.
+* New `VenueCollection { scope, title, venues[] }` — registry of Venues.
+* `Contact` and `Venue` gain `urn` (their registry identity) and `ref`
+  (when used as a URN reference; if set, other fields are ignored).
+
+=== Minutes/TopicDocument language fields renamed
+
+* `Minutes.language_code` + `Minutes.script` → single `Minutes.spelling`.
+* `TopicDocument.languageCode` → `TopicDocument.spelling`.
+* `SourceUrl.languageCode` → `SourceUrl.spelling`.
+
+== [2.2.0] — 2026-07-08
 
 Model refinements that close the v2.0 → v2.1 genericity gaps surfaced
 by migrating TC154's 25 custom event files. The core stays generic;

@@ -1,5 +1,5 @@
 class Reference {
   ref: String
   kind: String
-  title: String
+  title: LocalizedString[0..*]
 }

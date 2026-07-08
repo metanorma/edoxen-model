@@ -1,8 +1,8 @@
 class MeetingSeries {
   identifier: StructuredIdentifier[1..*]
   urn: String
-  name: String
-  description: String
+  name: LocalizedString[0..*]
+  description: LocalizedString[0..*]
   recurrence: Recurrence
   term: String
   contact: Contact

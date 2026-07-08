@@ -5,30 +5,35 @@
 // optional siblings. Validators (Edoxen::VenueValidator) enforce that
 // fields match `kind`.
 //
-// The PhysicalVenue and VirtualVenue subclasses exist as Ruby-only type
-// markers; their lutaml declarations are intentionally empty.
+// v3.0 changes (per-field localization, ISO 24229):
+//   - All translatable fields (name, label, description, access_notes,
+//     address, room, building, floor) are now Localized<String>[0..*].
+//   - Added: `urn` for registry storage; `ref` for reference-by-URN.
+//   - Added: `localizations[]` collection removed (per-field instead).
+//
+// Reference vs inline: when `ref` is set, treat as a reference.
 class Venue {
+  ref: String
+  urn: String
   kind: VenueKind
-  name: String
-  label: String
-  description: String
+  name: LocalizedString[0..*]
+  label: LocalizedString[0..*]
+  description: LocalizedString[0..*]
   capacity: Integer
   url: String
-  // Polymorphic contact channels for this venue (front-desk phone,
-  // reservations email, fax, etc.). Replaces the old `phones` field.
   contactMethods: ContactMethod[0..*]
   // Physical-venue fields (populated when kind == "physical").
   unlocode: String
   iataCode: String
-  address: String
+  address: LocalizedString[0..*]
   city: String
   countryCode: String
   lat: Float
   lon: Float
-  building: String
-  floor: String
-  room: String
-  accessNotes: String
+  building: LocalizedString[0..*]
+  floor: LocalizedString[0..*]
+  room: LocalizedString[0..*]
+  accessNotes: LocalizedString[0..*]
   // Virtual-venue fields (populated when kind == "virtual").
   uri: String
   features: VirtualFeature[0..*]

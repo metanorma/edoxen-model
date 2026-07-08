@@ -1,8 +1,7 @@
 class Minutes {
   identifier: StructuredIdentifier[0..*]
   urn: String
-  language_code: Iso639ThreeCharCode
-  script: Iso15924Code
+  spelling: String
   source_doc: String
   source_pages: String
   sections: MinutesSection[0..*]
