@@ -1,5 +1,5 @@
 class MeetingCollectionMetadata {
-  title: String
+  title: LocalizedString[0..*]
   source: String
   bodyVocabulary: BodyVocabularyEntry[0..*]
 }

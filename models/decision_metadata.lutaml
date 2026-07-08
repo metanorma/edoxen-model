@@ -1,7 +1,6 @@
 class DecisionMetadata {
   date: DateTime
-  title: String
-  titleLocalized: Localization[0..*]
+  title: LocalizedString[0..*]
   source: String
   sourceUrls: SourceUrl[0..*]
   meetingUrn: String
