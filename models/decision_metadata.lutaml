@@ -1,5 +1,5 @@
 class DecisionMetadata {
-  date: DateTime
+  date: Date
   title: LocalizedString[0..*]
   source: String
   sourceUrls: SourceUrl[0..*]
