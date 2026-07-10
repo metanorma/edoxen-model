@@ -1,4 +1,4 @@
 class MeetingIdentifier {
   venue: String
-  date: DateTime
+  date: Date
 }

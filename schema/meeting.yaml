@@ -1,6 +1,6 @@
 ---
 "$schema": http://json-schema.org/draft-07/schema#
-"$id": https://github.com/edoxen/edoxen/schema/meeting.yaml
+"$id": https://github.com/edoxen/edoxen-model/schema/meeting.yaml
 title: Edoxen Meeting Schema
 description: |
   Schema for validating Edoxen Meeting/Agenda YAML files.

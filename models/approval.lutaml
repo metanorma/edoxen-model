@@ -1,6 +1,6 @@
 class Approval {
   type: ApprovalType
   degree: ApprovalDegree
-  date: Date
+  date: DecisionDate
   message: LocalizedString[0..*]
 }
