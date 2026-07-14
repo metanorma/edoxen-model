@@ -8,7 +8,8 @@ class Meeting {
   visibility: Visibility
   bodyType: String
   title: LocalizedString[0..*]
-  dateRange: DateRange
+  scheduledDateRange: DateRange
+  occurredDateRange: DateTimeRange
   recurrence: Recurrence
   venues: Venue[0..*]
   generalArea: LocalizedString[0..*]
@@ -29,6 +30,7 @@ class Meeting {
   deadlines: Deadline[0..*]
   attendance: Attendance[0..*]
   minutes: Minutes[0..*]
+  declarations: Declaration[0..*]
   decisions: Decision[0..*]
   motions: Motion[0..*]
   votings: Voting[0..*]

@@ -1,0 +1,7 @@
+// DeclarationKind — discriminates the two BS 0:2006 declaration
+// types. Adding a new kind is a one-line enum extension; the
+// Declaration model itself never needs to change (OCP).
+enum DeclarationKind {
+  conflict_of_interest
+  ipr
+}

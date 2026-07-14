@@ -104,6 +104,28 @@ Any entity-typed field accepts either **inline data** (full object) or
   canonical_type).
 * `EntityRef` — typed cross-reference between entities.
 
+=== BS 0:2006 meeting-minutes concepts
+
+Source: BS 0:2006 §7.6 (BSI committee minutes standard). The concepts
+are universal across standards bodies — ISO, IEC, BIPM, IETF all track
+statements, declarations, and scheduled-vs-occurred times.
+
+* `Statement`, `StatementKind` — one remark by one or more members;
+  kind discriminates `statement` / `comment` / `standpoint`.
+* `Declaration`, `DeclarationKind` — conflict-of-interest and IPR
+  declarations; IPR carries typed `EntityRef` subject and target
+  (`iprSubjectRef`, `iprTargetRef`).
+* `DateTimeRange` — sub-day precision range, parallel to `DateRange`.
+* `Meeting.scheduledDateRange` (renamed from `dateRange`),
+  `Meeting.occurredDateRange: DateTimeRange`,
+  `Meeting.declarations: Declaration[0..*]`.
+* `Topic.statements`, `Topic.declarations` — standing positions that
+  travel with the topic across meetings.
+* `MinutesSection.statements` — per-meeting remarks on this section.
+* `MinutesSection.topic_ref` — URN back-link to a `Topic`,
+  formalising the convention that `MinutesSection#number` matches
+  `AgendaItem#label`.
+
 === Enums
 
 Single source of truth in `Edoxen::Enums` (Ruby) and the schemas'

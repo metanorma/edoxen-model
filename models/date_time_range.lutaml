@@ -1,0 +1,10 @@
+// DateTimeRange — start + end pair with sub-day precision. Use
+// when a DateRange (day granularity) is insufficient — e.g.
+// `Meeting#occurredDateRange` (a meeting that ran 09:00–11:30).
+//
+// Parallel to DateRange; the two are intentionally separate types
+// so the granularity is visible at the type level.
+class DateTimeRange {
+  start: DateTime
+  end: DateTime
+}

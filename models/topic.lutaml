@@ -10,5 +10,7 @@ class Topic {
   references: Reference[0..*]
   motions: String[0..*]
   decisions: String[0..*]
+  statements: Statement[0..*]
+  declarations: Declaration[0..*]
   extensions: MeetingExtension[0..*]
 }
