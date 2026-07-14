@@ -1,0 +1,21 @@
+// Statement — one remark made by one or more meeting members on a
+// topic or a minutes section. Carries a per-field Localized
+// description and a list of members (Person references) who made
+// the statement.
+//
+// The `kind` discriminator separates the three BS 0:2006 statement
+// types: `statement` (general remark), `comment` (sub-type), and
+// `standpoint` (a member's position on the topic). New kinds are
+// added by extending the StatementKind enum (or use `other` +
+// extensions for adopter-specific kinds) — no model change
+// required (OCP).
+//
+// Attachment points: `MinutesSection#statements[]` (per-meeting,
+// what was said this time) and `Topic#statements[]` (standing
+// position that travels with the topic across meetings).
+class Statement {
+  kind: StatementKind
+  description: LocalizedString[0..*]
+  party: Person[0..*]
+  extensions: MeetingExtension[0..*]
+}

@@ -1,0 +1,8 @@
+// StatementKind — discriminates the three BS 0:2006 statement types.
+// Adding a new kind is a one-line enum extension; the Statement
+// model itself never needs to change (OCP).
+enum StatementKind {
+  statement
+  comment
+  standpoint
+}

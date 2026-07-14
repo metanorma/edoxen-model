@@ -1,0 +1,33 @@
+// Declaration — a formal declaration made by one or more meeting
+// members. Covers the two BS 0:2006 declaration types via the
+// `kind` discriminator:
+//
+//   * `conflict_of_interest` — a member declares a conflict on a
+//     target (typically a Topic or a TopicDocument).
+//   * `ipr` — a member declares an IPR position on a target (a
+//     published standard or work in progress).
+//
+// The IPR-specific fields (`iprSubjectRef`, `iprTargetRef`) are
+// populated only when `kind == "ipr"`. This mirrors edoxen's
+// "flat class, kind discriminates which subset is populated"
+// pattern (cf. Venue: physical fields + virtual fields on one
+// flat class).
+//
+// Attachment points: `Meeting#declarations[]` (per-meeting) and
+// `Topic#declarations[]` (standing position that travels with
+// the topic).
+class Declaration {
+  kind: DeclarationKind
+  description: LocalizedString[0..*]
+  party: Person[0..*]
+  // IPR-specific: the IPR item that applies (e.g. a patent
+  // declaration on a specific patent). Populated only when
+  // kind == "ipr". Typed EntityRef — validates that the
+  // reference resolves.
+  iprSubjectRef: EntityRef
+  // IPR-specific: the published standard or work in progress
+  // that the IPR declaration applies to. Populated only when
+  // kind == "ipr".
+  iprTargetRef: EntityRef
+  extensions: MeetingExtension[0..*]
+}

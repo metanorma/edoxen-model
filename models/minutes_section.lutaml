@@ -5,4 +5,6 @@ class MinutesSection {
   page_start: Integer
   page_end: Integer
   references: Reference[0..*]
+  statements: Statement[0..*]
+  topic_ref: String
 }
