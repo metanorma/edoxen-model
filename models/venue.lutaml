@@ -1,19 +1,13 @@
 // Venue — polymorphic by discriminator, flat on the wire.
 //
-// The `kind` field discriminates physical vs virtual; all possible fields
-// (physical-specific and virtual-specific) live on this one class as
-// optional siblings. Validators (Edoxen::VenueValidator) enforce that
-// fields match `kind`.
-//
-// 1.0 changes (per-field localization, ISO 24229):
-//   - All translatable fields (name, label, description, access_notes,
-//     address, room, building, floor) are now Localized<String>[0..*].
-//   - Added: `urn` for registry storage; `ref` for reference-by-URN.
-//   - Added: `localizations[]` collection removed (per-field instead).
-//
-// Reference vs inline: when `ref` is set, treat as a reference.
+// Three-tier entity resolution (same pattern as Contact):
+//   - `ref` set      → resolve from global VenueRegister by URN.
+//   - `localRef` set → resolve from document-scoped collection
+//                      (e.g. Meeting#venues[]) by matching `urn`.
+//   - both nil       → inline data.
 class Venue {
   ref: String
+  localRef: String
   urn: String
   kind: VenueKind
   name: LocalizedString[0..*]

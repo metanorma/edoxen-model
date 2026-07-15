@@ -1,0 +1,14 @@
+// BodyRegister — authoritative register of Bodies (committees,
+// subcommittees, working groups). Members carry
+// `urn: urn:edoxen:body:{scope}:{local-id}`; the register's `scope`
+// MUST match the scope segment in member URNs.
+//
+// Other documents (Meeting, MeetingCollection) reference bodies via
+// `ref: urn:edoxen:body:{scope}:{local-id}` and resolve against the
+// matching BodyRegister.
+class BodyRegister {
+  scope: String
+  title: LocalizedString[0..*]
+  bodies: Body[0..*]
+  extensions: MeetingExtension[0..*]
+}

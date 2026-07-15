@@ -1,0 +1,18 @@
+// Body — a committee, subcommittee, working group, or other organised
+// body that owns meetings and decisions. Carries a short code (e.g.
+// "ISO/TC 154", "CIML") and a localised full name.
+//
+// Three-tier entity resolution (same pattern as Contact and Venue):
+//   - `ref` set      → resolve from global BodyRegister by URN.
+//   - `localRef` set → resolve from document-scoped collection
+//                      (e.g. Meeting#bodies[]) by matching `code`.
+//   - both nil       → inline data (the Body IS the data).
+class Body {
+  ref: String
+  localRef: String
+  code: String
+  name: LocalizedString[0..*]
+  kind: String
+  parentRef: EntityRef
+  extensions: MeetingExtension[0..*]
+}
