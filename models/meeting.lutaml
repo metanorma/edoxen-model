@@ -16,8 +16,8 @@ class Meeting {
   practicalInfo: LocalizedString[0..*]
   city: String
   countryCode: String
-  committee: String
-  committeeGroup: String
+  committee: Body
+  committeeGroup: Body
   officers: Officer[0..*]
   hosts: HostRef[0..*]
   sourceUrls: SourceUrl[0..*]
@@ -25,6 +25,8 @@ class Meeting {
   registrationUrl: String
   note: LocalizedString[0..*]
   contact: Contact
+  contacts: Contact[0..*]
+  bodies: Body[0..*]
   agenda: Agenda
   components: MeetingComponent[0..*]
   deadlines: Deadline[0..*]

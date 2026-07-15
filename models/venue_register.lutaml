@@ -1,0 +1,11 @@
+// VenueRegister — registry of Venues, indexed by scoped URN.
+//
+// Mirrors ContactRegister: members carry
+// `urn: urn:edoxen:venue:{scope}:{local-id}`; the collection's `scope`
+// MUST match the scope segment in member URNs.
+class VenueRegister {
+  scope: String
+  title: LocalizedString[0..*]
+  venues: Venue[0..*]
+  extensions: MeetingExtension[0..*]
+}

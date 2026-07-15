@@ -3,19 +3,15 @@
 // role ("Secretariat"), or any other entity with a name and one or
 // more communication channels.
 //
-// 1.0 changes (per-field localization, ISO 24229):
-//   - All translatable fields are now Localized<String/Name>[0..*]
-//     (one entry per ISO 24229 spelling/conversion system code).
-//   - Removed: `localizations[]` collection, `language_code` + `script`
-//     fields (every translatable field carries its own language tags).
-//   - Added: `urn` for registry storage; `ref` for reference-by-URN.
-//
-// Reference vs inline: when `ref` is set, treat this Contact as a
-// reference (other fields ignored). When `ref` is unset, the Contact
-// is inline (full data). Both patterns are valid on every field that
-// accepts a Contact.
+// Three-tier entity resolution:
+//   - `ref` set      → resolve from global ContactRegister by URN.
+//   - `localRef` set → resolve from document-scoped collection
+//                      (e.g. Meeting#contacts[]) by matching `urn`.
+//   - both nil       → inline data (the Contact IS the data).
+// When either `ref` or `localRef` is set, other fields are ignored.
 class Contact {
   ref: String
+  localRef: String
   urn: String
   name: LocalizedName[0..*]
   kind: String
