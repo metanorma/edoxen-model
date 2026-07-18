@@ -1,4 +1,5 @@
 class AgendaItem {
+  urn: String
   label: String
   kind: AgendaItemKind
   title: LocalizedString[0..*]
