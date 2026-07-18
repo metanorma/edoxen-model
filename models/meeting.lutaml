@@ -33,7 +33,7 @@ class Meeting {
   attendance: Attendance[0..*]
   minutes: Minutes[0..*]
   declarations: Declaration[0..*]
-  decisions: Decision[0..*]
+  decisions: StructuredIdentifier[0..*]
   motions: Motion[0..*]
   votings: Voting[0..*]
   relations: MeetingRelation[0..*]
